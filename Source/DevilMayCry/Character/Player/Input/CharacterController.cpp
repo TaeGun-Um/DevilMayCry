@@ -31,15 +31,25 @@ void ACharacterController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->ClearAllMappings();
+	//GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->ClearAllMappings();
 	GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(InputMapping, 0);
 
+	KeyBinding();
+}
+
+void ACharacterController::KeyBinding()
+{
 	UEnhancedInputComponent* EIComp = Cast<UEnhancedInputComponent>(InputComponent);
 
 	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Triggered, this, &ACharacterController::Move);
 	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Triggered, this, &ACharacterController::Jump);
-	EIComp->BindAction(InputActions->AttackInput, ETriggerEvent::Triggered, this, &ACharacterController::Attack);
 	EIComp->BindAction(InputActions->LookInput, ETriggerEvent::Triggered, this, &ACharacterController::Look);
+	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Triggered, this, &ACharacterController::LockOn);
+	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Triggered, this, &ACharacterController::LeftClick);
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Triggered, this, &ACharacterController::RightClick);
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Triggered, this, &ACharacterController::WheelClick);
+	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Triggered, this, &ACharacterController::EKey);
+	EIComp->BindAction(InputActions->TestInput, ETriggerEvent::Triggered, this, &ACharacterController::TestFunc);
 }
 
 
@@ -73,20 +83,36 @@ void ACharacterController::Jump(const FInputActionValue& Value)
 	}
 }
 
-void ACharacterController::Attack(const FInputActionValue& Value)
-{
-	bool bAttack = Value.Get<bool>();
-
-	if (bAttack)
-	{
-		//공격을 해라~
-	}
-}
-
 void ACharacterController::Look(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	GetCharacter()->AddControllerYawInput(MovementVector.X);
 	GetCharacter()->AddControllerPitchInput(-MovementVector.Y);
+}
+
+void ACharacterController::LockOn(const FInputActionValue& Value)
+{
+}
+
+void ACharacterController::LeftClick(const FInputActionValue& Value)
+{
+}
+
+void ACharacterController::RightClick(const FInputActionValue& Value)
+{
+}
+
+void ACharacterController::WheelClick(const FInputActionValue& Value)
+{
+}
+
+void ACharacterController::EKey(const FInputActionValue& Value)
+{
+}
+
+void ACharacterController::TestFunc(const FInputActionValue& Value)
+{
+	float Value16 = Value.Get<float>();
+	UE_LOG(LogTemp, Warning, TEXT("%f"), Value16);
 }

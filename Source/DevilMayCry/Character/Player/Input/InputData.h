@@ -24,8 +24,23 @@ public:
     UInputAction* JumpInput;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    UInputAction* AttackInput;
+    UInputAction* LeftClickInput;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UInputAction* RightClickInput;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UInputAction* WheelClickInput;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UInputAction* EKeyInput;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UInputAction* LockOnInput;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UInputAction* LookInput;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UInputAction* TestInput;
 };

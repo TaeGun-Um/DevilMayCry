@@ -24,8 +24,13 @@ public:
 public:
 	void Move(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
-	void Attack(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void LockOn(const FInputActionValue& Value);
+	void LeftClick(const FInputActionValue& Value);
+	void RightClick(const FInputActionValue& Value);
+	void WheelClick(const FInputActionValue& Value);
+	void EKey(const FInputActionValue& Value);
+	void TestFunc(const FInputActionValue& Value);
 
 protected:
 	virtual void BeginPlay() override;
@@ -40,4 +45,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	class UInputData* InputActions;
+
+private:
+	void KeyBinding();
+private:
+
 };

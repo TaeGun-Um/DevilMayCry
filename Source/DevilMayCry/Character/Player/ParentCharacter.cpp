@@ -2,6 +2,7 @@
 
 
 #include "ParentCharacter.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AParentCharacter::AParentCharacter()
@@ -15,7 +16,7 @@ AParentCharacter::AParentCharacter()
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -26,9 +27,8 @@ void AParentCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void AParentCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
+//void AParentCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+//{
+//	Super::SetupPlayerInputComponent(PlayerInputComponent);
+//}
 
