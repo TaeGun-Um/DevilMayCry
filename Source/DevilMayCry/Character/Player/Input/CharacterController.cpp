@@ -2,10 +2,10 @@
 
 
 #include "CharacterController.h"
+#include "../ParentCharacter.h"
 #include "EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include <GameFramework/CharacterMovementComponent.h>
-#include "../ParentCharacter.h"
 
 ACharacterController::ACharacterController(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
