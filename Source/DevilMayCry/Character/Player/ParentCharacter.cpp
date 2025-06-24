@@ -15,23 +15,30 @@ AParentCharacter::AParentCharacter()
     SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
     SpringArmComp->SetupAttachment(RootComponent);
     SpringArmComp->TargetArmLength = 300.f;       
-    SpringArmComp->bUsePawnControlRotation = true; 
-
+    SpringArmComp->bUsePawnControlRotation = true;    
     SpringArmComp->bDoCollisionTest = true;
-    SpringArmComp->ProbeChannel = ECC_GameTraceChannel1; // Camera Ã¤³Î
+    SpringArmComp->ProbeChannel = ECC_GameTraceChannel1;
     SpringArmComp->ProbeSize = 8.0f;
-    SpringArmComp->bUsePawnControlRotation = true;
     
     CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
     CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
     CameraComp->bUsePawnControlRotation = false;
+
+
+    bUseControllerRotationPitch = false;
+    bUseControllerRotationYaw = false;
+    bUseControllerRotationRoll = false;
+
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->RotationRate =FRotator(0.f,540.f,0.f);
 }
 
 // Called when the game starts or when spawned
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    GetCharacterMovement()->JumpZVelocity=600.f;
+    GetCharacterMovement()->JumpZVelocity = 1000.f;
+    
 }
 
 // Called every frame
