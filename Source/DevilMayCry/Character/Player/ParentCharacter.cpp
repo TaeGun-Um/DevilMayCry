@@ -4,6 +4,7 @@
 #include "ParentCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AParentCharacter::AParentCharacter()
@@ -14,6 +15,11 @@ AParentCharacter::AParentCharacter()
     SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
     SpringArmComp->SetupAttachment(RootComponent);
     SpringArmComp->TargetArmLength = 300.f;       
+    SpringArmComp->bUsePawnControlRotation = true; 
+
+    SpringArmComp->bDoCollisionTest = true;
+    SpringArmComp->ProbeChannel = ECC_GameTraceChannel1; // Camera Ã¤³Î
+    SpringArmComp->ProbeSize = 8.0f;
     SpringArmComp->bUsePawnControlRotation = true;
     
     CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
@@ -25,7 +31,7 @@ AParentCharacter::AParentCharacter()
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+    GetCharacterMovement()->JumpZVelocity=600.f;
 }
 
 // Called every frame

@@ -22,6 +22,20 @@ void ANero::BeginPlay()
 		GetMesh()->SetSkeletalMesh(SKM);
 	}
 
+	UAnimBlueprint* AnimSeq = LoadObject<UAnimBlueprint>(nullptr, TEXT("/Script/Engine.AnimBlueprint'/Game/Player/Nero/ABP_Nero.ABP_Nero'"));
+
+	if (AnimSeq)
+	{
+		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		GetMesh()->SetAnimInstanceClass(*AnimSeq->GeneratedClass);
+		UE_LOG(LogTemp, Warning, TEXT("Anim success"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Anim Fail"));
+	}
+
+
 }
 
 void ANero::Tick(float DeltaTime)
