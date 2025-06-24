@@ -32,9 +32,21 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool IsAttack()const
+	bool IsLeftClick()const
 	{
-		return bAttack;
+		return bLeftClick;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttackNow(bool Value)
+	{
+		bAttackNow = Value;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAttackNow()const
+	{
+		return bAttackNow;
 	}
 
 protected:
@@ -46,9 +58,9 @@ protected:
 	virtual void SpaceKey()		PURE_VIRTUAL(AParentCharacter::SpaceKey, ;);
 
 private:
-	void SetAttack(bool Value)
+	void SetLeftClick(bool Value)
 	{
-		bAttack = Value;
+		bLeftClick = Value;
 	}
 
 private:
@@ -58,5 +70,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
 
-	bool bAttack = false;
+	bool bLeftClick = false;
+	bool bAttackNow = false;
 };

@@ -55,6 +55,11 @@ void ACharacterController::KeyBinding()
 
 void ACharacterController::Move(const FInputActionValue& Value)
 {
+	if (Cast<AParentCharacter>(GetCharacter())->IsAttackNow())
+	{
+		return;
+	}
+
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = GetControlRotation();
@@ -70,6 +75,11 @@ void ACharacterController::Move(const FInputActionValue& Value)
 
 void ACharacterController::Jump(const FInputActionValue& Value)
 {
+	if (Cast<AParentCharacter>(GetCharacter())->IsAttackNow())
+	{
+		return;
+	}
+
 	bool bJump = Value.Get<bool>();
 
 	if (bJump)
@@ -92,7 +102,15 @@ void ACharacterController::LockOn(const FInputActionValue& Value)
 
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
-	Cast<AParentCharacter>(GetCharacter())->SetAttack(true);
+	bool bClick = Value.Get<bool>();
+	if (bClick)
+	{
+		Cast<AParentCharacter>(GetCharacter())->SetLeftClick(true);
+	}
+	else
+	{
+		Cast<AParentCharacter>(GetCharacter())->SetLeftClick(false);
+	}
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)

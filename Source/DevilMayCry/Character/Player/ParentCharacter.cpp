@@ -37,7 +37,7 @@ AParentCharacter::AParentCharacter()
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    GetCharacterMovement()->JumpZVelocity = 1000.f;
+    GetCharacterMovement()->JumpZVelocity = 600.f;
     
 }
 
