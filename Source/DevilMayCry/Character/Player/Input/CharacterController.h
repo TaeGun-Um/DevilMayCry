@@ -48,6 +48,7 @@ protected:
 
 private:
 	void KeyBinding();
+
 private:
 
 };

@@ -11,6 +11,8 @@ class AParentCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	friend class ACharacterController;
+
 public:
 	// Sets default values for this character's properties
 	AParentCharacter();
@@ -29,7 +31,11 @@ public:
 
 
 public:
-
+	UFUNCTION(BlueprintCallable)
+	bool IsAttack()const
+	{
+		return bAttack;
+	}
 
 protected:
 	virtual void LeftClick()	PURE_VIRTUAL(AParentCharacter::LeftClick, ;);
@@ -40,10 +46,17 @@ protected:
 	virtual void SpaceKey()		PURE_VIRTUAL(AParentCharacter::SpaceKey, ;);
 
 private:
+	void SetAttack(bool Value)
+	{
+		bAttack = Value;
+	}
+
+private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCameraComponent> CameraComp = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
 
+	bool bAttack = false;
 };

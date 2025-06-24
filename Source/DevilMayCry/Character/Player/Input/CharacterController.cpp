@@ -74,11 +74,6 @@ void ACharacterController::Jump(const FInputActionValue& Value)
 
 	if (bJump)
 	{
-		const FRotator Rotation = GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector UpVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
-
 		GetCharacter()->Jump();
 	}
 }
@@ -97,6 +92,7 @@ void ACharacterController::LockOn(const FInputActionValue& Value)
 
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
+	Cast<AParentCharacter>(GetCharacter())->SetAttack(true);
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)
