@@ -27,12 +27,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	virtual void LeftClick() override;
-	virtual void RightClick() override;
-	virtual void WheelClick() override;
-	virtual void EKey() override;
-	virtual void ShiftKey() override;
-	virtual void SpaceKey() override;
 
 private:
 

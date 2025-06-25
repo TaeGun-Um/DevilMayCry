@@ -15,6 +15,8 @@ ACharacterController::ACharacterController(const FObjectInitializer& ObjectIniti
 void ACharacterController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ParentChar = Cast<AParentCharacter>(GetCharacter());
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -55,12 +57,15 @@ void ACharacterController::KeyBinding()
 
 void ACharacterController::Move(const FInputActionValue& Value)
 {
-	if (Cast<AParentCharacter>(GetCharacter())->IsAttackNow())
+	FVector2D MovementVector = Value.Get<FVector2D>();
+	
+	ParentChar->MoveKey(!MovementVector.IsZero());
+
+	if (ParentChar->IsAttackNow())
 	{
 		return;
 	}
 
-	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -75,12 +80,14 @@ void ACharacterController::Move(const FInputActionValue& Value)
 
 void ACharacterController::Jump(const FInputActionValue& Value)
 {
-	if (Cast<AParentCharacter>(GetCharacter())->IsAttackNow())
+	bool bJump = Value.Get<bool>();
+
+	ParentChar->MoveKey(bJump);
+
+	if (ParentChar->IsAttackNow())
 	{
 		return;
 	}
-
-	bool bJump = Value.Get<bool>();
 
 	if (bJump)
 	{
@@ -105,11 +112,11 @@ void ACharacterController::LeftClick(const FInputActionValue& Value)
 	bool bClick = Value.Get<bool>();
 	if (bClick)
 	{
-		Cast<AParentCharacter>(GetCharacter())->SetLeftClick(true);
+		ParentChar->SetLeftClick(true);
 	}
 	else
 	{
-		Cast<AParentCharacter>(GetCharacter())->SetLeftClick(false);
+		ParentChar->SetLeftClick(false);
 	}
 }
 
