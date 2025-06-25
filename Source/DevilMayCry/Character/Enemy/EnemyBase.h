@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "MonsterBase.generated.h"
+#include "GameFramework/Pawn.h"
+#include "EnemyBase.generated.h"
 
 UCLASS()
-class DEVILMAYCRY_API AMonsterBase : public AActor
+class DEVILMAYCRY_API AEnemyBase : public APawn
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AMonsterBase();
+
+public:
+	// Sets default values for this pawn's properties
+	AEnemyBase();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,16 +22,4 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-
-public:
-	
-protected:
-
-private:
-	int MaxHP = 1000;
-	int CurHP = 1000;
-	int MoveSpeed = 300.f;
-
-
 };

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MonsterBase.h"
+#include "EnemyBase.h"
 #include "Empusa.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVILMAYCRY_API AEmpusa : public AMonsterBase
+class DEVILMAYCRY_API AEmpusa : public AEnemyBase
 {
 	GENERATED_BODY()
 

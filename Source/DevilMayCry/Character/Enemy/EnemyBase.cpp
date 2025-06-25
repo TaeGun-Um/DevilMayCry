@@ -1,27 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MonsterBase.h"
+#include "EnemyBase.h"
 
 // Sets default values
-AMonsterBase::AMonsterBase()
+AEnemyBase::AEnemyBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
 // Called when the game starts or when spawned
-void AMonsterBase::BeginPlay()
+void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AMonsterBase::Tick(float DeltaTime)
+void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
-

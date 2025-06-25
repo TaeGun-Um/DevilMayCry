@@ -56,7 +56,6 @@ public:
 	}
 
 protected:
-	virtual void MoveKey(bool Value);
 	virtual void LeftClick();
 	virtual void RightClick();
 	virtual void WheelClick();

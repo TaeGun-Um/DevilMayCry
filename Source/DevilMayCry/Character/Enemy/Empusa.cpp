@@ -6,7 +6,6 @@
 
 AEmpusa::AEmpusa()
 {
-
 	SkmComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkmComp"));
 }
 

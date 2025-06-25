@@ -63,11 +63,6 @@ void AParentCharacter::CameraInit()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 }
 
-void AParentCharacter::MoveKey(bool Value)
-{
-    bWantMove = Value;
-}
-
 void AParentCharacter::LeftClick()
 {
 }

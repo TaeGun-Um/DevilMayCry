@@ -58,8 +58,6 @@ void ACharacterController::KeyBinding()
 void ACharacterController::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	
-	ParentChar->MoveKey(!MovementVector.IsZero());
 
 	if (ParentChar->IsAttackNow())
 	{
@@ -81,8 +79,6 @@ void ACharacterController::Move(const FInputActionValue& Value)
 void ACharacterController::Jump(const FInputActionValue& Value)
 {
 	bool bJump = Value.Get<bool>();
-
-	ParentChar->MoveKey(bJump);
 
 	if (ParentChar->IsAttackNow())
 	{
