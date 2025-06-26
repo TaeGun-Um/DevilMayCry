@@ -106,14 +106,7 @@ void ACharacterController::LockOn(const FInputActionValue& Value)
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
 	bool bClick = Value.Get<bool>();
-	if (bClick)
-	{
-		ParentChar->SetLeftClick(true);
-	}
-	else
-	{
-		ParentChar->SetLeftClick(false);
-	}
+
 	ParentChar->LeftClick();
 }
 

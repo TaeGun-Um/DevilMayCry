@@ -32,12 +32,6 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool IsLeftClick()const
-	{
-		return bLeftClick;
-	}
-
-	UFUNCTION(BlueprintCallable)
 	void SetAttackNow(bool Value)
 	{
 		bAttackNow = Value;
@@ -58,10 +52,6 @@ protected:
 	virtual void SpaceKey();
 
 private:
-	void SetLeftClick(bool Value)
-	{
-		bLeftClick = Value;
-	}
 
 	void CameraInit();
 
@@ -71,7 +61,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
-
-	bool bLeftClick = false;
+	UPROPERTY()
 	bool bAttackNow = false;
+
+	UPROPERTY()
+	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
 };
