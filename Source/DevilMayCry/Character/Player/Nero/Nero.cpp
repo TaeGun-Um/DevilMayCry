@@ -26,7 +26,7 @@ void ANero::LeftClick()
 		JumpAttackCombo();
 	}
 	else
-	{µ¿Âù : 
+	{
 		RedQueenCombo();
 	}
 }
