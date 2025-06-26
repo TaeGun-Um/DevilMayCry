@@ -114,6 +114,7 @@ void ACharacterController::LeftClick(const FInputActionValue& Value)
 	{
 		ParentChar->SetLeftClick(false);
 	}
+	ParentChar->LeftClick();
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)

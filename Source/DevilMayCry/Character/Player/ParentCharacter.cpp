@@ -17,6 +17,9 @@ AParentCharacter::AParentCharacter()
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
     CameraInit();
+
+    
+    Tags.Add(TEXT("Player"));
 }
 
 // Called when the game starts or when spawned

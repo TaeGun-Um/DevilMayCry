@@ -49,12 +49,6 @@ public:
 		return bAttackNow;
 	}
 
-	UFUNCTION(BlueprintCallable)
-	bool IsWantMove() const
-	{
-		return bWantMove;
-	}
-
 protected:
 	virtual void LeftClick();
 	virtual void RightClick();
@@ -80,5 +74,4 @@ private:
 
 	bool bLeftClick = false;
 	bool bAttackNow = false;
-	bool bWantMove = false;
 };

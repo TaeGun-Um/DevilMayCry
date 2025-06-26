@@ -27,6 +27,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	virtual void LeftClick() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RedQueenCombo();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void JumpAttackCombo();
+
 
 private:
 

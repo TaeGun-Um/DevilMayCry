@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnemyBase.h"
+#include "../EnemyBase.h"
 #include "Empusa.generated.h"
 
 /**
@@ -22,6 +22,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,5 +34,4 @@ public:
 protected:
 
 private:
-	TObjectPtr<class USkeletalMeshComponent> SkmComp = nullptr;
 };

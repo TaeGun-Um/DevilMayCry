@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class DEVILMAYCRY_API AEnemyBase : public APawn
+class DEVILMAYCRY_API AEnemyBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -22,4 +22,12 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetWalkSpeed(float Value);
+
+protected:
+
+private:
 };

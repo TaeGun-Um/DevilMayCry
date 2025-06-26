@@ -11,7 +11,8 @@ AVergil::AVergil()
 void AVergil::BeginPlay()
 {
 	Super::BeginPlay();
-	USkeletalMesh* SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Player/Vergil/Mesh/Vergil.Vergil'"));
+
+	TObjectPtr<USkeletalMesh> SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Player/Vergil/Mesh/Vergil.Vergil'"));
 
 	if (SKM)
 	{
@@ -19,7 +20,7 @@ void AVergil::BeginPlay()
 	}
 
 
-	UAnimBlueprint* AnimSeq = LoadObject<UAnimBlueprint>(nullptr, TEXT("/Script/Engine.AnimBlueprint'/Game/Player/Nero/ABP_Nero.ABP_Nero'"));
+	TObjectPtr<UAnimBlueprint> AnimSeq = LoadObject<UAnimBlueprint>(nullptr, TEXT("/Script/Engine.AnimBlueprint'/Game/Player/Nero/ABP_Nero.ABP_Nero'"));
 
 	if (AnimSeq)
 	{

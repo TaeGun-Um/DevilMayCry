@@ -2,6 +2,7 @@
 
 
 #include "EnemyBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AEnemyBase::AEnemyBase()
@@ -23,4 +24,11 @@ void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AEnemyBase::SetWalkSpeed(float Value)
+{
+	
+	GetCharacterMovement()->MaxWalkSpeed = Value;
+	
 }
