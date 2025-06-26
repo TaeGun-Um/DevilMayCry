@@ -6,47 +6,35 @@
 AVergil::AVergil()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
-	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 }
 
 void AVergil::BeginPlay()
 {
 	Super::BeginPlay();
-	USkeletalMesh* SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Player/Vergil/Mesh/Vergil.Vergil'"));
+
+	TObjectPtr<USkeletalMesh> SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Player/Vergil/Mesh/Vergil.Vergil'"));
 
 	if (SKM)
 	{
 		GetMesh()->SetSkeletalMesh(SKM);
+	}
+
+
+	TObjectPtr<UAnimBlueprint> AnimSeq = LoadObject<UAnimBlueprint>(nullptr, TEXT("/Script/Engine.AnimBlueprint'/Game/Player/Nero/ABP_Nero.ABP_Nero'"));
+
+	if (AnimSeq)
+	{
+		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		GetMesh()->SetAnimInstanceClass(*AnimSeq->GeneratedClass);
+		UE_LOG(LogTemp, Warning, TEXT("Anim success"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Anim Fail"));
 	}
 }
 
 void AVergil::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AVergil::LeftClick()
-{
-}
-
-void AVergil::RightClick()
-{
-}
-
-void AVergil::WheelClick()
-{
-}
-
-void AVergil::EKey()
-{
-}
-
-void AVergil::ShiftKey()
-{
-}
-
-void AVergil::SpaceKey()
-{
 }

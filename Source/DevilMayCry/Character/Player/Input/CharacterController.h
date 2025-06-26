@@ -50,5 +50,5 @@ private:
 	void KeyBinding();
 
 private:
-
+	TObjectPtr<class AParentCharacter> ParentChar = nullptr;
 };
