@@ -15,6 +15,8 @@ ACharacterController::ACharacterController(const FObjectInitializer& ObjectIniti
 void ACharacterController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ParentChar = Cast<AParentCharacter>(GetCharacter());
 }
 
 void ACharacterController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -57,6 +59,12 @@ void ACharacterController::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
+	if (ParentChar->IsAttackNow())
+	{
+		return;
+	}
+
+
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
@@ -71,6 +79,11 @@ void ACharacterController::Move(const FInputActionValue& Value)
 void ACharacterController::Jump(const FInputActionValue& Value)
 {
 	bool bJump = Value.Get<bool>();
+
+	if (ParentChar->IsAttackNow())
+	{
+		return;
+	}
 
 	if (bJump)
 	{
@@ -92,7 +105,16 @@ void ACharacterController::LockOn(const FInputActionValue& Value)
 
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
-	Cast<AParentCharacter>(GetCharacter())->SetAttack(true);
+	bool bClick = Value.Get<bool>();
+	if (bClick)
+	{
+		ParentChar->SetLeftClick(true);
+	}
+	else
+	{
+		ParentChar->SetLeftClick(false);
+	}
+	ParentChar->LeftClick();
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)

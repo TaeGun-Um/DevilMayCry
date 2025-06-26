@@ -3,40 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../ParentCharacter.h"
-#include "Nero.generated.h"
+#include "../EnemyBase.h"
+#include "Empusa.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVILMAYCRY_API ANero : public AParentCharacter
+class DEVILMAYCRY_API AEmpusa : public AEnemyBase
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	ANero();
+	// Sets default values for this actor's properties
+	AEmpusa();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+public:
+
 protected:
-	virtual void LeftClick() override;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void RedQueenCombo();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void JumpAttackCombo();
-
 
 private:
-
-
 };

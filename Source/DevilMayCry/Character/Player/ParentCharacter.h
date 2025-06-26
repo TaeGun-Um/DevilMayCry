@@ -32,24 +32,38 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool IsAttack()const
+	bool IsLeftClick()const
 	{
-		return bAttack;
+		return bLeftClick;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttackNow(bool Value)
+	{
+		bAttackNow = Value;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAttackNow() const
+	{
+		return bAttackNow;
 	}
 
 protected:
-	virtual void LeftClick()	PURE_VIRTUAL(AParentCharacter::LeftClick, ;);
-	virtual void RightClick()	PURE_VIRTUAL(AParentCharacter::RightClick, ;);
-	virtual void WheelClick()	PURE_VIRTUAL(AParentCharacter::WheelClick, ;);
-	virtual void EKey()			PURE_VIRTUAL(AParentCharacter::EKey, ;);
-	virtual void ShiftKey()		PURE_VIRTUAL(AParentCharacter::ShiftKey, ;);
-	virtual void SpaceKey()		PURE_VIRTUAL(AParentCharacter::SpaceKey, ;);
+	virtual void LeftClick();
+	virtual void RightClick();
+	virtual void WheelClick();
+	virtual void EKey();
+	virtual void ShiftKey();
+	virtual void SpaceKey();
 
 private:
-	void SetAttack(bool Value)
+	void SetLeftClick(bool Value)
 	{
-		bAttack = Value;
+		bLeftClick = Value;
 	}
+
+	void CameraInit();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -58,5 +72,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
 
-	bool bAttack = false;
+	bool bLeftClick = false;
+	bool bAttackNow = false;
 };
