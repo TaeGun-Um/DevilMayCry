@@ -19,7 +19,20 @@ void ANero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ANero::LeftClick()
+void ANero::Multicast_LeftClick_Implementation()
+{
+	if (GetCharacterMovement()->IsFalling())
+	{
+		JumpAttackCombo();
+	}
+	else
+	{
+		RedQueenCombo();
+	}
+}
+
+
+void ANero::Server_LeftClick_Implementation()
 {
 	if (GetCharacterMovement()->IsFalling())
 	{

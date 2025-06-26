@@ -66,7 +66,11 @@ void AParentCharacter::CameraInit()
     GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 }
 
-void AParentCharacter::LeftClick()
+void AParentCharacter::Server_LeftClick()
+{
+}
+
+void AParentCharacter::Multicast_LeftClick()
 {
 }
 

@@ -44,7 +44,10 @@ public:
 	}
 
 protected:
-	virtual void LeftClick();
+	virtual void Server_LeftClick();
+
+	virtual void Multicast_LeftClick();
+
 	virtual void RightClick();
 	virtual void WheelClick();
 	virtual void EKey();

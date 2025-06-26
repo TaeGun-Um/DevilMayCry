@@ -107,7 +107,16 @@ void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
 	bool bClick = Value.Get<bool>();
 
-	ParentChar->LeftClick();
+	if (HasAuthority())
+	{		
+		ParentChar->Multicast_LeftClick();
+	}
+	else
+	{
+		ParentChar->Multicast_LeftClick();
+		ParentChar->Server_LeftClick();
+	}
+
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)
