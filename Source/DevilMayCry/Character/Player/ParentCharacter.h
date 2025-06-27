@@ -48,6 +48,11 @@ public:
 		return bLockOn;
 	}
 
+	TObjectPtr<class AEnemyBase> GetLockOnEnemy() const
+	{
+		return LockOnEnemy;
+	}
+
 protected:
 	virtual void Server_LeftClick();
 
@@ -67,17 +72,20 @@ protected:
 	{
 		LockOnEnemy = Enemy;
 	}
-
-	void SetLockOnValue(bool Value)
+	UFUNCTION(BlueprintCallable)
+	float GetSearchRadius() const
 	{
-		bLockOn = Value;
+		return SearchRadius;
 	}
 	
 private:
 	void CameraInit();
 	void TurnToEnemy(float DeltaTime);
+	void LockOn();
+	void LockOff();
 
 private:
+	float CameraArmLength = 600.f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCameraComponent> CameraComp = nullptr;
 
@@ -88,8 +96,11 @@ private:
 	bool bAttackNow = false;
 
 
+	//LockOn
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
 	bool bLockOn = false;
 	float LockOnRatio = 5.f;
+	UPROPERTY(EditAnywhere)
+	float SearchRadius = 1500.f;
 };

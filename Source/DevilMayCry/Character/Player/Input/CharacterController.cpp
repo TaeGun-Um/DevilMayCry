@@ -104,17 +104,11 @@ void ACharacterController::LockOn(const FInputActionValue& Value)
 	bool bDown = Value.Get<bool>();
 	if (bDown)
 	{
-		ParentChar->EnemyCheck();
-		ParentChar->SetLockOnValue(true);
-		ParentChar->GetCharacterMovement()->bOrientRotationToMovement = false;
-
+		ParentChar->LockOn();
 	}
 	else
 	{
-
-		ParentChar->GetCharacterMovement()->bOrientRotationToMovement = true;
-		ParentChar->SetLockOnValue(false);
-		ParentChar->SetEnemy(nullptr);
+		ParentChar->LockOff();
 	}
 }
 

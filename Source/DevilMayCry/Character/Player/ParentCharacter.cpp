@@ -8,13 +8,15 @@
 #include "../Enemy/EnemyBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
+
+#include "DrawDebugHelpers.h"
+
 // Sets default values
 AParentCharacter::AParentCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
@@ -49,7 +51,7 @@ void AParentCharacter::CameraInit()
 {
     SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
     SpringArmComp->SetupAttachment(RootComponent);
-    SpringArmComp->TargetArmLength = 600.f;
+    SpringArmComp->TargetArmLength = CameraArmLength;
     SpringArmComp->bUsePawnControlRotation = true;
     SpringArmComp->bDoCollisionTest = true;
     SpringArmComp->ProbeChannel = ECC_Camera;
@@ -73,35 +75,72 @@ void AParentCharacter::TurnToEnemy(float DeltaTime)
     if (IsValid(LockOnEnemy.GetClass()))
     {
 		FVector Direction = LockOnEnemy->GetActorLocation() - GetActorLocation();
-		Direction.Normalize();
+        
+        //서치 범위 벗어나면 종료
+        if (Direction.Length()>SearchRadius)
+        {
+            LockOff();
+            return;
+        }
 
-        FRotator SmoothRot = FMath::RInterpTo(GetActorForwardVector().Rotation(), Direction.Rotation(), DeltaTime, LockOnRatio);
+        //액터 방향 돌리기
+        FRotator SmoothRot = FMath::RInterpTo(GetActorForwardVector().Rotation(), Direction.Rotation().GetNormalized(), DeltaTime, LockOnRatio);
         SmoothRot.Roll = 0.f;
 		SmoothRot.Pitch = 0.f;
 
-		SetActorRotation(SmoothRot);
-
-
-        // 1) Get Rotations
-        FRotator CamRot = CameraComp->GetComponentRotation();
-        FRotator DestRot = Direction.Rotation();
-
-        // 2) Δ Rot 계산(Shortest Path)
-        FRotator DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(DestRot, CamRot);
+		SetActorRotation(SmoothRot); 
         
-        // 3) Yaw 오버슈트 시 컨트롤러 움직이기
-		const float Limit = 30.f;
 
-		if (DeltaRot.Yaw > Limit )
+        //카메라 중심점 변경
+        FVector CenterPos = (LockOnEnemy->GetActorLocation() + GetActorLocation())*0.5f;
+
+        FVector DestVector = FMath::VInterpTo(SpringArmComp->GetComponentLocation(), CenterPos, DeltaTime,LockOnRatio);
+
+        SpringArmComp->SetWorldLocation(DestVector);
+
+        //거리 비례 카메라암
+        if (Direction.Length() > CameraArmLength)
         {
-			AddControllerYawInput(540.f * DeltaTime );
+
+            float AddLength = FMath::GetMappedRangeValueClamped(
+                FVector2D(CameraArmLength, SearchRadius),   // 비교 값
+                FVector2D(0.f, CameraArmLength*0.5f),       // 압축 값
+                Direction.Length()                          // 넣을 값
+            );
+            SpringArmComp->TargetArmLength = CameraArmLength + AddLength;
         }
-        else if(-Limit > DeltaRot.Yaw)
+
+        //ui 만들어지기 전까지 사용할 락온 디버깅용 구체
+        DrawDebugSphere(GetWorld(), LockOnEnemy->GetActorLocation(), 30.f, 12, FColor::Red);
+    }
+    else
+    {
+        if (SpringArmComp->GetRelativeLocation() !=FVector::ZeroVector)
         {
-            AddControllerYawInput(-540.f * DeltaTime);
+            FVector DestVector = FMath::VInterpTo(SpringArmComp->GetRelativeLocation(), FVector::ZeroVector, DeltaTime, LockOnRatio);
+           
+            SpringArmComp->SetRelativeLocation(DestVector);
+
+            float ArmLength = FMath::FInterpTo(SpringArmComp->TargetArmLength, CameraArmLength, DeltaTime, LockOnRatio);
+            SpringArmComp->TargetArmLength = ArmLength;
         }
     }
 }
+
+void AParentCharacter::LockOn()
+{
+    EnemyCheck();
+    bLockOn = true;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void AParentCharacter::LockOff()
+{
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    bLockOn = false;
+    SetEnemy(nullptr);
+}
+
 
 void AParentCharacter::Server_LeftClick()
 {
