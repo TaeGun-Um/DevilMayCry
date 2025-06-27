@@ -57,6 +57,9 @@ void AParentCharacter::CameraInit()
     SpringArmComp->ProbeChannel = ECC_Camera;
     SpringArmComp->ProbeSize = 8.0f;
 
+    SpringArmComp->bEnableCameraRotationLag = true;
+    SpringArmComp->CameraRotationLagSpeed = 10.f;
+
     CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
     CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
     CameraComp->bUsePawnControlRotation = false;
@@ -138,7 +141,7 @@ void AParentCharacter::LockOff()
 {
     GetCharacterMovement()->bOrientRotationToMovement = true;
     bLockOn = false;
-    SetEnemy(nullptr);
+    LockOnEnemy = nullptr;
 }
 
 
