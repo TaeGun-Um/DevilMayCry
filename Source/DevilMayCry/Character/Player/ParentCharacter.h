@@ -31,11 +31,6 @@ public:
 
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetAttackNow(bool Value)
-	{
-		bAttackNow = Value;
-	}
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAttackNow() const
@@ -55,9 +50,7 @@ public:
 
 protected:
 	virtual void Server_LeftClick();
-
 	virtual void Multicast_LeftClick();
-
 	virtual void RightClick();
 	virtual void WheelClick();
 	virtual void EKey();
@@ -66,17 +59,7 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnemyCheck();
-
-	UFUNCTION(BlueprintCallable)
-	void SetEnemy(AEnemyBase* Enemy)
-	{
-		LockOnEnemy = Enemy;
-	}
-	UFUNCTION(BlueprintCallable)
-	float GetSearchRadius() const
-	{
-		return SearchRadius;
-	}
+	
 	
 private:
 	void CameraInit();
@@ -85,6 +68,7 @@ private:
 	void LockOff();
 
 private:
+	//Camera
 	float CameraArmLength = 600.f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCameraComponent> CameraComp = nullptr;
@@ -92,15 +76,20 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
 
-	UPROPERTY()
-	bool bAttackNow = false;
-
 
 	//LockOn
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
 	bool bLockOn = false;
 	float LockOnRatio = 5.f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float SearchRadius = 1500.f;
+
+
+	//Attack
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bAttackNow = false;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int CurComboCount = 0;
 };
