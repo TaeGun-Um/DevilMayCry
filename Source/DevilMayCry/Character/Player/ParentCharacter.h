@@ -43,6 +43,11 @@ public:
 		return bAttackNow;
 	}
 
+	bool IsLockOn()
+	{
+		return bLockOn;
+	}
+
 protected:
 	virtual void Server_LeftClick();
 
@@ -54,9 +59,23 @@ protected:
 	virtual void ShiftKey();
 	virtual void SpaceKey();
 
-private:
+	UFUNCTION(BlueprintImplementableEvent)
+	void EnemyCheck();
 
+	UFUNCTION(BlueprintCallable)
+	void SetEnemy(AEnemyBase* Enemy)
+	{
+		LockOnEnemy = Enemy;
+	}
+
+	void SetLockOnValue(bool Value)
+	{
+		bLockOn = Value;
+	}
+	
+private:
 	void CameraInit();
+	void TurnToEnemy(float DeltaTime);
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -64,9 +83,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
+
 	UPROPERTY()
 	bool bAttackNow = false;
 
-	UPROPERTY()
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
+	bool bLockOn = false;
+	float LockOnRatio = 5.f;
 };
