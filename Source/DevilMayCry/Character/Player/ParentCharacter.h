@@ -32,12 +32,6 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool IsLeftClick()const
-	{
-		return bLeftClick;
-	}
-
-	UFUNCTION(BlueprintCallable)
 	void SetAttackNow(bool Value)
 	{
 		bAttackNow = Value;
@@ -49,29 +43,64 @@ public:
 		return bAttackNow;
 	}
 
+	bool IsLockOn()
+	{
+		return bLockOn;
+	}
+
+	TObjectPtr<class AEnemyBase> GetLockOnEnemy() const
+	{
+		return LockOnEnemy;
+	}
+
 protected:
-	virtual void LeftClick();
+	virtual void Server_LeftClick();
+
+	virtual void Multicast_LeftClick();
+
 	virtual void RightClick();
 	virtual void WheelClick();
 	virtual void EKey();
 	virtual void ShiftKey();
 	virtual void SpaceKey();
 
-private:
-	void SetLeftClick(bool Value)
+	UFUNCTION(BlueprintImplementableEvent)
+	void EnemyCheck();
+
+	UFUNCTION(BlueprintCallable)
+	void SetEnemy(AEnemyBase* Enemy)
 	{
-		bLeftClick = Value;
+		LockOnEnemy = Enemy;
 	}
-
+	UFUNCTION(BlueprintCallable)
+	float GetSearchRadius() const
+	{
+		return SearchRadius;
+	}
+	
+private:
 	void CameraInit();
+	void TurnToEnemy(float DeltaTime);
+	void LockOn();
+	void LockOff();
 
 private:
+	float CameraArmLength = 600.f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCameraComponent> CameraComp = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp = nullptr;
 
-	bool bLeftClick = false;
+	UPROPERTY()
 	bool bAttackNow = false;
+
+
+	//LockOn
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
+	bool bLockOn = false;
+	float LockOnRatio = 5.f;
+	UPROPERTY(EditAnywhere)
+	float SearchRadius = 1500.f;
 };
