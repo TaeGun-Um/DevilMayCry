@@ -27,14 +27,17 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	virtual void LeftClick() override;
+	UFUNCTION(Server, Reliable)
+	virtual void Server_LeftClick() override;
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_LeftClick() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void JumpAttackCombo();
-
 
 private:
 

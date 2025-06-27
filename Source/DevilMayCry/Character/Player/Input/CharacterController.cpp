@@ -101,20 +101,31 @@ void ACharacterController::Look(const FInputActionValue& Value)
 
 void ACharacterController::LockOn(const FInputActionValue& Value)
 {
+	bool bDown = Value.Get<bool>();
+	if (bDown)
+	{
+		ParentChar->LockOn();
+	}
+	else
+	{
+		ParentChar->LockOff();
+	}
 }
 
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
 	bool bClick = Value.Get<bool>();
-	if (bClick)
-	{
-		ParentChar->SetLeftClick(true);
+
+	if (HasAuthority())
+	{		
+		ParentChar->Multicast_LeftClick();
 	}
 	else
 	{
-		ParentChar->SetLeftClick(false);
+		ParentChar->Multicast_LeftClick();
+		ParentChar->Server_LeftClick();
 	}
-	ParentChar->LeftClick();
+
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)
