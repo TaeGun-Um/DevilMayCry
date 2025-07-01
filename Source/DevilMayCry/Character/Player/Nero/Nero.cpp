@@ -45,13 +45,21 @@ void ANero::Server_LeftClick_Implementation()
 
 void ANero::Server_Evade_Implementation()
 {
-	AParentCharacter::Server_Evade_Implementation();
-	FVector2D Dir = GetMoveDir();
+	if (FSM == EPlayerState::EVADE)
+	{
+		return;
+	}
+	FSM = EPlayerState::EVADE;
+	Evade();
 }
 
 void ANero::Multicast_Evade_Implementation()
 {
-	AParentCharacter::Multicast_Evade_Implementation();
-	FVector2D Dir = GetMoveDir();
+	if (FSM == EPlayerState::EVADE)
+	{
+		return;
+	}
+	FSM = EPlayerState::EVADE;
+	Evade();
 }
 

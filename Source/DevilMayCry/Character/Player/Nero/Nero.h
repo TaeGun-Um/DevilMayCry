@@ -41,6 +41,10 @@ protected:
 	virtual void Server_Evade_Implementation()override;
 	virtual void Multicast_Evade_Implementation()override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void Evade();
+
+
 private:
 
 

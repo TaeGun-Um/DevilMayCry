@@ -14,9 +14,8 @@ enum class EPlayerState :uint8
 	RUN		UMETA(DisplayName = "RUN"),
 	JUMP	UMETA(DisplayName = "JUMP"),
 	FALL	UMETA(DisplayName = "FALL"),
-	EVADE	UMETA(DisplayName = "EVADE"),
 	ATTACK	UMETA(DisplayName = "ATTACK"),
-	LOCKON	UMETA(DisplayName = "LOCKON"),
+	EVADE	UMETA(DisplayName = "EVADE"),
 };
 
 
@@ -98,13 +97,16 @@ protected:
 
 
 	UFUNCTION(BlueprintImplementableEvent)
+	bool EnemyCameraCheck();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void EnemyCheck();
 
-	UFUNCTION(BlueprintCallable)
-	FVector2D GetMoveDir() const
-	{
-		return MoveDir;
-	}
+
+	//PlayerState
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EPlayerState FSM = EPlayerState::IDLE;
+
 
 private:
 	void CameraInit();
@@ -112,17 +114,21 @@ private:
 	void LockOn();
 	void LockOff();
 	void StateChanger();
+	void SetKeyDir(const FVector2D& Value)
+	{
+		KeyDir = Value;
+		KeyDir.Normalize();
+	}
 
 private:
-	//PlayerState
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	EPlayerState FSM = EPlayerState::IDLE; 
 
 	//Move
 	float RunSpeed = 600.f;
 	float WalkSpeed = 400.f;
 	UPROPERTY(BlueprintReadOnly , meta = (AllowPrivateAccess = "true"))
 	FVector2D MoveDir = FVector2D::ZeroVector;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FVector2D KeyDir = FVector2D::ZeroVector;
 	
 	//Camera
 	float CameraArmLength = 600.f;
@@ -137,8 +143,10 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
 	float LockOnRatio = 5.f;
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float SearchRadius = 1500.f;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float SearchRadius = 2000.f;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bLockOn = false;
 
 
 

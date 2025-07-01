@@ -138,11 +138,18 @@ void AParentCharacter::LockOn()
     {
         EnemyCheck();
     }
+
+    if (EnemyCameraCheck()) // true면 벽이 있음
+    {
+        LockOnEnemy = nullptr;
+    }
 }
 
 void AParentCharacter::LockOff()
 {
     FSM = EPlayerState::IDLE;
+
+    bLockOn = false;
     LockOnEnemy = nullptr;
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
@@ -188,17 +195,12 @@ void AParentCharacter::StateChanger()
         
         break;
     }
-    case EPlayerState::EVADE:
-    {
-
-        break;
-    }
     case EPlayerState::ATTACK:
     {
 
         break;
     }
-    case EPlayerState::LOCKON:
+    case EPlayerState::EVADE:
     {
 
         break;
@@ -259,7 +261,6 @@ void AParentCharacter::Server_ShiftKeyStart_Implementation()
 
 void AParentCharacter::Server_ShiftKey_Implementation()
 {
-    FSM = EPlayerState::LOCKON;
     LockOn();
 }
 
@@ -276,7 +277,8 @@ void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
 
 void AParentCharacter::Multicast_ShiftKey_Implementation()
 {
-    FSM = EPlayerState::LOCKON;
+
+    bLockOn = true;
     LockOn();
 }
 
@@ -311,17 +313,12 @@ void AParentCharacter::Server_SpaceKey_Implementation()
 
         break;
     }
-    case EPlayerState::EVADE:
-    {
-
-        break;
-    }
     case EPlayerState::ATTACK:
     {
 
         break;
     }
-    case EPlayerState::LOCKON:
+    case EPlayerState::EVADE:
     {
 
         break;
@@ -355,17 +352,12 @@ void AParentCharacter::Multicast_SpaceKey_Implementation()
 
         break;
     }
-    case EPlayerState::EVADE:
-    {
-
-        break;
-    }
     case EPlayerState::ATTACK:
     {
 
         break;
     }
-    case EPlayerState::LOCKON:
+    case EPlayerState::EVADE:
     {
 
         break;
@@ -375,10 +367,8 @@ void AParentCharacter::Multicast_SpaceKey_Implementation()
 
 void AParentCharacter::Server_Evade_Implementation()
 {
-    FSM = EPlayerState::EVADE;
 }
 
 void AParentCharacter::Multicast_Evade_Implementation()
 {
-    FSM = EPlayerState::EVADE;
 }

@@ -80,6 +80,8 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
 	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);
 
+	ParentChar->SetKeyDir(MovementVector);
+
 	if (HasAuthority())
 	{
 		ParentChar->Multicast_MoveKey();
@@ -192,8 +194,6 @@ void ACharacterController::EKey(const FInputActionValue& Value)
 
 void ACharacterController::EvadeKeyStart(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Evade"));
-
 	if (HasAuthority())
 	{
 		ParentChar->Multicast_Evade();
