@@ -114,11 +114,11 @@ private:
 	void LockOn();
 	void LockOff();
 	void StateChanger();
-	void SetKeyDir(const FVector2D& Value)
-	{
-		KeyDir = Value;
-		KeyDir.Normalize();
-	}
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetKeyDir(const FVector2D& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetKeyDir(const FVector2D& Value);
 
 private:
 

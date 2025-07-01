@@ -183,6 +183,10 @@ void AParentCharacter::StateChanger()
     }
     case EPlayerState::JUMP:
     {
+        if (!GetCharacterMovement()->IsFalling())
+        {
+            FSM = EPlayerState::IDLE;
+        }
 
         break;
     }
@@ -209,6 +213,18 @@ void AParentCharacter::StateChanger()
     
 }
 
+void AParentCharacter::Server_SetKeyDir_Implementation(const FVector2D& Value)
+{
+	KeyDir = Value;
+	KeyDir.Normalize();
+}
+
+void AParentCharacter::Multicast_SetKeyDir_Implementation(const FVector2D& Value)
+{
+    KeyDir = Value;
+    KeyDir.Normalize();
+}
+
 void AParentCharacter::Server_MoveKey_Implementation()
 {
     FVector DirX = GetActorRotation().Vector().RightVector * GetVelocity().X;
@@ -226,11 +242,13 @@ void AParentCharacter::Multicast_MoveKey_Implementation()
 
 void AParentCharacter::Server_MoveComplete_Implementation()
 {
-	MoveDir = FVector2D::ZeroVector;
+    MoveDir = FVector2D::ZeroVector;
+    KeyDir = FVector2D::ZeroVector;
 }
 void AParentCharacter::Multicast_MoveComplete_Implementation()
 {
     MoveDir = FVector2D::ZeroVector;
+    KeyDir = FVector2D::ZeroVector;
 }
 
 void AParentCharacter::Server_LeftClick_Implementation()

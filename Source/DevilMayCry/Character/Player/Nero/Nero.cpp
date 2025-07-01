@@ -45,21 +45,11 @@ void ANero::Server_LeftClick_Implementation()
 
 void ANero::Server_Evade_Implementation()
 {
-	if (FSM == EPlayerState::EVADE)
-	{
-		return;
-	}
-	FSM = EPlayerState::EVADE;
 	Evade();
 }
 
 void ANero::Multicast_Evade_Implementation()
 {
-	if (FSM == EPlayerState::EVADE)
-	{
-		return;
-	}
-	FSM = EPlayerState::EVADE;
 	Evade();
 }
 

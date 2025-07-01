@@ -80,16 +80,18 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
 	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);
 
-	ParentChar->SetKeyDir(MovementVector);
 
 	if (HasAuthority())
 	{
 		ParentChar->Multicast_MoveKey();
+		ParentChar->Multicast_SetKeyDir(MovementVector);
 	}
 	else
 	{
 		ParentChar->Multicast_MoveKey();
+		ParentChar->Multicast_SetKeyDir(MovementVector);
 		ParentChar->Server_MoveKey();
+		ParentChar->Server_SetKeyDir(MovementVector);
 	}
 }
 
