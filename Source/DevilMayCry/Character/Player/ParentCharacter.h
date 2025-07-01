@@ -86,9 +86,15 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_ShiftKeyComplete();
 
-	virtual void SpaceKey();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_SpaceKey();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_SpaceKey();
 
-	virtual void Evade();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_Evade();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_Evade();
 
 
 	UFUNCTION(BlueprintImplementableEvent)

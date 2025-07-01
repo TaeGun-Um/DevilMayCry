@@ -203,13 +203,8 @@ void AParentCharacter::StateChanger()
 
         break;
     }
-    default:
-    {
-        FSM = EPlayerState::IDLE;
-        break;
-
     }
-    }
+    
 }
 
 void AParentCharacter::Server_MoveKey_Implementation()
@@ -290,12 +285,100 @@ void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
     LockOff();
 }
 
-
-void AParentCharacter::SpaceKey()
+void AParentCharacter::Server_SpaceKey_Implementation()
 {
+    switch (FSM)
+    {
+    case EPlayerState::IDLE:
+    {
+        FSM = EPlayerState::JUMP;
+        Jump();
+        break;
+    }
+    case EPlayerState::RUN:
+    {
+        FSM = EPlayerState::JUMP;
+        Jump();
+        break;
+    }
+    case EPlayerState::JUMP:
+    {
+
+        break;
+    }
+    case EPlayerState::FALL:
+    {
+
+        break;
+    }
+    case EPlayerState::EVADE:
+    {
+
+        break;
+    }
+    case EPlayerState::ATTACK:
+    {
+
+        break;
+    }
+    case EPlayerState::LOCKON:
+    {
+
+        break;
+    }
+    }
 }
 
-void AParentCharacter::Evade()
+void AParentCharacter::Multicast_SpaceKey_Implementation()
+{
+    switch (FSM)
+    {
+    case EPlayerState::IDLE:
+    {
+        FSM = EPlayerState::JUMP;
+        Jump();
+        break;
+    }
+    case EPlayerState::RUN:
+    {
+        FSM = EPlayerState::JUMP;
+        Jump();
+        break;
+    }
+    case EPlayerState::JUMP:
+    {
+
+        break;
+    }
+    case EPlayerState::FALL:
+    {
+
+        break;
+    }
+    case EPlayerState::EVADE:
+    {
+
+        break;
+    }
+    case EPlayerState::ATTACK:
+    {
+
+        break;
+    }
+    case EPlayerState::LOCKON:
+    {
+
+        break;
+    }
+    }
+}
+
+void AParentCharacter::Server_Evade_Implementation()
+{
+    FSM = EPlayerState::EVADE;
+}
+
+void AParentCharacter::Multicast_Evade_Implementation()
 {
     FSM = EPlayerState::EVADE;
 }

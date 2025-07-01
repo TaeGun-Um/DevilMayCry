@@ -19,12 +19,6 @@ void ANero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ANero::Evade()
-{
-	AParentCharacter::Evade();
-	FVector2D Dir = GetMoveDir();
-}
-
 void ANero::Multicast_LeftClick_Implementation()
 {
 	if (GetCharacterMovement()->IsFalling())
@@ -37,7 +31,6 @@ void ANero::Multicast_LeftClick_Implementation()
 	}	
 }
 
-
 void ANero::Server_LeftClick_Implementation()
 {
 	if (GetCharacterMovement()->IsFalling())
@@ -49,3 +42,16 @@ void ANero::Server_LeftClick_Implementation()
 		RedQueenCombo();
 	}
 }
+
+void ANero::Server_Evade_Implementation()
+{
+	AParentCharacter::Server_Evade_Implementation();
+	FVector2D Dir = GetMoveDir();
+}
+
+void ANero::Multicast_Evade_Implementation()
+{
+	AParentCharacter::Multicast_Evade_Implementation();
+	FVector2D Dir = GetMoveDir();
+}
+

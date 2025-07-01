@@ -46,7 +46,7 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Triggered, this, &ACharacterController::MoveKey);
 	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Completed, this, &ACharacterController::MoveComplete)
 		;
-	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Triggered, this, &ACharacterController::Jump);
+	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Started, this, &ACharacterController::Jump);
 
 	EIComp->BindAction(InputActions->LookInput, ETriggerEvent::Triggered, this, &ACharacterController::Look);
 
@@ -54,13 +54,13 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Started, this, &ACharacterController::ShiftKeyStart);
 	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Completed, this, &ACharacterController::ShiftKeyComplete);
 
-	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Triggered, this, &ACharacterController::LeftClick);
+	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Started, this, &ACharacterController::LeftClick);
 
-	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Triggered, this, &ACharacterController::RightClick);
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClick);
 
-	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Triggered, this, &ACharacterController::WheelClick);
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
 
-	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Triggered, this, &ACharacterController::EKey);
+	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
 
 	EIComp->BindAction(InputActions->EvadeInput, ETriggerEvent::Started, this, &ACharacterController::EvadeKeyStart);
 }
@@ -106,7 +106,15 @@ void ACharacterController::MoveComplete(const FInputActionValue& Value)
 
 void ACharacterController::Jump(const FInputActionValue& Value)
 {
-	ParentChar->SpaceKey();
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_SpaceKey();
+	}
+	else
+	{
+		ParentChar->Multicast_SpaceKey();
+		ParentChar->Server_SpaceKey();
+	}
 }
 
 void ACharacterController::Look(const FInputActionValue& Value)
@@ -158,8 +166,6 @@ void ACharacterController::ShiftKeyComplete(const FInputActionValue& Value)
 
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
-	bool bClick = Value.Get<bool>();
-
 	if (HasAuthority())
 	{		
 		ParentChar->Multicast_LeftClick();
@@ -187,5 +193,14 @@ void ACharacterController::EKey(const FInputActionValue& Value)
 void ACharacterController::EvadeKeyStart(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Evade"));
-	ParentChar->Evade();
+
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_Evade();
+	}
+	else
+	{
+		ParentChar->Multicast_Evade();
+		ParentChar->Server_Evade();
+	}
 }
