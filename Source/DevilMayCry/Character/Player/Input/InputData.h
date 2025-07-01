@@ -42,5 +42,5 @@ public:
     UInputAction* LookInput;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    UInputAction* TestInput;
+    UInputAction* EvadeInput;
 };

@@ -8,6 +8,8 @@
 #include "../Enemy/EnemyBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include "Net/UnrealNetwork.h"
+
 
 #include "DrawDebugHelpers.h"
 
@@ -16,7 +18,7 @@ AParentCharacter::AParentCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+    bReplicates = true;
 
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
@@ -31,7 +33,6 @@ AParentCharacter::AParentCharacter()
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    GetCharacterMovement()->JumpZVelocity = 800.f;
 }
 
 // Called every frame
@@ -39,6 +40,7 @@ void AParentCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     TurnToEnemy(DeltaTime);
+    StateChanger();
 }
 
 // Called to bind functionality to input
@@ -107,7 +109,7 @@ void AParentCharacter::TurnToEnemy(float DeltaTime)
 
             float AddLength = FMath::GetMappedRangeValueClamped(
                 FVector2D(CameraArmLength, SearchRadius),   // 비교 값
-                FVector2D(0.f, CameraArmLength*0.5f),       // 압축 값
+                FVector2D(0.f, CameraArmLength),       // 압축 값
                 Direction.Length()                          // 넣을 값
             );
             SpringArmComp->TargetArmLength = CameraArmLength + AddLength;
@@ -132,24 +134,113 @@ void AParentCharacter::TurnToEnemy(float DeltaTime)
 
 void AParentCharacter::LockOn()
 {
-    EnemyCheck();
-    bLockOn = true;
-    GetCharacterMovement()->bOrientRotationToMovement = false;
+    if (LockOnEnemy == nullptr)
+    {
+        EnemyCheck();
+    }
 }
 
 void AParentCharacter::LockOff()
 {
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-    bLockOn = false;
+    FSM = EPlayerState::IDLE;
     LockOnEnemy = nullptr;
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 }
 
 
-void AParentCharacter::Server_LeftClick()
+void AParentCharacter::StateChanger()
+{
+    switch (FSM)
+    {
+    case EPlayerState::IDLE:
+    {
+        if (MoveDir != FVector2D::ZeroVector)
+        {
+            FSM = EPlayerState::RUN;
+        }
+        break;
+    }
+    case EPlayerState::RUN:
+    {
+        if (MoveDir == FVector2D::ZeroVector)
+        {
+            FSM = EPlayerState::IDLE;
+        }
+
+        if (GetCharacterMovement()->IsFalling())
+        {
+            FSM = EPlayerState::JUMP;
+        }
+        break;
+    }
+    case EPlayerState::JUMP:
+    {
+
+        break;
+    }
+    case EPlayerState::FALL:
+    {
+        if (!GetCharacterMovement()->IsFalling())
+        {
+            FSM = EPlayerState::IDLE;
+        }
+        
+        break;
+    }
+    case EPlayerState::EVADE:
+    {
+
+        break;
+    }
+    case EPlayerState::ATTACK:
+    {
+
+        break;
+    }
+    case EPlayerState::LOCKON:
+    {
+
+        break;
+    }
+    default:
+    {
+        FSM = EPlayerState::IDLE;
+        break;
+
+    }
+    }
+}
+
+void AParentCharacter::Server_MoveKey_Implementation()
+{
+    FVector DirX = GetActorRotation().Vector().RightVector * GetVelocity().X;
+    FVector DirY = GetActorRotation().Vector().ForwardVector * GetVelocity().Y;
+    MoveDir = FVector2D(DirX) + FVector2D(DirY);
+    MoveDir.Normalize();
+}
+void AParentCharacter::Multicast_MoveKey_Implementation()
+{
+    FVector DirX = GetActorRotation().Vector().RightVector * GetVelocity().X;
+    FVector DirY = GetActorRotation().Vector().ForwardVector * GetVelocity().Y;
+    MoveDir = FVector2D(DirX) + FVector2D(DirY);
+    MoveDir.Normalize();
+}
+
+void AParentCharacter::Server_MoveComplete_Implementation()
+{
+	MoveDir = FVector2D::ZeroVector;
+}
+void AParentCharacter::Multicast_MoveComplete_Implementation()
+{
+    MoveDir = FVector2D::ZeroVector;
+}
+
+void AParentCharacter::Server_LeftClick_Implementation()
 {
 }
 
-void AParentCharacter::Multicast_LeftClick()
+void AParentCharacter::Multicast_LeftClick_Implementation()
 {
 }
 
@@ -165,10 +256,46 @@ void AParentCharacter::EKey()
 {
 }
 
-void AParentCharacter::ShiftKey()
+void AParentCharacter::Server_ShiftKeyStart_Implementation()
 {
+    GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
 }
+
+void AParentCharacter::Server_ShiftKey_Implementation()
+{
+    FSM = EPlayerState::LOCKON;
+    LockOn();
+}
+
+void AParentCharacter::Server_ShiftKeyComplete_Implementation()
+{
+    LockOff();
+}
+
+void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
+{
+    GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void AParentCharacter::Multicast_ShiftKey_Implementation()
+{
+    FSM = EPlayerState::LOCKON;
+    LockOn();
+}
+
+void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
+{
+    LockOff();
+}
+
 
 void AParentCharacter::SpaceKey()
 {
+}
+
+void AParentCharacter::Evade()
+{
+    FSM = EPlayerState::EVADE;
 }

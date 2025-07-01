@@ -19,6 +19,12 @@ void ANero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ANero::Evade()
+{
+	AParentCharacter::Evade();
+	FVector2D Dir = GetMoveDir();
+}
+
 void ANero::Multicast_LeftClick_Implementation()
 {
 	if (GetCharacterMovement()->IsFalling())
@@ -28,7 +34,7 @@ void ANero::Multicast_LeftClick_Implementation()
 	else
 	{
 		RedQueenCombo();
-	}
+	}	
 }
 
 

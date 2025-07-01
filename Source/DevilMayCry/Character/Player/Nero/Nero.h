@@ -9,6 +9,7 @@
 /**
  * 
  */
+
 UCLASS()
 class DEVILMAYCRY_API ANero : public AParentCharacter
 {
@@ -27,17 +28,17 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UFUNCTION(Server, Reliable)
-	virtual void Server_LeftClick() override;
+	virtual void Server_LeftClick_Implementation() override;
 
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void Multicast_LeftClick() override;
+	virtual void Multicast_LeftClick_Implementation() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void JumpAttackCombo();
+
+	virtual void Evade()override;
 
 private:
 

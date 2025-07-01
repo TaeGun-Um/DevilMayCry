@@ -6,6 +6,20 @@
 #include "GameFramework/Character.h"
 #include "ParentCharacter.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EPlayerState :uint8
+{
+	IDLE	UMETA(DisplayName = "IDLE"),
+	RUN		UMETA(DisplayName = "RUN"),
+	JUMP	UMETA(DisplayName = "JUMP"),
+	FALL	UMETA(DisplayName = "FALL"),
+	EVADE	UMETA(DisplayName = "EVADE"),
+	ATTACK	UMETA(DisplayName = "ATTACK"),
+	LOCKON	UMETA(DisplayName = "LOCKON"),
+};
+
+
 UCLASS(Abstract)
 class AParentCharacter : public ACharacter
 {
@@ -32,42 +46,78 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintCallable)
-	bool IsAttackNow() const
-	{
-		return bAttackNow;
-	}
-
-	bool IsLockOn()
-	{
-		return bLockOn;
-	}
-
 	TObjectPtr<class AEnemyBase> GetLockOnEnemy() const
 	{
 		return LockOnEnemy;
 	}
 
 protected:
+	UFUNCTION(Server, Reliable)
+	virtual void Server_MoveKey();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_MoveKey();
+
+	UFUNCTION(Server, Reliable)
+	virtual void Server_MoveComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_MoveComplete();
+
+	UFUNCTION(Server, Reliable)
 	virtual void Server_LeftClick();
+	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_LeftClick();
+
 	virtual void RightClick();
+
 	virtual void WheelClick();
+
 	virtual void EKey();
-	virtual void ShiftKey();
+
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ShiftKeyStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ShiftKey();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ShiftKeyComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ShiftKeyStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ShiftKey();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ShiftKeyComplete();
+
 	virtual void SpaceKey();
+
+	virtual void Evade();
+
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnemyCheck();
-	
-	
+
+	UFUNCTION(BlueprintCallable)
+	FVector2D GetMoveDir() const
+	{
+		return MoveDir;
+	}
+
 private:
 	void CameraInit();
 	void TurnToEnemy(float DeltaTime);
 	void LockOn();
 	void LockOff();
+	void StateChanger();
 
 private:
+	//PlayerState
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EPlayerState FSM = EPlayerState::IDLE; 
+
+	//Move
+	float RunSpeed = 600.f;
+	float WalkSpeed = 400.f;
+	UPROPERTY(BlueprintReadOnly , meta = (AllowPrivateAccess = "true"))
+	FVector2D MoveDir = FVector2D::ZeroVector;
+	
 	//Camera
 	float CameraArmLength = 600.f;
 	UPROPERTY(VisibleAnywhere)
@@ -80,15 +130,11 @@ private:
 	//LockOn
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
-	bool bLockOn = false;
 	float LockOnRatio = 5.f;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float SearchRadius = 1500.f;
 
 
-	//Attack
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool bAttackNow = false;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int CurComboCount = 0;
