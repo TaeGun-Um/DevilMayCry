@@ -19,13 +19,9 @@ void ANero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ANero::Server_LeftClick_Implementation()
+void ANero::DefaultAttack()
 {
-	Multicast_LeftClick();
-}
-
-void ANero::Multicast_LeftClick_Implementation()
-{
+	UE_LOG(LogTemp, Warning, TEXT("Attack"));
 	if (GetCharacterMovement()->IsFalling())
 	{
 		JumpAttackCombo();
@@ -34,5 +30,13 @@ void ANero::Multicast_LeftClick_Implementation()
 	{
 		RedQueenCombo();
 	}
+	
 }
+
+void ANero::DefaultEvade()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Evade"));
+	Evade();
+}
+
 

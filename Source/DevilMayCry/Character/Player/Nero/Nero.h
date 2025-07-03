@@ -7,7 +7,7 @@
 #include "Nero.generated.h"
 
 /**
- * 
+ *
  */
 
 UCLASS()
@@ -28,9 +28,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	virtual void Server_LeftClick_Implementation() override;
-
-	virtual void Multicast_LeftClick_Implementation() override;
+	virtual void DefaultAttack() override;
+	virtual void DefaultEvade() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
