@@ -62,6 +62,16 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (GetCharacterMovement()->IsFalling())
+			{
+				FsmComp->ChangeState(EPlayerState::FALL);
+				return;
+			}
+			if (bEvadeKey == true && bPrevEvade == false)
+			{
+				FsmComp->ChangeState(EPlayerState::EVADE);
+				return;
+			}
 			if (bLockOn == true)
 			{
 				FsmComp->ChangeState(EPlayerState::LOCKON);
@@ -80,11 +90,6 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
-			if (GetCharacterMovement()->IsFalling())
-			{
-				FsmComp->ChangeState(EPlayerState::FALL);
-				return;
-			}
 
 		},
 
@@ -173,19 +178,15 @@ void AParentCharacter::SetupFsm()
 		[this](float DeltaTime)
 		{
 			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
-			if (AnimIns.Get())
+			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
-				// false면 재생 중이지 않으므로 완료된 것
-				if (!AnimIns->IsAnyMontagePlaying())
+				if (bLockOn)
 				{
-					if (bLockOn)
-					{
-						FsmComp->ChangeState(EPlayerState::LOCKON);
-					}
-					else
-					{
-						FsmComp->ChangeState(EPlayerState::IDLE);
-					}
+					FsmComp->ChangeState(EPlayerState::LOCKON);
+				}
+				else
+				{
+					FsmComp->ChangeState(EPlayerState::IDLE);
 				}
 			}
 		},
@@ -208,10 +209,35 @@ void AParentCharacter::SetupFsm()
 		[this]()
 		{
 			bPrevEvade = false;
-			UE_LOG(LogTemp, Warning, TEXT("%d"),bPrevEvade);
 		}
 	);
 
+	FsmComp->CreateState(EPlayerState::JUMPBACK,
+		//Start
+		[this]()
+		{
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (!AnimIns->IsAnyMontagePlaying())
+			{
+				if (GetCharacterMovement()->IsFalling())
+				{
+					FsmComp->ChangeState(EPlayerState::FALL);
+				}
+				else
+				{
+					FsmComp->ChangeState(EPlayerState::IDLE);
+				}
+			}
+		},
+		//End
+		[this]()
+		{
+		}
+	);
 
 	FsmComp->ChangeState(EPlayerState::IDLE);
 }

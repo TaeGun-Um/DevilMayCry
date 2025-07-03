@@ -10,13 +10,14 @@
 UENUM(BlueprintType)
 enum class EPlayerState :uint8
 {
-	IDLE	UMETA(DisplayName = "IDLE"),
-	RUN		UMETA(DisplayName = "RUN"),
-	JUMP	UMETA(DisplayName = "JUMP"),
-	FALL	UMETA(DisplayName = "FALL"),
-	ATTACK	UMETA(DisplayName = "ATTACK"),
-	EVADE	UMETA(DisplayName = "EVADE"),
-	LOCKON	UMETA(DisplayName = "LOCKON"),
+	IDLE		UMETA(DisplayName = "IDLE"),
+	RUN			UMETA(DisplayName = "RUN"),
+	JUMP		UMETA(DisplayName = "JUMP"),
+	FALL		UMETA(DisplayName = "FALL"),
+	ATTACK		UMETA(DisplayName = "ATTACK"),
+	EVADE		UMETA(DisplayName = "EVADE"),
+	LOCKON		UMETA(DisplayName = "LOCKON"),
+	JUMPBACK	UMETA(DisplayName = "JUMPBACK"),
 };
 
 

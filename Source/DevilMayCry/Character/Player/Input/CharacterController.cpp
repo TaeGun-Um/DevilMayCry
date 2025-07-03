@@ -111,6 +111,7 @@ void ACharacterController::MoveComplete(const FInputActionValue& Value)
 
 void ACharacterController::JumpStart(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("JumpStart"));
 	if (HasAuthority())
 	{
 		ParentChar->Multicast_SpaceKeyStart();
