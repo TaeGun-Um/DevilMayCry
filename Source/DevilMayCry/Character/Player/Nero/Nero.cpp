@@ -21,7 +21,6 @@ void ANero::Tick(float DeltaTime)
 
 void ANero::DefaultAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack"));
 	if (GetCharacterMovement()->IsFalling())
 	{
 		JumpAttackCombo();
@@ -35,7 +34,6 @@ void ANero::DefaultAttack()
 
 void ANero::DefaultEvade()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Evade"));
 	Evade();
 }
 
