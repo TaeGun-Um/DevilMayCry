@@ -159,8 +159,7 @@ void AParentCharacter::LockOff()
 
 void AParentCharacter::Server_SetKeyDir_Implementation(const FVector2D& Value)
 {
-    KeyDir = Value;
-    KeyDir.Normalize();
+    Multicast_SetKeyDir(Value);
 }
 
 void AParentCharacter::Multicast_SetKeyDir_Implementation(const FVector2D& Value)
@@ -171,10 +170,7 @@ void AParentCharacter::Multicast_SetKeyDir_Implementation(const FVector2D& Value
 
 void AParentCharacter::Server_MoveKey_Implementation()
 {
-    FVector DirX = GetActorRotation().Vector().RightVector * GetVelocity().X;
-    FVector DirY = GetActorRotation().Vector().ForwardVector * GetVelocity().Y;
-    MoveDir = FVector2D(DirX) + FVector2D(DirY);
-    MoveDir.Normalize();
+    Multicast_MoveKey();
 }
 void AParentCharacter::Multicast_MoveKey_Implementation()
 {
@@ -186,8 +182,7 @@ void AParentCharacter::Multicast_MoveKey_Implementation()
 
 void AParentCharacter::Server_MoveComplete_Implementation()
 {
-    MoveDir = FVector2D::ZeroVector;
-    KeyDir = FVector2D::ZeroVector;
+    Multicast_MoveComplete();
 }
 void AParentCharacter::Multicast_MoveComplete_Implementation()
 {
@@ -197,6 +192,7 @@ void AParentCharacter::Multicast_MoveComplete_Implementation()
 
 void AParentCharacter::Server_LeftClick_Implementation()
 {
+    Multicast_LeftClick();
 }
 
 void AParentCharacter::Multicast_LeftClick_Implementation()
@@ -217,20 +213,7 @@ void AParentCharacter::EKey()
 
 void AParentCharacter::Server_ShiftKeyStart_Implementation()
 {
-    bLockOn = true;
-    GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-    GetCharacterMovement()->bOrientRotationToMovement = false;
-}
-
-void AParentCharacter::Server_ShiftKey_Implementation()
-{
-    LockOn();
-}
-
-void AParentCharacter::Server_ShiftKeyComplete_Implementation()
-{
-    bLockOn = false;
-    LockOff();
+    Multicast_ShiftKeyStart();
 }
 
 void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
@@ -240,9 +223,19 @@ void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
     GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
+void AParentCharacter::Server_ShiftKey_Implementation()
+{
+    Multicast_ShiftKey();
+}
+
 void AParentCharacter::Multicast_ShiftKey_Implementation()
 {
     LockOn();
+}
+
+void AParentCharacter::Server_ShiftKeyComplete_Implementation()
+{
+    Multicast_ShiftKeyComplete();
 }
 
 void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
@@ -253,7 +246,7 @@ void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
 
 void AParentCharacter::Server_SpaceKeyStart_Implementation()
 {
-    bJumpKey = true;
+    Multicast_SpaceKeyStart();
 }
 
 void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
@@ -263,7 +256,7 @@ void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
 
 void AParentCharacter::Server_EvadeKeyStart_Implementation()
 {
-    bEvadeKey = true;
+    Multicast_EvadeKeyStart();
 }
 
 void AParentCharacter::Multicast_EvadeKeyStart_Implementation()
@@ -273,7 +266,7 @@ void AParentCharacter::Multicast_EvadeKeyStart_Implementation()
 
 void AParentCharacter::Server_SpaceKeyComplete_Implementation()
 {
-    bJumpKey = false;
+    Multicast_SpaceKeyComplete();
 }
 
 void AParentCharacter::Multicast_SpaceKeyComplete_Implementation()

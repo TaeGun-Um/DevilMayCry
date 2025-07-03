@@ -57,9 +57,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_MoveKey();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_MoveComplete();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_MoveComplete();
 
 	UFUNCTION(Server, Reliable)
@@ -73,31 +73,31 @@ protected:
 
 	virtual void EKey();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_ShiftKeyStart();
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_ShiftKey();
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_ShiftKeyComplete();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_ShiftKeyStart();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_ShiftKey();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_ShiftKeyComplete();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_SpaceKeyStart();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_SpaceKeyStart();
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_SpaceKeyComplete();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_SpaceKeyComplete();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	virtual void Server_EvadeKeyStart();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	virtual void Multicast_EvadeKeyStart();
 
 
@@ -127,9 +127,9 @@ private:
 	UFUNCTION(BlueprintCallable)
 	EPlayerState BlueprintGetCurState();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	void Server_SetKeyDir(const FVector2D& Value);
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	void Multicast_SetKeyDir(const FVector2D& Value);
 
 private:

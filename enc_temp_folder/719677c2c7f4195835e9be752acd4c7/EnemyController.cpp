@@ -28,6 +28,29 @@ void AEnemyController::Tick(float DeltaTime)
 
 void AEnemyController::StateUpdate()
 {
+    switch (CurState)
+    {
+    case EAIState::Idle:
+    {
+        // 대기 상태 로직
+        break;
+    }
+    case EAIState::Patrol:
+    {
+        // 순찰 상태 로직
+        break;
+    }
+    case EAIState::Run:
+    {
+        // 추적 상태 로직
+        break;
+    }
+    case EAIState::Attack:
+    {
+        // 공격 상태 로직
+        break;
+    }
+    }
 }
 
 void AEnemyController::TargetSearch(AActor* Actor, FAIStimulus AIStimulus)

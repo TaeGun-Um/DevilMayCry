@@ -43,6 +43,8 @@ public:
 protected:
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "AI")
+	EAIState CurState = EAIState::Max;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UBehaviorTree> EnemyBehaviorTree; 
