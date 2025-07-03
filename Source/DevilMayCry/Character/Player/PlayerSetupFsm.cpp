@@ -22,7 +22,7 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			if (bLockOn == true)
+			if (bLockOnKey == true)
 			{
 				FsmComp->ChangeState(EPlayerState::LOCKON);
 				return;
@@ -67,12 +67,8 @@ void AParentCharacter::SetupFsm()
 				FsmComp->ChangeState(EPlayerState::FALL);
 				return;
 			}
-			if (bEvadeKey == true && bPrevEvade == false)
-			{
-				FsmComp->ChangeState(EPlayerState::EVADE);
-				return;
-			}
-			if (bLockOn == true)
+
+			if (bLockOnKey == true)
 			{
 				FsmComp->ChangeState(EPlayerState::LOCKON);
 				return;
@@ -180,7 +176,7 @@ void AParentCharacter::SetupFsm()
 			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
-				if (bLockOn)
+				if (bLockOnKey)
 				{
 					FsmComp->ChangeState(EPlayerState::LOCKON);
 				}
@@ -204,6 +200,15 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bLockOnKey==false)
+			{
+				FsmComp->ChangeState(EPlayerState::IDLE);
+			}
+
+			if (bJumpKey)
+			{
+				Evade();
+			}
 		},
 		//End
 		[this]()

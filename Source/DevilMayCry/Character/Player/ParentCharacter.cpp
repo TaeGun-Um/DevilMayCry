@@ -151,7 +151,6 @@ void AParentCharacter::LockOn()
 
 void AParentCharacter::LockOff()
 {
-    FsmComp->ChangeState(EPlayerState::IDLE);
     LockOnEnemy = nullptr;
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
@@ -218,7 +217,7 @@ void AParentCharacter::Server_ShiftKeyStart_Implementation()
 
 void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
 {
-    bLockOn = true;
+    bLockOnKey = true;
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
     GetCharacterMovement()->bOrientRotationToMovement = false;
 }
@@ -240,18 +239,8 @@ void AParentCharacter::Server_ShiftKeyComplete_Implementation()
 
 void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
 {
-    bLockOn = false;
+    bLockOnKey = false;
     LockOff();
-}
-
-void AParentCharacter::Server_EvadeKeyStart_Implementation()
-{
-    Multicast_EvadeKeyStart();
-}
-
-void AParentCharacter::Multicast_EvadeKeyStart_Implementation()
-{
-    bEvadeKey = true;
 }
 
 void AParentCharacter::Server_SpaceKeyComplete_Implementation()
@@ -271,4 +260,8 @@ void AParentCharacter::Server_SpaceKeyStart_Implementation()
 void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
 {
     bJumpKey = true;
+}
+
+void AParentCharacter::Evade()
+{
 }

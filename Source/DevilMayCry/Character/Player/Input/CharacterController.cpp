@@ -62,8 +62,6 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
 
 	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
-
-	EIComp->BindAction(InputActions->EvadeInput, ETriggerEvent::Started, this, &ACharacterController::EvadeKeyStart);
 }
 
 
@@ -207,17 +205,4 @@ void ACharacterController::WheelClick(const FInputActionValue& Value)
 
 void ACharacterController::EKey(const FInputActionValue& Value)
 {
-}
-
-void ACharacterController::EvadeKeyStart(const FInputActionValue& Value)
-{
-	if (HasAuthority())
-	{
-		ParentChar->Multicast_EvadeKeyStart();
-	}
-	else
-	{
-		//ParentChar->Multicast_EvadeKeyStart();
-		ParentChar->Server_EvadeKeyStart();
-	}
 }

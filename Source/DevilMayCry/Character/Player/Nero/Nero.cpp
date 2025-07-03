@@ -36,13 +36,3 @@ void ANero::Multicast_LeftClick_Implementation()
 	}
 }
 
-void ANero::Server_EvadeKeyStart_Implementation()
-{
-	Multicast_EvadeKeyStart();
-}
-
-void ANero::Multicast_EvadeKeyStart_Implementation()
-{
-	Evade();
-}
-

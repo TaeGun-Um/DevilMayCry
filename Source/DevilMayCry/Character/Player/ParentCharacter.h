@@ -96,11 +96,8 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_SpaceKeyComplete();
 
-	UFUNCTION(Server, Reliable)
-	virtual void Server_EvadeKeyStart();
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void Multicast_EvadeKeyStart();
 
+	virtual void Evade();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool EnemyCameraCheck();
@@ -153,7 +150,6 @@ private:
 	float JumpRatio = 0.f;
 
 	//Evade
-	bool bEvadeKey = false;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bPrevEvade = false;
 	
@@ -173,7 +169,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float SearchRadius = 2000.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool bLockOn = false;
+	bool bLockOnKey = false;
 
 
 	//Attack
