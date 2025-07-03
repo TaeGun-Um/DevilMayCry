@@ -2,6 +2,7 @@
 
 
 #include "FsmComponent.h"
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
 UFsmComponent::UFsmComponent()

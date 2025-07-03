@@ -71,9 +71,9 @@ protected:
 private:
 	void FsmTick(float DT);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 	void Server_FsmTick(float DT);
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	void Multicast_FsmTick(float DT);
 	void ChangeState(int32 Index);
 	void CreateState(int Index,
