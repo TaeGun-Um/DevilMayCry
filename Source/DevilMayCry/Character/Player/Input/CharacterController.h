@@ -24,7 +24,8 @@ public:
 public:
 	void MoveKey(const FInputActionValue& Value);
 	void MoveComplete(const FInputActionValue& Value);
-	void Jump(const FInputActionValue& Value);
+	void JumpStart(const FInputActionValue& Value);
+	void JumpComplete(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void ShiftKeyStart(const FInputActionValue& Value);
 	void ShiftKey(const FInputActionValue& Value);

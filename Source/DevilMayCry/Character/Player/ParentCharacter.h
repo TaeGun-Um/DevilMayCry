@@ -16,6 +16,7 @@ enum class EPlayerState :uint8
 	FALL	UMETA(DisplayName = "FALL"),
 	ATTACK	UMETA(DisplayName = "ATTACK"),
 	EVADE	UMETA(DisplayName = "EVADE"),
+	LOCKON	UMETA(DisplayName = "LOCKON"),
 };
 
 
@@ -86,14 +87,18 @@ protected:
 	virtual void Multicast_ShiftKeyComplete();
 
 	UFUNCTION(Server, Reliable)
-	virtual void Server_SpaceKey();
+	virtual void Server_SpaceKeyStart();
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void Multicast_SpaceKey();
+	virtual void Multicast_SpaceKeyStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_SpaceKeyComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_SpaceKeyComplete();
 
 	UFUNCTION(Server, Reliable)
-	virtual void Server_Evade();
+	virtual void Server_EvadeKeyStart();
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void Multicast_Evade();
+	virtual void Multicast_EvadeKeyStart();
 
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -105,7 +110,7 @@ protected:
 
 	//PlayerState
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	EPlayerState FSM = EPlayerState::IDLE;
+	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 
 
 private:
@@ -113,15 +118,21 @@ private:
 	void TurnToEnemy(float DeltaTime);
 	void LockOn();
 	void LockOff();
-	void StateChanger();
+	void SetupFsm();
+	FVector CheckJumpPos();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(BlueprintCallable)
+	void BlueprintChangeState(EPlayerState Value);
+
+	UFUNCTION(BlueprintCallable)
+	EPlayerState BlueprintGetCurState();
+
+	UFUNCTION(Server, Reliable) 
 	void Server_SetKeyDir(const FVector2D& Value);
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetKeyDir(const FVector2D& Value);
 
 private:
-
 	//Move
 	float RunSpeed = 600.f;
 	float WalkSpeed = 400.f;
@@ -129,6 +140,21 @@ private:
 	FVector2D MoveDir = FVector2D::ZeroVector;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector2D KeyDir = FVector2D::ZeroVector;
+
+	//Jump
+	bool bJumpKey = false;
+	FVector JumpStartPos = FVector::ZeroVector;
+	FVector JumpEndPos = FVector::ZeroVector;
+	float MaxJumpHeight = 600.f;
+	float FallSpeed = 1000.f;
+	FCollisionObjectQueryParams CheckParam;
+	float GravityForce = 1000.f;
+	float JumpRatio = 0.f;
+
+	//Evade
+	bool bEvadeKey = false;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bPrevEvade = false;
 	
 	//Camera
 	float CameraArmLength = 600.f;
@@ -149,7 +175,7 @@ private:
 	bool bLockOn = false;
 
 
-
+	//Attack
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int CurComboCount = 0;
 };

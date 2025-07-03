@@ -43,12 +43,12 @@ void ANero::Server_LeftClick_Implementation()
 	}
 }
 
-void ANero::Server_Evade_Implementation()
+void ANero::Server_EvadeKeyStart_Implementation()
 {
 	Evade();
 }
 
-void ANero::Multicast_Evade_Implementation()
+void ANero::Multicast_EvadeKeyStart_Implementation()
 {
 	Evade();
 }

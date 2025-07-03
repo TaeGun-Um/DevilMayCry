@@ -5,10 +5,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "../Enemy/EnemyBase.h"
 #include "Kismet/KismetMathLibrary.h"
-
 #include "Net/UnrealNetwork.h"
+
+#include "../Enemy/EnemyBase.h"
+#include "FsmComponent.h"
 
 
 #include "DrawDebugHelpers.h"
@@ -23,8 +24,12 @@ AParentCharacter::AParentCharacter()
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-    CameraInit();    
+    CameraInit();
 
+    SetupFsm();
+
+	CheckParam.AddObjectTypesToQuery(ECC_WorldStatic);
+	CheckParam.AddObjectTypesToQuery(ECC_WorldDynamic);
     
     Tags.Add(TEXT("Player"));
 }
@@ -40,7 +45,6 @@ void AParentCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     TurnToEnemy(DeltaTime);
-    StateChanger();
 }
 
 // Called to bind functionality to input
@@ -147,76 +151,16 @@ void AParentCharacter::LockOn()
 
 void AParentCharacter::LockOff()
 {
-    FSM = EPlayerState::IDLE;
-
-    bLockOn = false;
+    FsmComp->ChangeState(EPlayerState::IDLE);
     LockOnEnemy = nullptr;
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 }
 
-
-void AParentCharacter::StateChanger()
-{
-    switch (FSM)
-    {
-    case EPlayerState::IDLE:
-    {
-        if (MoveDir != FVector2D::ZeroVector)
-        {
-            FSM = EPlayerState::RUN;
-        }
-        break;
-    }
-    case EPlayerState::RUN:
-    {
-        if (MoveDir == FVector2D::ZeroVector)
-        {
-            FSM = EPlayerState::IDLE;
-        }
-
-        if (GetCharacterMovement()->IsFalling())
-        {
-            FSM = EPlayerState::JUMP;
-        }
-        break;
-    }
-    case EPlayerState::JUMP:
-    {
-        if (!GetCharacterMovement()->IsFalling())
-        {
-            FSM = EPlayerState::IDLE;
-        }
-
-        break;
-    }
-    case EPlayerState::FALL:
-    {
-        if (!GetCharacterMovement()->IsFalling())
-        {
-            FSM = EPlayerState::IDLE;
-        }
-        
-        break;
-    }
-    case EPlayerState::ATTACK:
-    {
-
-        break;
-    }
-    case EPlayerState::EVADE:
-    {
-
-        break;
-    }
-    }
-    
-}
-
 void AParentCharacter::Server_SetKeyDir_Implementation(const FVector2D& Value)
 {
-	KeyDir = Value;
-	KeyDir.Normalize();
+    KeyDir = Value;
+    KeyDir.Normalize();
 }
 
 void AParentCharacter::Multicast_SetKeyDir_Implementation(const FVector2D& Value)
@@ -273,6 +217,7 @@ void AParentCharacter::EKey()
 
 void AParentCharacter::Server_ShiftKeyStart_Implementation()
 {
+    bLockOn = true;
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
     GetCharacterMovement()->bOrientRotationToMovement = false;
 }
@@ -284,109 +229,54 @@ void AParentCharacter::Server_ShiftKey_Implementation()
 
 void AParentCharacter::Server_ShiftKeyComplete_Implementation()
 {
+    bLockOn = false;
     LockOff();
 }
 
 void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
 {
+    bLockOn = true;
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
     GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void AParentCharacter::Multicast_ShiftKey_Implementation()
 {
-
-    bLockOn = true;
     LockOn();
 }
 
 void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
 {
+    bLockOn = false;
     LockOff();
 }
 
-void AParentCharacter::Server_SpaceKey_Implementation()
+void AParentCharacter::Server_SpaceKeyStart_Implementation()
 {
-    switch (FSM)
-    {
-    case EPlayerState::IDLE:
-    {
-        FSM = EPlayerState::JUMP;
-        Jump();
-        break;
-    }
-    case EPlayerState::RUN:
-    {
-        FSM = EPlayerState::JUMP;
-        Jump();
-        break;
-    }
-    case EPlayerState::JUMP:
-    {
-
-        break;
-    }
-    case EPlayerState::FALL:
-    {
-
-        break;
-    }
-    case EPlayerState::ATTACK:
-    {
-
-        break;
-    }
-    case EPlayerState::EVADE:
-    {
-
-        break;
-    }
-    }
+    bJumpKey = true;
 }
 
-void AParentCharacter::Multicast_SpaceKey_Implementation()
+void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
 {
-    switch (FSM)
-    {
-    case EPlayerState::IDLE:
-    {
-        FSM = EPlayerState::JUMP;
-        Jump();
-        break;
-    }
-    case EPlayerState::RUN:
-    {
-        FSM = EPlayerState::JUMP;
-        Jump();
-        break;
-    }
-    case EPlayerState::JUMP:
-    {
-
-        break;
-    }
-    case EPlayerState::FALL:
-    {
-
-        break;
-    }
-    case EPlayerState::ATTACK:
-    {
-
-        break;
-    }
-    case EPlayerState::EVADE:
-    {
-
-        break;
-    }
-    }
+    bJumpKey = true;
 }
 
-void AParentCharacter::Server_Evade_Implementation()
+void AParentCharacter::Server_EvadeKeyStart_Implementation()
 {
+    bEvadeKey = true;
 }
 
-void AParentCharacter::Multicast_Evade_Implementation()
+void AParentCharacter::Multicast_EvadeKeyStart_Implementation()
 {
+    bEvadeKey = true;
+}
+
+void AParentCharacter::Server_SpaceKeyComplete_Implementation()
+{
+    bJumpKey = false;
+}
+
+void AParentCharacter::Multicast_SpaceKeyComplete_Implementation()
+{
+    bJumpKey = false;
 }

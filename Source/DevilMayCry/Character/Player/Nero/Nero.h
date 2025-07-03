@@ -38,8 +38,8 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void JumpAttackCombo();
 
-	virtual void Server_Evade_Implementation()override;
-	virtual void Multicast_Evade_Implementation()override;
+	virtual void Server_EvadeKeyStart_Implementation()override;
+	virtual void Multicast_EvadeKeyStart_Implementation()override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Evade();
