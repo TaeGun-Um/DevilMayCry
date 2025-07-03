@@ -43,27 +43,31 @@ void ACharacterController::KeyBinding()
 {
 	UEnhancedInputComponent* EIComp = Cast<UEnhancedInputComponent>(InputComponent);
 
-	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Triggered, this, &ACharacterController::Move);
-	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Triggered, this, &ACharacterController::Jump);
+	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Triggered, this, &ACharacterController::MoveKey);
+	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Completed, this, &ACharacterController::MoveComplete)
+		;
+	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Started, this, &ACharacterController::JumpStart);
+	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Completed, this, &ACharacterController::JumpComplete);
+
 	EIComp->BindAction(InputActions->LookInput, ETriggerEvent::Triggered, this, &ACharacterController::Look);
-	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Triggered, this, &ACharacterController::LockOn);
-	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Triggered, this, &ACharacterController::LeftClick);
-	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Triggered, this, &ACharacterController::RightClick);
-	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Triggered, this, &ACharacterController::WheelClick);
-	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Triggered, this, &ACharacterController::EKey);
-	EIComp->BindAction(InputActions->TestInput, ETriggerEvent::Triggered, this, &ACharacterController::TestFunc);
+
+	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Triggered, this, &ACharacterController::ShiftKey);
+	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Started, this, &ACharacterController::ShiftKeyStart);
+	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Completed, this, &ACharacterController::ShiftKeyComplete);
+
+	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Started, this, &ACharacterController::LeftClick);
+
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClick);
+
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
+
+	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
 }
 
 
-void ACharacterController::Move(const FInputActionValue& Value)
+void ACharacterController::MoveKey(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	if (ParentChar->IsAttackNow())
-	{
-		return;
-	}
-
 
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -74,20 +78,59 @@ void ACharacterController::Move(const FInputActionValue& Value)
 
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
 	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);
+
+
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_MoveKey();
+		ParentChar->Multicast_SetKeyDir(MovementVector);
+	}
+	else
+	{
+		//ParentChar->Multicast_MoveKey();
+		//ParentChar->Multicast_SetKeyDir(MovementVector);
+		ParentChar->Server_MoveKey();
+		ParentChar->Server_SetKeyDir(MovementVector);
+	}
 }
 
-void ACharacterController::Jump(const FInputActionValue& Value)
+void ACharacterController::MoveComplete(const FInputActionValue& Value)
 {
-	bool bJump = Value.Get<bool>();
-
-	if (ParentChar->IsAttackNow())
+	if (HasAuthority())
 	{
-		return;
+		ParentChar->Multicast_MoveComplete();
 	}
-
-	if (bJump)
+	else
 	{
-		GetCharacter()->Jump();
+		//ParentChar->Multicast_MoveComplete();
+		ParentChar->Server_MoveComplete();
+	}
+}
+
+void ACharacterController::JumpStart(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("JumpStart"));
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_SpaceKeyStart();
+	}
+	else
+	{
+		//ParentChar->Multicast_SpaceKeyStart();
+		ParentChar->Server_SpaceKeyStart();
+	}
+}
+
+void ACharacterController::JumpComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_SpaceKeyComplete();
+	}
+	else
+	{
+		//ParentChar->Multicast_SpaceKeyComplete();
+		ParentChar->Server_SpaceKeyComplete();
 	}
 }
 
@@ -99,30 +142,54 @@ void ACharacterController::Look(const FInputActionValue& Value)
 	GetCharacter()->AddControllerPitchInput(-MovementVector.Y);
 }
 
-void ACharacterController::LockOn(const FInputActionValue& Value)
+void ACharacterController::ShiftKeyStart(const FInputActionValue& Value)
 {
-	bool bDown = Value.Get<bool>();
-	if (bDown)
+	if (HasAuthority())
 	{
-		ParentChar->LockOn();
+		ParentChar->Multicast_ShiftKeyStart();
 	}
 	else
 	{
-		ParentChar->LockOff();
+		//ParentChar->Multicast_ShiftKeyStart();
+		ParentChar->Server_ShiftKeyStart();
+	}
+}
+
+void ACharacterController::ShiftKey(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_ShiftKey();
+	}
+	else
+	{
+		//ParentChar->Multicast_ShiftKey();
+		ParentChar->Server_ShiftKey();
+	}
+}
+
+void ACharacterController::ShiftKeyComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_ShiftKeyComplete();
+	}
+	else
+	{
+		//ParentChar->Multicast_ShiftKeyComplete();
+		ParentChar->Server_ShiftKeyComplete();
 	}
 }
 
 void ACharacterController::LeftClick(const FInputActionValue& Value)
 {
-	bool bClick = Value.Get<bool>();
-
 	if (HasAuthority())
 	{		
 		ParentChar->Multicast_LeftClick();
 	}
 	else
 	{
-		ParentChar->Multicast_LeftClick();
+		//ParentChar->Multicast_LeftClick();
 		ParentChar->Server_LeftClick();
 	}
 
@@ -138,10 +205,4 @@ void ACharacterController::WheelClick(const FInputActionValue& Value)
 
 void ACharacterController::EKey(const FInputActionValue& Value)
 {
-}
-
-void ACharacterController::TestFunc(const FInputActionValue& Value)
-{
-	float Value16 = Value.Get<float>();
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Value16);
 }

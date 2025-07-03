@@ -5,8 +5,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "../Enemy/EnemyBase.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
+
+#include "../Enemy/EnemyBase.h"
+#include "FsmComponent.h"
 
 
 #include "DrawDebugHelpers.h"
@@ -16,13 +19,17 @@ AParentCharacter::AParentCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+    bReplicates = true;
 
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-    CameraInit();    
+    CameraInit();
 
+    SetupFsm();
+
+	CheckParam.AddObjectTypesToQuery(ECC_WorldStatic);
+	CheckParam.AddObjectTypesToQuery(ECC_WorldDynamic);
     
     Tags.Add(TEXT("Player"));
 }
@@ -31,7 +38,6 @@ AParentCharacter::AParentCharacter()
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    GetCharacterMovement()->JumpZVelocity = 800.f;
 }
 
 // Called every frame
@@ -107,7 +113,7 @@ void AParentCharacter::TurnToEnemy(float DeltaTime)
 
             float AddLength = FMath::GetMappedRangeValueClamped(
                 FVector2D(CameraArmLength, SearchRadius),   // 비교 값
-                FVector2D(0.f, CameraArmLength*0.5f),       // 압축 값
+                FVector2D(0.f, CameraArmLength),       // 압축 값
                 Direction.Length()                          // 넣을 값
             );
             SpringArmComp->TargetArmLength = CameraArmLength + AddLength;
@@ -132,24 +138,63 @@ void AParentCharacter::TurnToEnemy(float DeltaTime)
 
 void AParentCharacter::LockOn()
 {
-    EnemyCheck();
-    bLockOn = true;
-    GetCharacterMovement()->bOrientRotationToMovement = false;
+    if (LockOnEnemy == nullptr)
+    {
+        EnemyCheck();
+    }
+
+    if (EnemyCameraCheck()) // true면 벽이 있음
+    {
+        LockOnEnemy = nullptr;
+    }
 }
 
 void AParentCharacter::LockOff()
 {
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-    bLockOn = false;
     LockOnEnemy = nullptr;
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 }
 
-
-void AParentCharacter::Server_LeftClick()
+void AParentCharacter::Server_SetKeyDir_Implementation(const FVector2D& Value)
 {
+    Multicast_SetKeyDir(Value);
 }
 
-void AParentCharacter::Multicast_LeftClick()
+void AParentCharacter::Multicast_SetKeyDir_Implementation(const FVector2D& Value)
+{
+    KeyDir = Value;
+    KeyDir.Normalize();
+}
+
+void AParentCharacter::Server_MoveKey_Implementation()
+{
+    Multicast_MoveKey();
+}
+void AParentCharacter::Multicast_MoveKey_Implementation()
+{
+    FVector DirX = GetActorRotation().Vector().RightVector * GetVelocity().X;
+    FVector DirY = GetActorRotation().Vector().ForwardVector * GetVelocity().Y;
+    MoveDir = FVector2D(DirX) + FVector2D(DirY);
+    MoveDir.Normalize();
+}
+
+void AParentCharacter::Server_MoveComplete_Implementation()
+{
+    Multicast_MoveComplete();
+}
+void AParentCharacter::Multicast_MoveComplete_Implementation()
+{
+    MoveDir = FVector2D::ZeroVector;
+    KeyDir = FVector2D::ZeroVector;
+}
+
+void AParentCharacter::Server_LeftClick_Implementation()
+{
+    Multicast_LeftClick();
+}
+
+void AParentCharacter::Multicast_LeftClick_Implementation()
 {
 }
 
@@ -165,10 +210,58 @@ void AParentCharacter::EKey()
 {
 }
 
-void AParentCharacter::ShiftKey()
+void AParentCharacter::Server_ShiftKeyStart_Implementation()
 {
+    Multicast_ShiftKeyStart();
 }
 
-void AParentCharacter::SpaceKey()
+void AParentCharacter::Multicast_ShiftKeyStart_Implementation()
+{
+    bLockOnKey = true;
+    GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void AParentCharacter::Server_ShiftKey_Implementation()
+{
+    Multicast_ShiftKey();
+}
+
+void AParentCharacter::Multicast_ShiftKey_Implementation()
+{
+    LockOn();
+}
+
+void AParentCharacter::Server_ShiftKeyComplete_Implementation()
+{
+    Multicast_ShiftKeyComplete();
+}
+
+void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
+{
+    bLockOnKey = false;
+    LockOff();
+}
+
+void AParentCharacter::Server_SpaceKeyComplete_Implementation()
+{
+    Multicast_SpaceKeyComplete();
+}
+
+void AParentCharacter::Multicast_SpaceKeyComplete_Implementation()
+{
+    bJumpKey = false;
+}
+void AParentCharacter::Server_SpaceKeyStart_Implementation()
+{
+    Multicast_SpaceKeyStart();
+}
+
+void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
+{
+    bJumpKey = true;
+}
+
+void AParentCharacter::Evade()
 {
 }

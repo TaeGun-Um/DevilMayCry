@@ -40,7 +40,4 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UInputAction* LookInput;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    UInputAction* TestInput;
 };

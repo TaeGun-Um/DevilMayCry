@@ -22,15 +22,18 @@ public:
 	ACharacterController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	void Move(const FInputActionValue& Value);
-	void Jump(const FInputActionValue& Value);
+	void MoveKey(const FInputActionValue& Value);
+	void MoveComplete(const FInputActionValue& Value);
+	void JumpStart(const FInputActionValue& Value);
+	void JumpComplete(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void LockOn(const FInputActionValue& Value);
+	void ShiftKeyStart(const FInputActionValue& Value);
+	void ShiftKey(const FInputActionValue& Value);
+	void ShiftKeyComplete(const FInputActionValue& Value);
 	void LeftClick(const FInputActionValue& Value);
 	void RightClick(const FInputActionValue& Value);
 	void WheelClick(const FInputActionValue& Value);
 	void EKey(const FInputActionValue& Value);
-	void TestFunc(const FInputActionValue& Value);
 
 protected:
 	virtual void BeginPlay() override;
