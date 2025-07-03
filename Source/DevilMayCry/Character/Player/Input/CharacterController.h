@@ -30,7 +30,8 @@ public:
 	void ShiftKeyStart(const FInputActionValue& Value);
 	void ShiftKey(const FInputActionValue& Value);
 	void ShiftKeyComplete(const FInputActionValue& Value);
-	void LeftClick(const FInputActionValue& Value);
+	void LeftClickStart(const FInputActionValue& Value);
+	void LeftClickComplete(const FInputActionValue& Value);
 	void RightClick(const FInputActionValue& Value);
 	void WheelClick(const FInputActionValue& Value);
 	void EKey(const FInputActionValue& Value);

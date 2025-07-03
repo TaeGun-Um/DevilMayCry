@@ -18,6 +18,7 @@ enum class EPlayerState :uint8
 	EVADE		UMETA(DisplayName = "EVADE"),
 	LOCKON		UMETA(DisplayName = "LOCKON"),
 	JUMPBACK	UMETA(DisplayName = "JUMPBACK"),
+	COMBOCHECK	UMETA(DisplayName = "COMBOCHECK"),
 };
 
 
@@ -64,9 +65,15 @@ protected:
 	virtual void Multicast_MoveComplete();
 
 	UFUNCTION(Server, Reliable)
-	virtual void Server_LeftClick();
+	virtual void Server_LeftClickStart();
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void Multicast_LeftClick();
+	virtual void Multicast_LeftClickStart();
+
+	UFUNCTION(Server, Reliable)
+	virtual void Server_LeftClickComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_LeftClickComplete();
+
 
 	virtual void RightClick();
 
@@ -97,7 +104,8 @@ protected:
 	virtual void Multicast_SpaceKeyComplete();
 
 
-	virtual void Evade();
+	virtual void DefaultEvade();
+	virtual void DefaultAttack();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool EnemyCameraCheck();
@@ -117,7 +125,7 @@ private:
 	void LockOn();
 	void LockOff();
 	void SetupFsm();
-	FVector CheckJumpPos();
+	FVector CheckJumpPos(float Height);
 
 	UFUNCTION(BlueprintCallable)
 	void BlueprintChangeState(EPlayerState Value);
@@ -143,11 +151,14 @@ private:
 	bool bJumpKey = false;
 	FVector JumpStartPos = FVector::ZeroVector;
 	FVector JumpEndPos = FVector::ZeroVector;
-	float MaxJumpHeight = 600.f;
+	float MaxJumpHeight = 300.f;
 	float FallSpeed = 1000.f;
 	FCollisionObjectQueryParams CheckParam;
 	float GravityForce = 1000.f;
 	float JumpRatio = 0.f;
+	float JumpBackDistance = 200.f;
+	FVector JumpBackPos = FVector::ZeroVector;
+	FVector JumpBackMiddlePos = FVector::ZeroVector;
 
 	//Evade
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -175,4 +186,8 @@ private:
 	//Attack
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int CurComboCount = 0;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bMoveOk = false;
+
+	bool bAttackKey = false;
 };

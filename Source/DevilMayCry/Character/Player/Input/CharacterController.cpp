@@ -55,7 +55,8 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Started, this, &ACharacterController::ShiftKeyStart);
 	EIComp->BindAction(InputActions->LockOnInput, ETriggerEvent::Completed, this, &ACharacterController::ShiftKeyComplete);
 
-	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Started, this, &ACharacterController::LeftClick);
+	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Started, this, &ACharacterController::LeftClickStart);
+	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Completed, this, &ACharacterController::LeftClickComplete);
 
 	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClick);
 
@@ -87,8 +88,6 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	}
 	else
 	{
-		//ParentChar->Multicast_MoveKey();
-		//ParentChar->Multicast_SetKeyDir(MovementVector);
 		ParentChar->Server_MoveKey();
 		ParentChar->Server_SetKeyDir(MovementVector);
 	}
@@ -102,21 +101,18 @@ void ACharacterController::MoveComplete(const FInputActionValue& Value)
 	}
 	else
 	{
-		//ParentChar->Multicast_MoveComplete();
 		ParentChar->Server_MoveComplete();
 	}
 }
 
 void ACharacterController::JumpStart(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("JumpStart"));
 	if (HasAuthority())
 	{
 		ParentChar->Multicast_SpaceKeyStart();
 	}
 	else
 	{
-		//ParentChar->Multicast_SpaceKeyStart();
 		ParentChar->Server_SpaceKeyStart();
 	}
 }
@@ -150,7 +146,6 @@ void ACharacterController::ShiftKeyStart(const FInputActionValue& Value)
 	}
 	else
 	{
-		//ParentChar->Multicast_ShiftKeyStart();
 		ParentChar->Server_ShiftKeyStart();
 	}
 }
@@ -163,7 +158,6 @@ void ACharacterController::ShiftKey(const FInputActionValue& Value)
 	}
 	else
 	{
-		//ParentChar->Multicast_ShiftKey();
 		ParentChar->Server_ShiftKey();
 	}
 }
@@ -176,23 +170,32 @@ void ACharacterController::ShiftKeyComplete(const FInputActionValue& Value)
 	}
 	else
 	{
-		//ParentChar->Multicast_ShiftKeyComplete();
 		ParentChar->Server_ShiftKeyComplete();
 	}
 }
 
-void ACharacterController::LeftClick(const FInputActionValue& Value)
+void ACharacterController::LeftClickStart(const FInputActionValue& Value)
 {
 	if (HasAuthority())
-	{		
-		ParentChar->Multicast_LeftClick();
+	{
+		ParentChar->Multicast_LeftClickStart();
 	}
 	else
 	{
-		//ParentChar->Multicast_LeftClick();
-		ParentChar->Server_LeftClick();
+		ParentChar->Server_LeftClickStart();
 	}
+}
 
+void ACharacterController::LeftClickComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_LeftClickComplete();
+	}
+	else
+	{
+		ParentChar->Server_LeftClickComplete();
+	}
 }
 
 void ACharacterController::RightClick(const FInputActionValue& Value)
