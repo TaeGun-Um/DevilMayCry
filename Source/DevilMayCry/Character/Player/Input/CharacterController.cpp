@@ -89,8 +89,8 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_MoveKey();
-		ParentChar->Multicast_SetKeyDir(MovementVector);
+		//ParentChar->Multicast_MoveKey();
+		//ParentChar->Multicast_SetKeyDir(MovementVector);
 		ParentChar->Server_MoveKey();
 		ParentChar->Server_SetKeyDir(MovementVector);
 	}
@@ -104,7 +104,7 @@ void ACharacterController::MoveComplete(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_MoveComplete();
+		//ParentChar->Multicast_MoveComplete();
 		ParentChar->Server_MoveComplete();
 	}
 }
@@ -117,7 +117,7 @@ void ACharacterController::JumpStart(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_SpaceKeyStart();
+		//ParentChar->Multicast_SpaceKeyStart();
 		ParentChar->Server_SpaceKeyStart();
 	}
 }
@@ -130,7 +130,7 @@ void ACharacterController::JumpComplete(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_SpaceKeyComplete();
+		//ParentChar->Multicast_SpaceKeyComplete();
 		ParentChar->Server_SpaceKeyComplete();
 	}
 }
@@ -151,7 +151,7 @@ void ACharacterController::ShiftKeyStart(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_ShiftKeyStart();
+		//ParentChar->Multicast_ShiftKeyStart();
 		ParentChar->Server_ShiftKeyStart();
 	}
 }
@@ -164,7 +164,7 @@ void ACharacterController::ShiftKey(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_ShiftKey();
+		//ParentChar->Multicast_ShiftKey();
 		ParentChar->Server_ShiftKey();
 	}
 }
@@ -177,7 +177,7 @@ void ACharacterController::ShiftKeyComplete(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_ShiftKeyComplete();
+		//ParentChar->Multicast_ShiftKeyComplete();
 		ParentChar->Server_ShiftKeyComplete();
 	}
 }
@@ -190,7 +190,7 @@ void ACharacterController::LeftClick(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_LeftClick();
+		//ParentChar->Multicast_LeftClick();
 		ParentChar->Server_LeftClick();
 	}
 
@@ -216,7 +216,7 @@ void ACharacterController::EvadeKeyStart(const FInputActionValue& Value)
 	}
 	else
 	{
-		ParentChar->Multicast_EvadeKeyStart();
+		//ParentChar->Multicast_EvadeKeyStart();
 		ParentChar->Server_EvadeKeyStart();
 	}
 }

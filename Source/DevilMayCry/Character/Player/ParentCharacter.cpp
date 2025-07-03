@@ -244,16 +244,6 @@ void AParentCharacter::Multicast_ShiftKeyComplete_Implementation()
     LockOff();
 }
 
-void AParentCharacter::Server_SpaceKeyStart_Implementation()
-{
-    Multicast_SpaceKeyStart();
-}
-
-void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
-{
-    bJumpKey = true;
-}
-
 void AParentCharacter::Server_EvadeKeyStart_Implementation()
 {
     Multicast_EvadeKeyStart();
@@ -272,4 +262,13 @@ void AParentCharacter::Server_SpaceKeyComplete_Implementation()
 void AParentCharacter::Multicast_SpaceKeyComplete_Implementation()
 {
     bJumpKey = false;
+}
+void AParentCharacter::Server_SpaceKeyStart_Implementation()
+{
+    Multicast_SpaceKeyStart();
+}
+
+void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
+{
+    bJumpKey = true;
 }

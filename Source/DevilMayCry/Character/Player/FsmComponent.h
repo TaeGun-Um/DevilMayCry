@@ -69,11 +69,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void FsmTick(float DT);
-
-	UFUNCTION(Server, UnReliable)
+	UFUNCTION(Server, Reliable)
 	void Server_FsmTick(float DT);
-	UFUNCTION(NetMulticast, UnReliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_FsmTick(float DT);
 	void ChangeState(int32 Index);
 	void CreateState(int Index,

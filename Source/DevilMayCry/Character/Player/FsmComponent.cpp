@@ -23,20 +23,6 @@ void UFsmComponent::BeginPlay()
 }
 
 
-void UFsmComponent::FsmTick(float DT)
-{
-	StateLiveTime += DT;
-	if (CurState == -1)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s %s"), *GetOwner()->GetName(), TEXT("Fsm Index Error"));
-		return;
-	}
-	if (true == MapState[CurState].Update.IsBound())
-	{
-		MapState[CurState].Update.Execute(DT);
-	}
-}
-
 // Called every frame
 void UFsmComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -45,11 +31,6 @@ void UFsmComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	if (GetOwner()->HasAuthority())
 	{
 		Multicast_FsmTick(DeltaTime);
-	}
-	else
-	{
-		Multicast_FsmTick(DeltaTime);
-		Server_FsmTick(DeltaTime);
 	}
 	
 }
@@ -80,16 +61,7 @@ void UFsmComponent::ChangeState(int32 Index)
 
 void UFsmComponent::Server_FsmTick_Implementation(float DT)
 {
-	StateLiveTime += DT;
-	if (CurState == -1)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s %s"), *GetOwner()->GetName(), TEXT("Fsm Index Error"));
-		return;
-	}
-	if (true == MapState[CurState].Update.IsBound())
-	{
-		MapState[CurState].Update.Execute(DT);
-	}
+	Multicast_FsmTick(DT);
 }
 
 void UFsmComponent::Multicast_FsmTick_Implementation(float DT)
