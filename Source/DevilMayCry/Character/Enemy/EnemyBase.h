@@ -6,6 +6,18 @@
 #include "GameFramework/Character.h"
 #include "EnemyBase.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EEnemyState :uint8
+{
+	IDLE		UMETA(DisplayName = "IDLE"),
+	PATROL		UMETA(DisplayName = "PATROL"),
+	RUN			UMETA(DisplayName = "RUN"),
+	FALL		UMETA(DisplayName = "FALL"),
+	ATTACK		UMETA(DisplayName = "ATTACK"),
+	DEAD		UMETA(DisplayName = "DEAD"),
+};
+
 UCLASS()
 class DEVILMAYCRY_API AEnemyBase : public ACharacter
 {
@@ -28,6 +40,10 @@ public:
 	void SetWalkSpeed(float Value);
 
 protected:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EEnemyState Fsm = EEnemyState::IDLE;
+
+private:
 
 private:
 };

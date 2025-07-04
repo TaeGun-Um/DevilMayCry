@@ -9,7 +9,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "../Enemy/EnemyBase.h"
-#include "FsmComponent.h"
+#include "../FsmComponent.h"
 
 
 #include "DrawDebugHelpers.h"

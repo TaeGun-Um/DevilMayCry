@@ -2,7 +2,7 @@
 
 
 #include "ParentCharacter.h"
-#include "FsmComponent.h"
+#include "../FsmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
