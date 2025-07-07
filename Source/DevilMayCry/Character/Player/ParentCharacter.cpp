@@ -261,6 +261,14 @@ void AParentCharacter::DefaultAttack()
 {
 }
 
+void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir)
+{
+}
+
+void AParentCharacter::DefaultJumpBack(float JumpHeight)
+{
+}
+
 void AParentCharacter::Server_LeftClickStart_Implementation()
 {
 	Multicast_LeftClickStart();

@@ -106,6 +106,8 @@ protected:
 
 	virtual void DefaultEvade();
 	virtual void DefaultAttack();
+	virtual void DefaultJump(float JumpHeight, FVector2D Dir);
+	virtual void DefaultJumpBack(float JumpHeight);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool EnemyCameraCheck();
@@ -118,6 +120,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 
+protected:
+	//Jump
+	float MaxJumpHeight = 300.f;
+	float JumpDistance = 200.f;
 
 private:
 	void CameraInit();
@@ -125,7 +131,7 @@ private:
 	void LockOn();
 	void LockOff();
 	void SetupFsm();
-	FVector CheckJumpPos(float Height);
+	float CheckJumpHeight(float Height);
 
 	UFUNCTION(BlueprintCallable)
 	void BlueprintChangeState(EPlayerState Value);
@@ -149,16 +155,7 @@ private:
 
 	//Jump
 	bool bJumpKey = false;
-	FVector JumpStartPos = FVector::ZeroVector;
-	FVector JumpEndPos = FVector::ZeroVector;
-	float MaxJumpHeight = 300.f;
-	float FallSpeed = 1000.f;
 	FCollisionObjectQueryParams CheckParam;
-	float GravityForce = 1000.f;
-	float JumpRatio = 0.f;
-	float JumpBackDistance = 200.f;
-	FVector JumpBackPos = FVector::ZeroVector;
-	FVector JumpBackMiddlePos = FVector::ZeroVector;
 
 	//Evade
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

@@ -109,10 +109,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			JumpRatio = 0.f;
-			JumpStartPos = GetActorLocation();
-			JumpEndPos = CheckJumpPos(MaxJumpHeight);
-			LaunchCharacter(FVector(0.f, 0.f, 100.f), false, true);
+			DefaultJump(CheckJumpHeight(MaxJumpHeight),MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -122,14 +119,12 @@ void AParentCharacter::SetupFsm()
 				DefaultAttack();
 			}
 
-			JumpRatio += DeltaTime * 3.f;
-			SetActorLocation(FMath::LerpStable(JumpStartPos, JumpEndPos, JumpRatio));
 
-			if (GetActorLocation().Z >= JumpEndPos.Z)
-			{
-				FsmComp->ChangeState(EPlayerState::FALL);
-				return;
-			}
+			//if (GetActorLocation().Z >= JumpEndPos.Z)
+			//{
+			//	FsmComp->ChangeState(EPlayerState::FALL);
+			//	return;
+			//}
 
 			if (!GetCharacterMovement()->IsFalling())
 			{
@@ -140,7 +135,7 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			JumpRatio = 0.f;
+			GetCharacterMovement()->GravityScale = 1.f;
 		}
 	);
 
@@ -258,27 +253,12 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			JumpRatio = 0.f;
-			JumpStartPos = GetActorLocation();
-			JumpEndPos = CheckJumpPos(MaxJumpHeight * 2.f);
-
-			JumpBackPos = JumpStartPos + FVector(MoveDir.X * JumpBackDistance, MoveDir.Y * JumpBackDistance, 0.f);
-			JumpBackMiddlePos = JumpStartPos + JumpBackPos;
-			JumpBackMiddlePos /= 2.f;
-			JumpBackMiddlePos.Z = JumpEndPos.Z;
-
-			LaunchCharacter(FVector(0.f, 0.f, 100.f), false, true);
+			DefaultJumpBack(CheckJumpHeight(MaxJumpHeight));
+			//LaunchCharacter(FVector(0.f, 0.f, 100.f), false, true);
 		},
 		//Update
 		[this](float DeltaTime)
 		{
-			JumpRatio += DeltaTime * 1.f;
-
-			FVector A = FMath::LerpStable(JumpStartPos, JumpBackMiddlePos, JumpRatio);
-			FVector B = FMath::LerpStable(JumpBackMiddlePos, JumpBackPos, JumpRatio);
-			FVector ResultPos = FMath::LerpStable(A, B, JumpRatio);
-
-			SetActorLocation(ResultPos);
 
 			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
@@ -300,6 +280,7 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
+			GetCharacterMovement()->GravityScale = 1.f;
 		}
 	);
 
@@ -332,20 +313,20 @@ void AParentCharacter::SetupFsm()
 	FsmComp->ChangeState(EPlayerState::IDLE);
 }
 
-FVector AParentCharacter::CheckJumpPos(float Height)
+float AParentCharacter::CheckJumpHeight(float Height)
 {
 	FHitResult Result;
 
 
-	bool bHit = GetWorld()->LineTraceSingleByObjectType(Result, JumpStartPos, JumpStartPos + FVector(0.f, 0.f, Height), CheckParam);
+	bool bHit = GetWorld()->LineTraceSingleByObjectType(Result, GetActorLocation(), GetActorLocation() + FVector(0.f, 0.f, Height), CheckParam);
 
 	if (bHit)
 	{
-		return Result.ImpactPoint;
+		return Result.ImpactPoint.Z;
 	}
 	else
 	{
-		return JumpStartPos + FVector(0.f, 0.f, Height);
+		return Height;
 	}
 }
 
