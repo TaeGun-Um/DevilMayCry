@@ -95,8 +95,6 @@ void AParentCharacter::SetupFsm()
 				FsmComp->ChangeState(EPlayerState::IDLE);
 				return;
 			}
-
-
 		},
 
 		//End
@@ -246,7 +244,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJumpBack(MaxJumpHeight);
+			DefaultJump(MaxJumpHeight,MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)

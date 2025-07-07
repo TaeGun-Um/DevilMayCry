@@ -173,10 +173,29 @@ void AParentCharacter::Server_MoveKey_Implementation(const FVector2D& Value)
 }
 void AParentCharacter::Multicast_MoveKey_Implementation(const FVector2D& Value)
 {
-	FVector DirX = GetActorRotation().Vector().ForwardVector * GetVelocity().X;
-	FVector DirY = GetActorRotation().Vector().RightVector * GetVelocity().Y;
+	//FVector DirX = GetActorRotation().Vector().ForwardVector * GetVelocity().X;
+	//FVector DirY = GetActorRotation().Vector().RightVector * GetVelocity().Y;
+	//MoveDir = FVector2D(DirX+DirY);
+	//MoveDir.Normalize();
+
+
+
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+	
+	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);	
+	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y); 
+	
+	FVector DirX = ForwardVector * Value.X;
+	FVector DirY = RightVector * Value.Y;
 	MoveDir = FVector2D(DirX+DirY);
 	MoveDir.Normalize();
+
+	if (FsmComp->GetCurrentState() != static_cast<int32>(EPlayerState::IDLE))
+	{
+		AddMovementInput(ForwardVector, Value.X);
+		AddMovementInput(RightVector, Value.Y);
+	}
 }
 
 void AParentCharacter::Server_MoveComplete_Implementation()
@@ -262,10 +281,6 @@ void AParentCharacter::DefaultAttack()
 }
 
 void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir)
-{
-}
-
-void AParentCharacter::DefaultJumpBack(float JumpHeight)
 {
 }
 

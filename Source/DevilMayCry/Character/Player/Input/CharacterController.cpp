@@ -70,7 +70,7 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	const FRotator Rotation = GetControlRotation();
+	/*const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -78,7 +78,7 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
-	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);
+	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);*/
 
 
 	if (HasAuthority())

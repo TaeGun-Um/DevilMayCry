@@ -107,7 +107,6 @@ protected:
 	virtual void DefaultEvade();
 	virtual void DefaultAttack();
 	virtual void DefaultJump(float JumpHeight, FVector2D Dir);
-	virtual void DefaultJumpBack(float JumpHeight);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool EnemyCameraCheck();
