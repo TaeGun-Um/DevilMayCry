@@ -3,10 +3,14 @@
 
 #include "Nero.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "ArmComponent.h"
 
 ANero::ANero()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	ArmComp = CreateDefaultSubobject<UArmComponent>(TEXT("ArmComp"));
+	
 }
 
 void ANero::BeginPlay()
@@ -57,4 +61,8 @@ void ANero::DefaultJump(float JumpHeight, FVector2D Dir)
 
 	//bool파라미터는 더해지는 가속도의 영향을 받을지
 	LaunchCharacter(LaunchVel, true, true);
+}
+
+void ANero::DefaultZKey()
+{
 }

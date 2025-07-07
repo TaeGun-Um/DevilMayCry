@@ -31,6 +31,7 @@ protected:
 	virtual void DefaultAttack() override;
 	virtual void DefaultEvade() override;
 	virtual void DefaultJump(float JumpHeight, FVector2D Dir) override;
+	virtual void DefaultZKey();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -43,5 +44,7 @@ protected:
 
 
 private:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UArmComponent> ArmComp = nullptr;
 
 };

@@ -103,10 +103,16 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_SpaceKeyComplete();
 
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ZKeyStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ZKeyStart();
+
 
 	virtual void DefaultEvade();
 	virtual void DefaultAttack();
 	virtual void DefaultJump(float JumpHeight, FVector2D Dir);
+	virtual void DefaultZKey();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool EnemyCameraCheck();
@@ -183,6 +189,8 @@ private:
 	int CurComboCount = 0;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bMoveOk = false;
-
 	bool bAttackKey = false;
+
+	//ZKey
+	bool bZKey = false;
 };

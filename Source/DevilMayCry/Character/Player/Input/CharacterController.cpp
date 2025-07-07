@@ -63,6 +63,8 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
 
 	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
+
+	EIComp->BindAction(InputActions->ZKeyInput, ETriggerEvent::Started, this, &ACharacterController::ZKeyStart);
 }
 
 
@@ -208,4 +210,16 @@ void ACharacterController::WheelClick(const FInputActionValue& Value)
 
 void ACharacterController::EKey(const FInputActionValue& Value)
 {
+}
+
+void ACharacterController::ZKeyStart(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_ZKeyStart();
+	}
+	else
+	{
+		ParentChar->Server_ZKeyStart();
+	}
 }

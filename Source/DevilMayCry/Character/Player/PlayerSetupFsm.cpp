@@ -163,7 +163,7 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				if (bLockOnKey)
@@ -191,7 +191,7 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				if (bLockOnKey)
@@ -249,8 +249,7 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				if (GetCharacterMovement()->IsFalling())
@@ -291,7 +290,7 @@ void AParentCharacter::SetupFsm()
 				DefaultAttack();
 			}
 
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);

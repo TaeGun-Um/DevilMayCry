@@ -272,6 +272,16 @@ void AParentCharacter::Multicast_SpaceKeyStart_Implementation()
 	bJumpKey = true;
 }
 
+void AParentCharacter::Server_ZKeyStart_Implementation()
+{
+	Multicast_ZKeyStart();
+}
+
+void AParentCharacter::Multicast_ZKeyStart_Implementation()
+{
+	bZKey = true;
+}
+
 void AParentCharacter::DefaultEvade()
 {
 }
@@ -281,6 +291,10 @@ void AParentCharacter::DefaultAttack()
 }
 
 void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir)
+{
+}
+
+void AParentCharacter::DefaultZKey()
 {
 }
 

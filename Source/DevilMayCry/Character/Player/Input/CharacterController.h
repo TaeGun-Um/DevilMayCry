@@ -35,6 +35,8 @@ public:
 	void RightClick(const FInputActionValue& Value);
 	void WheelClick(const FInputActionValue& Value);
 	void EKey(const FInputActionValue& Value);
+	void ZKeyStart(const FInputActionValue& Value);
+	
 
 protected:
 	virtual void BeginPlay() override;
