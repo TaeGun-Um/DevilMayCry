@@ -30,6 +30,7 @@ public:
 protected:
 	virtual void DefaultAttack() override;
 	virtual void DefaultEvade() override;
+	virtual void DefaultJump(float JumpHeight, FVector2D Dir) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -42,6 +43,5 @@ protected:
 
 
 private:
-
 
 };
