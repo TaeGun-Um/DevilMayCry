@@ -109,7 +109,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJump(CheckJumpHeight(MaxJumpHeight),MoveDir);
+			DefaultJump(MaxJumpHeight,MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -118,13 +118,6 @@ void AParentCharacter::SetupFsm()
 			{
 				DefaultAttack();
 			}
-
-
-			//if (GetActorLocation().Z >= JumpEndPos.Z)
-			//{
-			//	FsmComp->ChangeState(EPlayerState::FALL);
-			//	return;
-			//}
 
 			if (!GetCharacterMovement()->IsFalling())
 			{
@@ -253,8 +246,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJumpBack(CheckJumpHeight(MaxJumpHeight));
-			//LaunchCharacter(FVector(0.f, 0.f, 100.f), false, true);
+			DefaultJumpBack(MaxJumpHeight);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -272,6 +264,10 @@ void AParentCharacter::SetupFsm()
 
 			if (!GetCharacterMovement()->IsFalling())
 			{
+				if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+				{
+					AnimIns->StopAllMontages(0.1f);
+				}
 
 				FsmComp->ChangeState(EPlayerState::IDLE);
 
@@ -311,23 +307,6 @@ void AParentCharacter::SetupFsm()
 	);
 
 	FsmComp->ChangeState(EPlayerState::IDLE);
-}
-
-float AParentCharacter::CheckJumpHeight(float Height)
-{
-	FHitResult Result;
-
-
-	bool bHit = GetWorld()->LineTraceSingleByObjectType(Result, GetActorLocation(), GetActorLocation() + FVector(0.f, 0.f, Height), CheckParam);
-
-	if (bHit)
-	{
-		return Result.ImpactPoint.Z;
-	}
-	else
-	{
-		return Height;
-	}
 }
 
 void AParentCharacter::BlueprintChangeState(EPlayerState Value)

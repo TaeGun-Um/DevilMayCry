@@ -74,21 +74,21 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
+	
 	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
+	
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
 	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);
 
 
 	if (HasAuthority())
 	{
-		ParentChar->Multicast_MoveKey();
+		ParentChar->Multicast_MoveKey(MovementVector);
 		ParentChar->Multicast_SetKeyDir(MovementVector);
 	}
 	else
 	{
-		ParentChar->Server_MoveKey();
+		ParentChar->Server_MoveKey(MovementVector);
 		ParentChar->Server_SetKeyDir(MovementVector);
 	}
 }

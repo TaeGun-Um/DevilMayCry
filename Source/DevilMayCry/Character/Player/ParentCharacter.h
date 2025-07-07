@@ -55,9 +55,9 @@ public:
 
 protected:
 	UFUNCTION(Server, Reliable)
-	virtual void Server_MoveKey();
+	virtual void Server_MoveKey(const FVector2D& Value);
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void Multicast_MoveKey();
+	virtual void Multicast_MoveKey(const FVector2D& Value);
 
 	UFUNCTION(Server, Reliable)
 	virtual void Server_MoveComplete();
@@ -131,7 +131,6 @@ private:
 	void LockOn();
 	void LockOff();
 	void SetupFsm();
-	float CheckJumpHeight(float Height);
 
 	UFUNCTION(BlueprintCallable)
 	void BlueprintChangeState(EPlayerState Value);

@@ -167,11 +167,11 @@ void AParentCharacter::Multicast_SetKeyDir_Implementation(const FVector2D& Value
 	KeyDir.Normalize();
 }
 
-void AParentCharacter::Server_MoveKey_Implementation()
+void AParentCharacter::Server_MoveKey_Implementation(const FVector2D& Value)
 {
-	Multicast_MoveKey();
+	Multicast_MoveKey(Value);
 }
-void AParentCharacter::Multicast_MoveKey_Implementation()
+void AParentCharacter::Multicast_MoveKey_Implementation(const FVector2D& Value)
 {
 	FVector DirX = GetActorRotation().Vector().ForwardVector * GetVelocity().X;
 	FVector DirY = GetActorRotation().Vector().RightVector * GetVelocity().Y;

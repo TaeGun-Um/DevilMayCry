@@ -77,7 +77,7 @@ void ANero::DefaultJumpBack(float JumpHeight)
 	float HorizontalSpeed = JumpDistance / AirTime;
 
 	//뒤쪽 방향으로 벡터만들기
-	FVector LaunchVel = GetActorLocation().BackwardVector * HorizontalSpeed + FVector::UpVector * VerticalSpeed;
+	FVector LaunchVel = GetActorRotation().Vector().BackwardVector * HorizontalSpeed + FVector::UpVector * VerticalSpeed;
 
 	//bool파라미터는 더해지는 가속도의 영향을 받을지
 	LaunchCharacter(LaunchVel, true, true);
