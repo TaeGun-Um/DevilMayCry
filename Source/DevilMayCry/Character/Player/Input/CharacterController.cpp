@@ -58,7 +58,8 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Started, this, &ACharacterController::LeftClickStart);
 	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Completed, this, &ACharacterController::LeftClickComplete);
 
-	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClick);
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClickStart);
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Completed, this, &ACharacterController::RightClickComplete);
 
 	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
 
@@ -76,9 +77,9 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	
+
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
 	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);*/
 
@@ -200,8 +201,28 @@ void ACharacterController::LeftClickComplete(const FInputActionValue& Value)
 	}
 }
 
-void ACharacterController::RightClick(const FInputActionValue& Value)
+void ACharacterController::RightClickStart(const FInputActionValue& Value)
 {
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_RightClickStart();
+	}
+	else
+	{
+		ParentChar->Server_RightClickStart();
+	}
+}
+
+void ACharacterController::RightClickComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_RightClickComplete();
+	}
+	else
+	{
+		ParentChar->Server_RightClickComplete();
+	}
 }
 
 void ACharacterController::WheelClick(const FInputActionValue& Value)

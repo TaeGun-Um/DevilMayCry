@@ -30,6 +30,12 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
+			}
+
 			if (bLockOnKey == true)
 			{
 				FsmComp->ChangeState(EPlayerState::LOCKON);
@@ -74,6 +80,12 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
+			}
+
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
 				return;
 			}
 
@@ -236,6 +248,12 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
+			}
+
 			if (bLockOnKey == false)
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);
@@ -306,6 +324,12 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
+			}
+
 			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (bMoveOk && MoveDir != FVector2D::ZeroVector)
 			{
@@ -349,6 +373,66 @@ void AParentCharacter::SetupFsm()
 				}
 			}
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
+			{
+				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
+			}
+		},
+		//End
+		[this]()
+		{
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+			{
+				AnimIns->StopAllMontages(0.25f);
+			}
+			DefaultZKeyEnd();
+		}
+	);
+
+	FsmComp->CreateState(EPlayerState::R_CLICK,
+		//Start
+		[this]()
+		{
+			bMoveOk = true;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%d"), AnimEnd);
+			if (AnimEnd)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICKDELAY);
+				return;
+			}
+		},
+		//End
+		[this]()
+		{
+			AnimEnd = false;
+		}
+	);
+
+
+	FsmComp->CreateState(EPlayerState::R_CLICKDELAY,
+		//Start
+		[this]()
+		{
+			bMoveOk = true;
+			RightClickDelay = 0.f;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			RightClickDelay += DeltaTime;
+
+			if (bRightClick)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
+			}
+
+			if (RightClickDelay>=1.f)
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);
 				return;

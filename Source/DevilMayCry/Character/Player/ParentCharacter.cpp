@@ -92,13 +92,13 @@ void AParentCharacter::TurnToEnemy(float DeltaTime)
 			return;
 		}
 
-		//액터 방향 돌리기
-		FRotator SmoothRot = FMath::RInterpTo(GetActorForwardVector().Rotation(), Direction.Rotation().GetNormalized(), DeltaTime, LockOnRatio);
-		SmoothRot.Roll = 0.f;
-		SmoothRot.Pitch = 0.f;
+		////액터 방향 돌리기
+		//FRotator SmoothRot = FMath::RInterpTo(GetActorForwardVector().Rotation(), Direction.Rotation().GetNormalized(), DeltaTime, LockOnRatio);
+		//SmoothRot.Roll = 0.f;
+		//SmoothRot.Pitch = 0.f;
 
-		SetActorRotation(SmoothRot);
-
+		//SetActorRotation(SmoothRot);
+		SetActorRotation(Direction.Rotation().GetNormalized());
 
 		//카메라 중심점 변경
 		FVector CenterPos = (LockOnEnemy->GetActorLocation() + GetActorLocation()) * 0.5f;
@@ -282,6 +282,26 @@ void AParentCharacter::Multicast_ZKeyStart_Implementation()
 	DefaultZKeyStart();
 }
 
+void AParentCharacter::Server_RightClickStart_Implementation()
+{
+	Multicast_RightClickStart();
+}
+
+void AParentCharacter::Multicast_RightClickStart_Implementation()
+{
+	bRightClick = true;
+}
+
+void AParentCharacter::Server_RightClickComplete_Implementation()
+{
+	Multicast_RightClickComplete();
+}
+
+void AParentCharacter::Multicast_RightClickComplete_Implementation()
+{
+	bRightClick = false;
+}
+
 void AParentCharacter::DefaultEvade()
 {
 
@@ -300,6 +320,10 @@ void AParentCharacter::DefaultZKeyStart()
 }
 
 void AParentCharacter::DefaultZKeyEnd()
+{
+}
+
+void AParentCharacter::DefaultRightClick()
 {
 }
 

@@ -32,7 +32,8 @@ public:
 	void ShiftKeyComplete(const FInputActionValue& Value);
 	void LeftClickStart(const FInputActionValue& Value);
 	void LeftClickComplete(const FInputActionValue& Value);
-	void RightClick(const FInputActionValue& Value);
+	void RightClickStart(const FInputActionValue& Value);
+	void RightClickComplete(const FInputActionValue& Value);
 	void WheelClick(const FInputActionValue& Value);
 	void EKey(const FInputActionValue& Value);
 	void ZKeyStart(const FInputActionValue& Value);
