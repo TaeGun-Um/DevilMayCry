@@ -17,6 +17,8 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			bMoveOk = true;
+			CurComboCount = 0;
 		},
 
 		//Update
@@ -25,6 +27,7 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
 			}
 
 			if (bLockOnKey == true)
@@ -62,6 +65,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			bMoveOk = true;
 		},
 
 		//Update
@@ -70,6 +74,7 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
 			}
 
 			if (GetCharacterMovement()->IsFalling())
@@ -107,7 +112,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJump(MaxJumpHeight,MoveDir);
+			DefaultJump(MaxJumpHeight, MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -115,6 +120,7 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
 			}
 
 			if (!GetCharacterMovement()->IsFalling())
@@ -126,7 +132,6 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			GetCharacterMovement()->GravityScale = 1.f;
 		}
 	);
 
@@ -134,6 +139,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			GetCharacterMovement()->GravityScale = 5.f;
 		},
 		//Update
 		[this](float DeltaTime)
@@ -141,6 +147,7 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
 			}
 
 			if (!GetCharacterMovement()->IsFalling())
@@ -152,6 +159,7 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
+			bMoveOk = true;
 		}
 	);
 
@@ -164,15 +172,17 @@ void AParentCharacter::SetupFsm()
 		[this](float DeltaTime)
 		{
 			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
-			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
+			if (bMoveOk || AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				if (bLockOnKey)
 				{
 					FsmComp->ChangeState(EPlayerState::LOCKON);
+					return;
 				}
 				else
 				{
 					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
 				}
 			}
 		},
@@ -197,10 +207,12 @@ void AParentCharacter::SetupFsm()
 				if (bLockOnKey)
 				{
 					FsmComp->ChangeState(EPlayerState::LOCKON);
+					return;
 				}
 				else
 				{
 					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
 				}
 			}
 		},
@@ -221,16 +233,19 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
 			}
 
 			if (bLockOnKey == false)
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
 			}
 
 			if (bJumpKey)
 			{
 				DefaultEvade();
+				return;
 			}
 		},
 		//End
@@ -244,7 +259,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJump(MaxJumpHeight,MoveDir);
+			DefaultJump(MaxJumpHeight, MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -267,7 +282,7 @@ void AParentCharacter::SetupFsm()
 				}
 
 				FsmComp->ChangeState(EPlayerState::IDLE);
-
+				return;
 			}
 		},
 		//End
@@ -288,9 +303,19 @@ void AParentCharacter::SetupFsm()
 			if (bAttackKey == true)
 			{
 				DefaultAttack();
+				return;
 			}
 
 			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (bMoveOk && MoveDir != FVector2D::ZeroVector)
+			{
+				if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+				{
+					AnimIns->StopAllMontages(0.25f);
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
+			}
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);
@@ -300,6 +325,44 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
+		}
+	);
+
+	FsmComp->CreateState(EPlayerState::Z_ACTION,
+		//Start
+		[this]()
+		{
+			bMoveOk = false;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (bMoveOk && MoveDir != FVector2D::ZeroVector)
+			{
+				if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+				{
+					AnimIns->StopAllMontages(0.25f);
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
+			}
+			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
+			{
+				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
+			}
+		},
+		//End
+		[this]()
+		{
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+			{
+				AnimIns->StopAllMontages(0.25f);
+			}
+			DefaultZKeyEnd();
 		}
 	);
 

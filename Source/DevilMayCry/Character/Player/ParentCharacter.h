@@ -19,6 +19,7 @@ enum class EPlayerState :uint8
 	LOCKON		UMETA(DisplayName = "LOCKON"),
 	JUMPBACK	UMETA(DisplayName = "JUMPBACK"),
 	COMBOCHECK	UMETA(DisplayName = "COMBOCHECK"),
+	Z_ACTION	UMETA(DisplayName = "Z_ACTION"),
 };
 
 
@@ -112,7 +113,8 @@ protected:
 	virtual void DefaultEvade();
 	virtual void DefaultAttack();
 	virtual void DefaultJump(float JumpHeight, FVector2D Dir);
-	virtual void DefaultZKey();
+	virtual void DefaultZKeyStart();
+	virtual void DefaultZKeyEnd();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool EnemyCameraCheck();
@@ -152,6 +154,8 @@ private:
 	//Move
 	float RunSpeed = 600.f;
 	float WalkSpeed = 400.f;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bMoveOk = true;
 	UPROPERTY(BlueprintReadOnly , meta = (AllowPrivateAccess = "true"))
 	FVector2D MoveDir = FVector2D::ZeroVector;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -187,10 +191,5 @@ private:
 	//Attack
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int CurComboCount = 0;
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool bMoveOk = false;
 	bool bAttackKey = false;
-
-	//ZKey
-	bool bZKey = false;
 };

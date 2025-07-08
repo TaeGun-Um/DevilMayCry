@@ -12,7 +12,7 @@ enum class EArmType :uint8
 {
 	OVERTURE		UMETA(DisplayName = "OVERTURE"),
 	GERBERA			UMETA(DisplayName = "GERBERA"),
-	BUSTER			UMETA(DisplayName = "BUSTER"),
+	//BUSTER			UMETA(DisplayName = "BUSTER"),
 	MAX				UMETA(Hidden),
 };
 
@@ -27,6 +27,18 @@ public:
 
 public:
 	void ChangeNextArm();
+
+	UFUNCTION(BlueprintCallable)
+	EArmType GetCurArmType() const
+	{
+		return CurArmType;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	class USkeletalMeshComponent* GetArmMesh() const
+	{
+		return SkmComp;
+	}
 
 protected:
 	// Called when the game starts

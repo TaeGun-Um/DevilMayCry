@@ -10,7 +10,6 @@ ANero::ANero()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	ArmComp = CreateDefaultSubobject<UArmComponent>(TEXT("ArmComp"));
-	
 }
 
 void ANero::BeginPlay()
@@ -63,6 +62,12 @@ void ANero::DefaultJump(float JumpHeight, FVector2D Dir)
 	LaunchCharacter(LaunchVel, true, true);
 }
 
-void ANero::DefaultZKey()
+void ANero::DefaultZKeyStart()
 {
+	ArmChangeAttack();
+}
+
+void ANero::DefaultZKeyEnd()
+{
+	ArmComp->ChangeNextArm();
 }

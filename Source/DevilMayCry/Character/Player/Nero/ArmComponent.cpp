@@ -32,36 +32,32 @@ UArmComponent::UArmComponent()
 		UE_LOG(LogTemp, Warning, TEXT("Gerbera Load Success"));
 	}
 	
-	TObjectPtr<USkeletalMesh> Buster = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/UI/UIMesh/NeroItemMesh/NeroArm/Buster_Arm/BusterArmUI.BusterArmUI'"));
+	/*TObjectPtr<USkeletalMesh> Buster = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/UI/UIMesh/NeroItemMesh/NeroArm/Buster_Arm/BusterArmUI.BusterArmUI'"));
 
 	if (Buster)
 	{
 		arrDevilBreaker[static_cast<int>(EArmType::BUSTER)] = Buster;
 		UE_LOG(LogTemp, Warning, TEXT("Buster Load Success"));
-	}
+	}*/
 }
 
 void UArmComponent::ChangeNextArm()
 {
-	switch (CurArmType)
+	uint8 TempType = static_cast<int>(CurArmType);
+
+	if (++TempType == static_cast<int>(EArmType::MAX))
 	{
-	case EArmType::OVERTURE:
+		CurArmType = static_cast<EArmType>(0);
+	}
+	else
 	{
-		CurArmType = EArmType::GERBERA;
-		break;
+		CurArmType = static_cast<EArmType>(TempType);
 	}
-	case EArmType::GERBERA:
-	{
-		CurArmType = EArmType::BUSTER;
-		break;
-	}
-	case EArmType::BUSTER:
-	{
-		CurArmType = EArmType::OVERTURE;
-		break;
-	}
-	}
+
+	SkmComp->SetSkeletalMesh(arrDevilBreaker[static_cast<int>(CurArmType)]);
+	SkmComp->SetLeaderPoseComponent(Owner->GetMesh());
 }
+
 
 
 // Called when the game starts

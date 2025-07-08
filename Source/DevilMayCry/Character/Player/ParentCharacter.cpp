@@ -191,7 +191,7 @@ void AParentCharacter::Multicast_MoveKey_Implementation(const FVector2D& Value)
 	MoveDir = FVector2D(DirX+DirY);
 	MoveDir.Normalize();
 
-	if (FsmComp->GetCurrentState() != static_cast<int32>(EPlayerState::IDLE))
+	if (bMoveOk/*FsmComp->GetCurrentState() != static_cast<int32>(EPlayerState::IDLE)*/)
 	{
 		AddMovementInput(ForwardVector, Value.X);
 		AddMovementInput(RightVector, Value.Y);
@@ -279,11 +279,12 @@ void AParentCharacter::Server_ZKeyStart_Implementation()
 
 void AParentCharacter::Multicast_ZKeyStart_Implementation()
 {
-	bZKey = true;
+	DefaultZKeyStart();
 }
 
 void AParentCharacter::DefaultEvade()
 {
+
 }
 
 void AParentCharacter::DefaultAttack()
@@ -294,9 +295,14 @@ void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir)
 {
 }
 
-void AParentCharacter::DefaultZKey()
+void AParentCharacter::DefaultZKeyStart()
 {
 }
+
+void AParentCharacter::DefaultZKeyEnd()
+{
+}
+
 
 void AParentCharacter::Server_LeftClickStart_Implementation()
 {
