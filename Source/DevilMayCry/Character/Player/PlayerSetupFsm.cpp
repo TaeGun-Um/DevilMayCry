@@ -324,12 +324,6 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
-			if (bRightClick == true)
-			{
-				FsmComp->ChangeState(EPlayerState::R_CLICK);
-				return;
-			}
-
 			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (bMoveOk && MoveDir != FVector2D::ZeroVector)
 			{
@@ -399,7 +393,6 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%d"), AnimEnd);
 			if (AnimEnd)
 			{
 				FsmComp->ChangeState(EPlayerState::R_CLICKDELAY);
