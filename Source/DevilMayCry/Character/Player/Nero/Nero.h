@@ -30,7 +30,7 @@ public:
 protected:
 	virtual void DefaultAttack() override;
 	virtual void DefaultEvade() override;
-	virtual void DefaultJump(float JumpHeight, FVector2D Dir) override;
+	virtual void DefaultJump(float JumpHeight, FVector2D Dir,bool bBack = false) override;
 	virtual void DefaultZKeyStart();
 	virtual void DefaultZKeyEnd();
 

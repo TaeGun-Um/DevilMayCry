@@ -123,7 +123,7 @@ protected:
 
 	virtual void DefaultEvade();
 	virtual void DefaultAttack();
-	virtual void DefaultJump(float JumpHeight, FVector2D Dir);
+	virtual void DefaultJump(float JumpHeight, FVector2D Dir, bool bBack = false);
 	virtual void DefaultZKeyStart();
 	virtual void DefaultZKeyEnd();
 	virtual void DefaultRightClick();

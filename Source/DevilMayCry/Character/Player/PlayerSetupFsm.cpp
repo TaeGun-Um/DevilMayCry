@@ -277,7 +277,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJump(MaxJumpHeight, MoveDir);
+			DefaultJump(MaxJumpHeight, MoveDir,true);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -333,6 +333,11 @@ void AParentCharacter::SetupFsm()
 					FsmComp->ChangeState(EPlayerState::IDLE);
 					return;
 				}
+			}
+			if (bLockOnKey)
+			{
+				FsmComp->ChangeState(EPlayerState::LOCKON);
+				return;
 			}
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
@@ -422,6 +427,12 @@ void AParentCharacter::SetupFsm()
 			if (bRightClick)
 			{
 				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
+			}
+
+			if (bJumpKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::JUMP);
 				return;
 			}
 

@@ -311,7 +311,7 @@ void AParentCharacter::DefaultAttack()
 {
 }
 
-void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir)
+void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir, bool bBack)
 {
 }
 
