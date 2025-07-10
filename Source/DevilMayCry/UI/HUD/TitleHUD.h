@@ -19,11 +19,24 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void Tick(float DeltaTime) override;
+
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> BGBlackWidgetClass;
+
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> TitleLogoWidgetClass;
 
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> TitleWidgetClass;
 
 private:
-    // UPROPERTY()
-    // TObjectPtr<class UTitleSceneWidget> TitleWidgetInstance;
+     UPROPERTY()
+     TObjectPtr<class UBGBlackWidget> BGBlackWidgetInstance;
+
+     UPROPERTY()
+     TObjectPtr<class UTitleLogoWidget> TitleLogoWidgetInstance;
+
+     UPROPERTY()
+     TObjectPtr<class UTitleWidget> TitleWidgetInstance;
 };

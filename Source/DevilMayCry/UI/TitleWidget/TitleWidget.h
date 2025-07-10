@@ -26,6 +26,12 @@ protected:
     TObjectPtr<class UImage> TitleBGImage;
 
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class USizeBox> TitleSizeBox1;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class USizeBox> TitleSizeBox2;
+
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> TitleStartButton;
 
     UPROPERTY(meta = (BindWidget))
