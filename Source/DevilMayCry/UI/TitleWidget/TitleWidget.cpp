@@ -1,33 +1,33 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TitleSceneWidget.h"
+#include "TitleWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
-bool UTitleSceneWidget::Initialize()
+bool UTitleWidget::Initialize()
 {
     Super::Initialize();
 
     if (TitleStartButton) // Start Button 함수 바인딩
     {
-        TitleStartButton->OnClicked.AddDynamic(this, &UTitleSceneWidget::OnStartClicked);
+        TitleStartButton->OnClicked.AddDynamic(this, &UTitleWidget::OnStartClicked);
     }
 
     if (TitleExitButton) // Exit Button 함수 바인딩
     {
-        TitleExitButton->OnClicked.AddDynamic(this, &UTitleSceneWidget::OnExitClicked);
+        TitleExitButton->OnClicked.AddDynamic(this, &UTitleWidget::OnExitClicked);
     }
 
     return true;
 }
 
-void UTitleSceneWidget::OnStartClicked()
+void UTitleWidget::OnStartClicked()
 {
     UGameplayStatics::OpenLevel(this, TEXT("Location2"));
 }
 
-void UTitleSceneWidget::OnExitClicked()
+void UTitleWidget::OnExitClicked()
 {
     UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
 }

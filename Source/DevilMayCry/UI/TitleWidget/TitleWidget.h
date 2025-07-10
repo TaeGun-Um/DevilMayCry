@@ -4,23 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "TitleSceneWidget.generated.h"
+#include "TitleWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVILMAYCRY_API UTitleSceneWidget : public UUserWidget
+class DEVILMAYCRY_API UTitleWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
     virtual bool Initialize() override;
-
-    // Root
-protected:
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UCanvasPanel> RootCanvas;
 
     // Title Screen
 protected:
@@ -35,14 +30,6 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> TitleExitButton;
-
-    // Setup Screen
-protected:
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UCanvasPanel> SetupCanvas;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> SetupLogoImage;
 
 private:
     UFUNCTION()

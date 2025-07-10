@@ -2,10 +2,10 @@
 
 
 #include "TitleSceneGameMode.h"
-#include "DevilMayCry/UI/TitleScene/TitleSceneHUD.h"
+// #include "DevilMayCry/UI/TitleScene/TitleSceneHUD.h"
 
 ATitleSceneGameMode::ATitleSceneGameMode()
 {
 	// HUDClass = ATitleSceneHUD::StaticClass();
-	// DefaultPawnClass = nullptr;
+	DefaultPawnClass = nullptr;
 }

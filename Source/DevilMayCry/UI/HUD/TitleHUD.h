@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "TitleSceneHUD.generated.h"
+#include "TitleHUD.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVILMAYCRY_API ATitleSceneHUD : public AHUD
+class DEVILMAYCRY_API ATitleHUD : public AHUD
 {
 	GENERATED_BODY()
 	
 public:
-    ATitleSceneHUD();
+    ATitleHUD();
 
 protected:
     virtual void BeginPlay() override;
@@ -24,7 +24,6 @@ protected:
     TSubclassOf<class UUserWidget> TitleWidgetClass;
 
 private:
-    UPROPERTY()
-    TObjectPtr<class UUserWidget> TitleWidgetInstance;
-
+    // UPROPERTY()
+    // TObjectPtr<class UTitleSceneWidget> TitleWidgetInstance;
 };
