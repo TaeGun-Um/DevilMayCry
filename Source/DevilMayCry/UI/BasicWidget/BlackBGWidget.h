@@ -4,31 +4,30 @@
 
 #include "CoreMinimal.h"
 #include "DevilMayCry/UI/BasicWidget/AnimationWidget.h"
-#include "TitleLogoWidget.generated.h"
+#include "BlackBGWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVILMAYCRY_API UTitleLogoWidget : public UAnimationWidget
+class DEVILMAYCRY_API UBlackBGWidget : public UAnimationWidget
 {
 	GENERATED_BODY()
 	
 public:
     void PlayAnim();
 
+protected:
+
 private:
     virtual bool Initialize() override;
     void AnimationEndEventSetting() override;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UCanvasPanel> TitleLogoCanvas;
+    TObjectPtr<class UCanvasPanel> BlackCanvas;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class USizeBox> TitleLogoSizeBox;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> TitleLogoImage;
+    TObjectPtr<class UImage> BGImage;
 
     UPROPERTY(Meta = (BindWidgetAnim), Transient)
     TObjectPtr<class UWidgetAnimation> FadeAnimation;

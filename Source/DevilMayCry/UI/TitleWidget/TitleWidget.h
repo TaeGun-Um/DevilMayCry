@@ -15,15 +15,18 @@ class DEVILMAYCRY_API UTitleWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-    virtual bool Initialize() override;
+    void PlayAnim();
+    void StopBlinkAnimation();
 
     // Title Screen
 protected:
+    virtual bool Initialize() override;
+
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> TitleCanvas;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> TitleBGImage;
+    TObjectPtr<class USizeBox> TitleSizeBox0;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class USizeBox> TitleSizeBox1;
@@ -32,10 +35,22 @@ protected:
     TObjectPtr<class USizeBox> TitleSizeBox2;
 
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class USizeBox> TitleSizeBox3;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> TitleBGImage;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> TitleAnyKeyImage;
+
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> TitleStartButton;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> TitleExitButton;
+
+    UPROPERTY(Meta = (BindWidgetAnim), Transient)
+    TObjectPtr<class UWidgetAnimation> BlinkAnimation;
 
 private:
     UFUNCTION()
@@ -43,5 +58,4 @@ private:
 
     UFUNCTION()
     void OnExitClicked();
-
 };

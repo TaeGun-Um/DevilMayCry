@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TitleLogoWidget.h"
+#include "BlackBGWidget.h"
 #include "DevilMayCry/UI/BasicWidget/AnimationWidget.h"
 
-bool UTitleLogoWidget::Initialize()
+bool UBlackBGWidget::Initialize()
 {
 	if (!Super::Initialize())
 	{
@@ -16,12 +16,12 @@ bool UTitleLogoWidget::Initialize()
 	return true;
 }
 
-void UTitleLogoWidget::PlayAnim()
+void UBlackBGWidget::PlayAnim()
 {
 	PlayAnimation(FadeAnimation);
 }
 
-void UTitleLogoWidget::AnimationEndEventSetting()
+void UBlackBGWidget::AnimationEndEventSetting()
 {
 	Super::AnimationEndEventSetting();
 

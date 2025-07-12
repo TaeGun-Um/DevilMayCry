@@ -30,13 +30,34 @@ protected:
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> TitleWidgetClass;
 
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> TestWidgetClass;
+
 private:
      UPROPERTY()
-     TObjectPtr<class UBGBlackWidget> BGBlackWidgetInstance;
+     TObjectPtr<class UBlackBGWidget> BGBlackWidgetInstance;
 
      UPROPERTY()
      TObjectPtr<class UTitleLogoWidget> TitleLogoWidgetInstance;
 
      UPROPERTY()
      TObjectPtr<class UTitleWidget> TitleWidgetInstance;
+
+     UPROPERTY()
+     TObjectPtr<class UTestWidget> TestWidgetInstance;
+
+     UPROPERTY()
+     TObjectPtr<class APlayerController> HUDPlayerController;
+
+     FTimerHandle TitleLogoAnimEndHandle;
+
+     bool bIsTitleLogoHandled = false;
+     bool bIsTitleBackHandled = false;
+     bool bIsTitleMenuHandled = false;
+
+     TArray<FKey> AllKeys;
+
+     UFUNCTION()
+     void OnTitleLogoAnimEndDelay();
+
 };

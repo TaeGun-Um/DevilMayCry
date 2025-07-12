@@ -22,12 +22,10 @@ class DEVILMAYCRY_API IUIAnimationInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	bool IsAnimFinished() const;
 
 protected:
 	virtual void AnimInit();
 	virtual void PlayAnim();
-	void SetAnimFinished();
 
 	uint8 bIsAnimFinished : 1;
 
