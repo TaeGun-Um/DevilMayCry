@@ -6,9 +6,15 @@
 #include "Blueprint/UserWidget.h"
 #include "TestWidget.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class ETitleMenuType : uint8
+{
+    MainMenu    UMETA(DisplayName = "MainMenu"),
+    Setting             UMETA(DisplayName = "Setting"),
+    Exit             UMETA(DisplayName = "Exit"),
+    None           UMETA(DisplayName = "None"),
+};
+
 UCLASS()
 class DEVILMAYCRY_API UTestWidget : public UUserWidget
 {
@@ -28,16 +34,22 @@ private:
     TObjectPtr<class UImage> TestImage;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class USizeBox> TestSizeBox0;
+    TObjectPtr<class USizeBox> TestSizeBox;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class USizeBox> TestSizeBox1;
+    TObjectPtr<class UImage> TestSizeImage;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> TestButton0;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> TestButton1;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UButton> TestButton2;
+
+    UPROPERTY(Meta = (BindWidgetAnim), Transient)
+    TObjectPtr<class UWidgetAnimation> SizeUpAnimation;
 
     UFUNCTION()
     void Button0Hover();
@@ -50,4 +62,14 @@ private:
 
     UFUNCTION()
     void Button1UnHover();
+
+    UFUNCTION()
+    void Button2Hover();
+
+    UFUNCTION()
+    void Button2UnHover();
+
+    ETitleMenuType MenuType = ETitleMenuType::None;
+    // FVector2D AbsolutePosition;  // DPI가 적용된 좌상단 위치
+    // FVector2D LocalSize;                // 위젯 크기
 };
