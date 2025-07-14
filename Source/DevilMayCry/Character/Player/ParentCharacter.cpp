@@ -229,12 +229,24 @@ void AParentCharacter::Multicast_MoveComplete_Implementation()
 	KeyDir = FVector2D::ZeroVector;
 }
 
-void AParentCharacter::RightClick()
+void AParentCharacter::Server_WheelClickStart_Implementation()
 {
+	Multicast_WheelClickStart();
 }
 
-void AParentCharacter::WheelClick()
+void AParentCharacter::Multicast_WheelClickStart_Implementation()
 {
+	bWheelClick = true;
+}
+
+void AParentCharacter::Server_WheelClickComplete_Implementation()
+{
+	Multicast_WheelClickComplete();
+}
+
+void AParentCharacter::Multicast_WheelClickComplete_Implementation()
+{
+	bWheelClick = false;
 }
 
 void AParentCharacter::EKey()
@@ -349,6 +361,18 @@ void AParentCharacter::DefaultZKeyEnd()
 
 void AParentCharacter::DefaultRightClick()
 {
+}
+
+void AParentCharacter::DefaultWheelClick()
+{
+}
+
+void AParentCharacter::WallCheck()
+{
+	if (EnemyCameraCheck())
+	{
+		LockOnEnemy = nullptr;
+	}
 }
 
 

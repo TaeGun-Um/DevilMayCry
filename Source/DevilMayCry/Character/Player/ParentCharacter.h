@@ -22,6 +22,7 @@ enum class EPlayerState :uint8
 	Z_ACTION			UMETA(DisplayName = "Z_ACTION"),
 	R_CLICK				UMETA(DisplayName = "R_CLICK"),
 	R_CLICKDELAY		UMETA(DisplayName = "R_CLICKDELAY"),
+	WHEELCLICK			UMETA(DisplayName = "WHEELCLICK"),
 };
 
 
@@ -77,10 +78,14 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_LeftClickComplete();
 
-
-	virtual void RightClick();
-
-	virtual void WheelClick();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_WheelClickStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_WheelClickStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_WheelClickComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_WheelClickComplete();
 
 	virtual void EKey();
 
@@ -127,12 +132,15 @@ protected:
 	virtual void DefaultZKeyStart();
 	virtual void DefaultZKeyEnd();
 	virtual void DefaultRightClick();
+	virtual void DefaultWheelClick();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	bool EnemyCameraCheck();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnemyCheck();
+
+	void WallCheck();
 
 
 	//PlayerState
@@ -215,4 +223,8 @@ private:
 	//AnimEnd
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool AnimEnd = false;
+
+
+	//WheelClickKey
+	bool bWheelClick = false;
 };

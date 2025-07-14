@@ -44,8 +44,8 @@ void ACharacterController::KeyBinding()
 	UEnhancedInputComponent* EIComp = Cast<UEnhancedInputComponent>(InputComponent);
 
 	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Triggered, this, &ACharacterController::MoveKey);
-	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Completed, this, &ACharacterController::MoveComplete)
-		;
+	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Completed, this, &ACharacterController::MoveComplete);
+
 	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Started, this, &ACharacterController::JumpStart);
 	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Completed, this, &ACharacterController::JumpComplete);
 
@@ -61,7 +61,8 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClickStart);
 	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Completed, this, &ACharacterController::RightClickComplete);
 
-	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClickStart);
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Completed, this, &ACharacterController::WheelClickComplete);
 
 	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
 
@@ -225,8 +226,28 @@ void ACharacterController::RightClickComplete(const FInputActionValue& Value)
 	}
 }
 
-void ACharacterController::WheelClick(const FInputActionValue& Value)
+void ACharacterController::WheelClickStart(const FInputActionValue& Value)
 {
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_WheelClickStart();
+	}
+	else
+	{
+		ParentChar->Server_WheelClickStart();
+	}
+}
+
+void ACharacterController::WheelClickComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_WheelClickComplete();
+	}
+	else
+	{
+		ParentChar->Server_WheelClickComplete();
+	}
 }
 
 void ACharacterController::EKey(const FInputActionValue& Value)

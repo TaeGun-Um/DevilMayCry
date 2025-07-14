@@ -34,6 +34,7 @@ protected:
 	virtual void DefaultZKeyStart()override;
 	virtual void DefaultZKeyEnd()override;
 	virtual void DefaultRightClick()override;
+	virtual void DefaultWheelClick()override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -49,10 +50,12 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void GunShoot();
+	
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class ASnatchActor> Snatcher = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UArmComponent> ArmComp = nullptr;
 private:
-
 };

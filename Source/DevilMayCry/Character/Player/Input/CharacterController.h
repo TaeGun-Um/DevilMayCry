@@ -34,7 +34,8 @@ public:
 	void LeftClickComplete(const FInputActionValue& Value);
 	void RightClickStart(const FInputActionValue& Value);
 	void RightClickComplete(const FInputActionValue& Value);
-	void WheelClick(const FInputActionValue& Value);
+	void WheelClickStart(const FInputActionValue& Value);
+	void WheelClickComplete(const FInputActionValue& Value);
 	void EKey(const FInputActionValue& Value);
 	void ZKeyStart(const FInputActionValue& Value);
 	

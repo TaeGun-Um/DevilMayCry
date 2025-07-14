@@ -4,17 +4,23 @@
 #include "Nero.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ArmComponent.h"
+#include "SnatchActor.h"
+#include "../../Enemy/EnemyBase.h"
 
 ANero::ANero()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
 	ArmComp = CreateDefaultSubobject<UArmComponent>(TEXT("ArmComp"));
+	
 }
 
 void ANero::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Snatcher = GetWorld()->SpawnActor<ASnatchActor>(GetMesh()->GetBoneLocation("R_Forearm"), FRotator::ZeroRotator);
+	Snatcher->SetOwnerActor(this);
 }
 
 void ANero::Tick(float DeltaTime)
@@ -88,4 +94,9 @@ void ANero::DefaultZKeyEnd()
 void ANero::DefaultRightClick()
 {
 	GunShoot();
+}
+
+void ANero::DefaultWheelClick()
+{
+	Snatcher->StartFire(GetLockOnEnemy());
 }
