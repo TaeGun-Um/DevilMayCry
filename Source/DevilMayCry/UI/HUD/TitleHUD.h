@@ -14,8 +14,12 @@ class DEVILMAYCRY_API ATitleHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+    /////////////////// Common
 public:
     ATitleHUD();
+
+    /////////////////// TitleStep
+public:
 
 protected:
     virtual void BeginPlay() override;
@@ -31,7 +35,10 @@ protected:
     TSubclassOf<class UUserWidget> TitleWidgetClass;
 
     UPROPERTY(EditAnywhere, Category = "UI")
-    TSubclassOf<class UUserWidget> TestWidgetClass;
+    TSubclassOf<class UUserWidget> CharacterWidgetClass;
+
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> MenuWidgetClass;
 
 private:
      UPROPERTY()
@@ -44,20 +51,42 @@ private:
      TObjectPtr<class UTitleWidget> TitleWidgetInstance;
 
      UPROPERTY()
-     TObjectPtr<class UTestWidget> TestWidgetInstance;
+     TObjectPtr<class USelectCharacterWidget> CharacterWidgetInstance;
+
+     UPROPERTY()
+     TObjectPtr<class USelectMenuWidget> MenuWidgetInstance;
 
      UPROPERTY()
      TObjectPtr<class APlayerController> HUDPlayerController;
 
+     TArray<FKey> AllKeys;
      FTimerHandle TitleLogoAnimEndHandle;
 
      bool bIsTitleLogoHandled = false;
      bool bIsTitleBackHandled = false;
      bool bIsTitleMenuHandled = false;
-
-     TArray<FKey> AllKeys;
+     bool bIsCharacterSelectHandle = false;
+     bool bIsMenuSelectHandle = false;
 
      UFUNCTION()
      void OnTitleLogoAnimEndDelay();
+
+     void TitleStep();
+
+     /////////////////// SelectStep
+public:
+
+protected:
+
+private:
+     void SelectStep();
+
+     /////////////////// MenuStep
+public:
+
+protected:
+
+private:
+    void MenuStep();
 
 };

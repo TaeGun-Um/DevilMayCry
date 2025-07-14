@@ -7,7 +7,7 @@
 #include "TestWidget.generated.h"
 
 UENUM(BlueprintType)
-enum class ETitleMenuType : uint8
+enum class ETestTitleMenuType : uint8
 {
     MainMenu    UMETA(DisplayName = "MainMenu"),
     Setting             UMETA(DisplayName = "Setting"),
@@ -69,7 +69,7 @@ private:
     UFUNCTION()
     void Button2UnHover();
 
-    ETitleMenuType MenuType = ETitleMenuType::None;
+    ETestTitleMenuType MenuType = ETestTitleMenuType::None;
     // FVector2D AbsolutePosition;  // DPI가 적용된 좌상단 위치
     // FVector2D LocalSize;                // 위젯 크기
 };

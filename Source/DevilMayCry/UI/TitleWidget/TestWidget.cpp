@@ -67,19 +67,19 @@ bool UTestWidget::Initialize()
         SizeImageSlot->SetOffsets(FMargin(0.f, -700.f, 300.f, 50.f)); // ÃÊ±âÆø ¼³Á¤
     }
 
-    MenuType = ETitleMenuType::None;
+    MenuType = ETestTitleMenuType::None;
     
     return true;
 }
 
 void UTestWidget::Button0Hover()
 {
-    if (ETitleMenuType::MainMenu == MenuType)
+    if (ETestTitleMenuType::MainMenu == MenuType)
     {
         return;
     }
 
-    MenuType = ETitleMenuType::MainMenu;
+    MenuType = ETestTitleMenuType::MainMenu;
 
     UCanvasPanelSlot* ButtonSlot0 = Cast<UCanvasPanelSlot>(TestButton0->Slot);
     if (ButtonSlot0)
@@ -94,6 +94,7 @@ void UTestWidget::Button0Hover()
 
     PlayAnimation(SizeUpAnimation);
 }
+
 void UTestWidget::Button0UnHover()
 {
     int a = 0;
@@ -101,12 +102,12 @@ void UTestWidget::Button0UnHover()
 
 void UTestWidget::Button1Hover()
 {
-    if (ETitleMenuType::Exit == MenuType)
+    if (ETestTitleMenuType::Exit == MenuType)
     {
         return;
     }
 
-    MenuType = ETitleMenuType::Exit;
+    MenuType = ETestTitleMenuType::Exit;
 
     UCanvasPanelSlot* ButtonSlot1 = Cast<UCanvasPanelSlot>(TestButton1->Slot);
     if (ButtonSlot1)
@@ -121,6 +122,7 @@ void UTestWidget::Button1Hover()
 
     PlayAnimation(SizeUpAnimation);
 }
+
 void UTestWidget::Button1UnHover()
 {
     int a = 0;
@@ -128,12 +130,12 @@ void UTestWidget::Button1UnHover()
 
 void UTestWidget::Button2Hover()
 {
-    if (ETitleMenuType::Setting == MenuType)
+    if (ETestTitleMenuType::Setting == MenuType)
     {
         return;
     }
 
-    MenuType = ETitleMenuType::Setting;
+    MenuType = ETestTitleMenuType::Setting;
 
     UCanvasPanelSlot* ButtonSlot2 = Cast<UCanvasPanelSlot>(TestButton2->Slot);
     if (ButtonSlot2)
@@ -148,6 +150,7 @@ void UTestWidget::Button2Hover()
 
     PlayAnimation(SizeUpAnimation);
 }
+
 void UTestWidget::Button2UnHover()
 {
     int a = 0;
