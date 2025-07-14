@@ -31,8 +31,9 @@ protected:
 	virtual void DefaultAttack() override;
 	virtual void DefaultEvade() override;
 	virtual void DefaultJump(float JumpHeight, FVector2D Dir,bool bBack = false) override;
-	virtual void DefaultZKeyStart();
-	virtual void DefaultZKeyEnd();
+	virtual void DefaultZKeyStart()override;
+	virtual void DefaultZKeyEnd()override;
+	virtual void DefaultRightClick()override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -45,6 +46,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ArmChangeAttack();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void GunShoot();
 
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

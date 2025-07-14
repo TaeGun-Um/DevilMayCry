@@ -4,6 +4,8 @@
 #include "ParentCharacter.h"
 #include "../FsmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "../Enemy/EnemyBase.h"
 
 
 
@@ -17,6 +19,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			SetStrafe(false);
 			bMoveOk = true;
 			CurComboCount = 0;
 		},
@@ -238,6 +241,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			SetStrafe(true);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -393,6 +397,8 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			//SetStrafe(true);
+			DefaultRightClick();
 			bMoveOk = true;
 		},
 		//Update
@@ -403,10 +409,25 @@ void AParentCharacter::SetupFsm()
 				FsmComp->ChangeState(EPlayerState::R_CLICKDELAY);
 				return;
 			}
+
+			if (LockOnEnemy != nullptr)
+			{
+				FVector Direction = LockOnEnemy->GetActorLocation() - GetActorLocation();
+
+				//서치 범위 벗어나면 종료
+				if (Direction.Length() > SearchRadius)
+				{
+					SetStrafe(false);
+					return;
+				}
+
+				TurnToEnemy(DeltaTime);
+			}
 		},
 		//End
 		[this]()
 		{
+
 			AnimEnd = false;
 		}
 	);
@@ -436,10 +457,32 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
+			if (bLockOnKey)
+			{
+				FsmComp->ChangeState(EPlayerState::LOCKON);
+				bPrevEvade = true;
+				return;
+			}
+
 			if (RightClickDelay>=1.f)
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);
 				return;
+			}
+
+
+			if (LockOnEnemy != nullptr)
+			{
+				FVector Direction = LockOnEnemy->GetActorLocation() - GetActorLocation();
+
+				//서치 범위 벗어나면 종료
+				if (Direction.Length() > SearchRadius)
+				{
+					SetStrafe(false);
+					return;
+				}
+
+				TurnToEnemy(DeltaTime);
 			}
 		},
 		//End
@@ -450,6 +493,7 @@ void AParentCharacter::SetupFsm()
 			{
 				AnimIns->StopAllMontages(0.25f);
 			}
+
 			DefaultZKeyEnd();
 		}
 	);

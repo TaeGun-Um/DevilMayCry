@@ -146,9 +146,11 @@ protected:
 
 private:
 	void CameraInit();
+	void CenterCamera(float DeltaTime);
+	void ResetCamera(float DeltaTime);
 	void TurnToEnemy(float DeltaTime);
-	void LockOn();
-	void LockOff();
+	void LockOn(float DeltaTime);
+	void SetStrafe(bool Value);
 	void SetupFsm();
 
 	UFUNCTION(BlueprintCallable)

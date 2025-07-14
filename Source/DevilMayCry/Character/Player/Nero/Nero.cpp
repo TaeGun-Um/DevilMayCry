@@ -84,3 +84,8 @@ void ANero::DefaultZKeyEnd()
 {
 	ArmComp->ChangeNextArm();
 }
+
+void ANero::DefaultRightClick()
+{
+	GunShoot();
+}
