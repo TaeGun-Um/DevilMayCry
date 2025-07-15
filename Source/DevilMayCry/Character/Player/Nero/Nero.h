@@ -28,13 +28,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	virtual void DefaultAttack() override;
-	virtual void DefaultEvade() override;
-	virtual void DefaultJump(float JumpHeight, FVector2D Dir,bool bBack = false) override;
-	virtual void DefaultZKeyStart()override;
-	virtual void DefaultZKeyEnd()override;
-	virtual void DefaultRightClick()override;
-	virtual void DefaultWheelClick()override;
+	virtual void Attack() override;
+	virtual void LockOnEvade() override;
+	virtual void Jumping(float JumpHeight, FVector2D Dir,bool bBack = false) override;
+	virtual void ZKeyStart()override;
+	virtual void ZKeyEnd()override;
+	virtual void Shift_WheelClick()override;
+	virtual void WheelClick()override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -44,12 +44,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Evade();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void ArmChangeAttack();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void GunShoot();
 	
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

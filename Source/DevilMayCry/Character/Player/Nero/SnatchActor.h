@@ -39,7 +39,7 @@ public:
 
 protected:
 	void Launch(float DeltaTime);
-
+	void Reset();
 
 	UFUNCTION()
 	void OnSphereOverlap(

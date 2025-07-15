@@ -22,6 +22,7 @@ enum class EPlayerState :uint8
 	Z_ACTION			UMETA(DisplayName = "Z_ACTION"),
 	R_CLICK				UMETA(DisplayName = "R_CLICK"),
 	R_CLICKDELAY		UMETA(DisplayName = "R_CLICKDELAY"),
+	SHIFTWHEELCLICK		UMETA(DisplayName = "SHIFTWHEELCLICK"),
 	WHEELCLICK			UMETA(DisplayName = "WHEELCLICK"),
 };
 
@@ -115,6 +116,10 @@ protected:
 	virtual void Server_ZKeyStart();
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_ZKeyStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ZKeyComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ZKeyComplete();
 
 	UFUNCTION(Server, Reliable)
 	virtual void Server_RightClickStart();
@@ -126,13 +131,14 @@ protected:
 	virtual void Multicast_RightClickComplete();
 
 
-	virtual void DefaultEvade();
-	virtual void DefaultAttack();
-	virtual void DefaultJump(float JumpHeight, FVector2D Dir, bool bBack = false);
-	virtual void DefaultZKeyStart();
-	virtual void DefaultZKeyEnd();
-	virtual void DefaultRightClick();
-	virtual void DefaultWheelClick();
+	virtual void LockOnEvade();
+	virtual void Attack();
+	virtual void Jumping(float JumpHeight, FVector2D Dir, bool bBack = false);
+	virtual void ZKeyStart();
+	virtual void ZKeyEnd();
+	virtual void RightClick();
+	virtual void Shift_WheelClick(); 
+	virtual void WheelClick();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	bool EnemyCameraCheck();
@@ -227,4 +233,7 @@ private:
 
 	//WheelClickKey
 	bool bWheelClick = false;
+
+	//ZKey
+	bool bZKey = false;
 };

@@ -33,9 +33,6 @@ void ASnatchActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//ui 만들어지기 전까지 사용할 락온 디버깅용 구체
-	DrawDebugSphere(GetWorld(), GetActorLocation(), ColRadius, 12, FColor::Blue);
-
 	Launch(DeltaTime);
 }
 
@@ -69,15 +66,20 @@ void ASnatchActor::Launch(float DeltaTime)
 {
 	if (bFire && !bPullActor)
 	{
+		//ui 만들어지기 전까지 사용할 락온 디버깅용 구체
+		DrawDebugSphere(GetWorld(), GetActorLocation(), ColRadius, 12, FColor::Blue);
+
 		Ratio = FMath::Clamp(Ratio += DeltaTime * SnatchSpeed, 0.f, 1.f);
 		FVector Temp = FMath::Lerp(StartPos, FirePos, Ratio);
 
 		FHitResult Hit;
 		SetActorLocation(Temp);		
 	}
-
 	else if (bFire && bPullActor)
 	{
+		//ui 만들어지기 전까지 사용할 락온 디버깅용 구체
+		DrawDebugSphere(GetWorld(), GetActorLocation(), ColRadius, 12, FColor::Blue);
+
 		Ratio = FMath::Clamp(Ratio -= DeltaTime * SnatchSpeed, 0.f, 1.f);
 		FVector Temp = FMath::Lerp(StartPos, FirePos, Ratio);
 
@@ -89,13 +91,22 @@ void ASnatchActor::Launch(float DeltaTime)
 
 		if (Ratio == 0.f)
 		{
-			bPullActor = false;
-			bFire = false;
-			SnatchEnemy = nullptr;
-
-			SphereComp->SetActive(false);
+			Reset();
 		}
 	}
+	else if (bFire && !bPullActor&& Ratio>=1.f)
+	{
+		Reset();
+	}
+}
+
+void ASnatchActor::Reset()
+{
+	bPullActor = false;
+	bFire = false;
+	SnatchEnemy = nullptr;
+
+	SphereComp->SetActive(false);
 }
 
 void ASnatchActor::OnSphereOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

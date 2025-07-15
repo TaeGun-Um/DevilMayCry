@@ -67,6 +67,7 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
 
 	EIComp->BindAction(InputActions->ZKeyInput, ETriggerEvent::Started, this, &ACharacterController::ZKeyStart);
+	EIComp->BindAction(InputActions->ZKeyInput, ETriggerEvent::Completed, this, &ACharacterController::ZKeyComplete);
 }
 
 
@@ -263,5 +264,17 @@ void ACharacterController::ZKeyStart(const FInputActionValue& Value)
 	else
 	{
 		ParentChar->Server_ZKeyStart();
+	}
+}
+
+void ACharacterController::ZKeyComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_ZKeyComplete();
+	}
+	else
+	{
+		ParentChar->Server_ZKeyComplete();
 	}
 }

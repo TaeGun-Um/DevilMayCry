@@ -38,6 +38,7 @@ public:
 	void WheelClickComplete(const FInputActionValue& Value);
 	void EKey(const FInputActionValue& Value);
 	void ZKeyStart(const FInputActionValue& Value);
+	void ZKeyComplete(const FInputActionValue& Value);
 	
 
 protected:

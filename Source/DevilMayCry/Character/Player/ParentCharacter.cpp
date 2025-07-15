@@ -315,7 +315,7 @@ void AParentCharacter::Server_ZKeyStart_Implementation()
 
 void AParentCharacter::Multicast_ZKeyStart_Implementation()
 {
-	DefaultZKeyStart();
+	bZKey = true;
 }
 
 void AParentCharacter::Server_RightClickStart_Implementation()
@@ -338,32 +338,36 @@ void AParentCharacter::Multicast_RightClickComplete_Implementation()
 	bRightClick = false;
 }
 
-void AParentCharacter::DefaultEvade()
+void AParentCharacter::LockOnEvade()
 {
 
 }
 
-void AParentCharacter::DefaultAttack()
+void AParentCharacter::Attack()
 {
 }
 
-void AParentCharacter::DefaultJump(float JumpHeight, FVector2D Dir, bool bBack)
+void AParentCharacter::Jumping(float JumpHeight, FVector2D Dir, bool bBack)
 {
 }
 
-void AParentCharacter::DefaultZKeyStart()
+void AParentCharacter::ZKeyStart()
 {
 }
 
-void AParentCharacter::DefaultZKeyEnd()
+void AParentCharacter::ZKeyEnd()
 {
 }
 
-void AParentCharacter::DefaultRightClick()
+void AParentCharacter::RightClick()
 {
 }
 
-void AParentCharacter::DefaultWheelClick()
+void AParentCharacter::Shift_WheelClick()
+{
+}
+
+void AParentCharacter::WheelClick()
 {
 }
 
@@ -394,4 +398,14 @@ void AParentCharacter::Server_LeftClickComplete_Implementation()
 void AParentCharacter::Multicast_LeftClickComplete_Implementation()
 {
 	bAttackKey = false;
+}
+
+void AParentCharacter::Server_ZKeyComplete_Implementation()
+{
+	Multicast_ZKeyComplete();
+}
+
+void AParentCharacter::Multicast_ZKeyComplete_Implementation()
+{
+	bZKey = false;
 }

@@ -28,7 +28,7 @@ void ANero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ANero::DefaultAttack()
+void ANero::Attack()
 {
 	if (GetCharacterMovement()->IsFalling())
 	{
@@ -41,12 +41,12 @@ void ANero::DefaultAttack()
 
 }
 
-void ANero::DefaultEvade()
+void ANero::LockOnEvade()
 {
 	Evade();
 }
 
-void ANero::DefaultJump(float JumpHeight, FVector2D Dir, bool bBack)
+void ANero::Jumping(float JumpHeight, FVector2D Dir, bool bBack)
 {
 	GetCharacterMovement()->GravityScale = 5.f;
 
@@ -81,22 +81,19 @@ void ANero::DefaultJump(float JumpHeight, FVector2D Dir, bool bBack)
 	LaunchCharacter(LaunchVel, true, true);
 }
 
-void ANero::DefaultZKeyStart()
+void ANero::ZKeyStart()
 {
-	ArmChangeAttack();
 }
 
-void ANero::DefaultZKeyEnd()
+void ANero::ZKeyEnd()
 {
 	ArmComp->ChangeNextArm();
 }
-
-void ANero::DefaultRightClick()
-{
-	GunShoot();
-}
-
-void ANero::DefaultWheelClick()
+void ANero::Shift_WheelClick()
 {
 	Snatcher->StartFire(GetLockOnEnemy());
+}
+
+void ANero::WheelClick()
+{
 }
