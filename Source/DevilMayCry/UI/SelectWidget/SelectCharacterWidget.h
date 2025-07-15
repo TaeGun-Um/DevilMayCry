@@ -75,6 +75,30 @@ private:
 	TObjectPtr<class UImage> VergilImage;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> NeroTegImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> NeroLineImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> VergilTegImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> VergilLineImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> NeroExTextBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> NeroTextBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> VergilExTextBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> VergilTextBox;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> NeroButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -101,6 +125,18 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> VergilMaterial;
+
+	UPROPERTY()
+	TObjectPtr<class UMaterialInstanceDynamic> NeroTagMaterial;
+
+	UPROPERTY()
+	TObjectPtr<class UMaterialInstanceDynamic> NeroLineMaterial;
+
+	UPROPERTY()
+	TObjectPtr<class UMaterialInstanceDynamic> VergilTagMaterial;
+
+	UPROPERTY()
+	TObjectPtr<class UMaterialInstanceDynamic> VergilLineMaterial;
 
 	ECharacterType CharacterType = ECharacterType::None;
 	uint8 bIsHovered : 1;

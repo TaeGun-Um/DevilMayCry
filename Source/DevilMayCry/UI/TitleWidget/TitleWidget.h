@@ -85,6 +85,12 @@ private:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> TitleTextBox;
 
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MainMenuTextBox;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> ExitTextBox;
+
     // Animations
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Anykey Animation
     TObjectPtr<class UWidgetAnimation> BlinkAnimation;

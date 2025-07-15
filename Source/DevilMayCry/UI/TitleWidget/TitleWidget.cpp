@@ -36,9 +36,11 @@ bool UTitleWidget::Initialize()
         {
             StartButtonSlot->SetAnchors(FAnchors(0.5f, 0.5f)); // Button Center Ref.
             StartButtonSlot->SetAlignment(FVector2D(0.5f, 0.5f)); // Alignment
-            StartButtonSlot->SetPosition(FVector2D(0.0f, 160.f));
-            StartButtonSlot->SetSize(FVector2D(300.f, 50.f));
+            StartButtonSlot->SetPosition(FVector2D(0.0f, 190.f));
+            StartButtonSlot->SetSize(FVector2D(300.f, 60.f));
         }
+
+        TitleStartButton->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
     }
 
     if (TitleExitButton) // ExitButton Setting
@@ -52,9 +54,11 @@ bool UTitleWidget::Initialize()
         {
             ExitButtonSlot->SetAnchors(FAnchors(0.5f, 0.5f));
             ExitButtonSlot->SetAlignment(FVector2D(0.5f, 0.5f));
-            ExitButtonSlot->SetPosition(FVector2D(0.0f, 230.f));
-            ExitButtonSlot->SetSize(FVector2D(300.f, 50.f));
+            ExitButtonSlot->SetPosition(FVector2D(0.0f, 260.f));
+            ExitButtonSlot->SetSize(FVector2D(300.f, 60.f));
         }
+
+        TitleExitButton->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
     }
 
     // TitleSizeUpImage Setting
@@ -63,7 +67,7 @@ bool UTitleWidget::Initialize()
     {
         SizeImageSlot->SetAnchors(FAnchors(0.5f, 0.5f)); 
         SizeImageSlot->SetAlignment(FVector2D(0.5f, 0.5f));
-        SizeImageSlot->SetOffsets(FMargin(0.f, -700.f, 300.f, 50.f)); // Initial settings : Position, Size(Width, Height)
+        SizeImageSlot->SetOffsets(FMargin(0.f, -700.f, 300.f, 60.f)); // Initial settings : Position, Size(Width, Height)
     }
 
     // TitleTextBox Setting
@@ -77,11 +81,53 @@ bool UTitleWidget::Initialize()
         TitleTextBox->SetText(FText::FromString(TEXT("")));
     }
 
+    // TitleTextBox Setting
+    UCanvasPanelSlot* StartTextSlot = Cast<UCanvasPanelSlot>(MainMenuTextBox->Slot);
+    if (StartTextSlot)
+    {
+        StartTextSlot->SetAnchors(FAnchors(0.5f, 0.5f)); // Button Center Ref.
+        StartTextSlot->SetAlignment(FVector2D(0.5f, 0.5f)); // Alignment
+        StartTextSlot->SetPosition(FVector2D(0.0f, 180.f));
+        StartTextSlot->SetSize(FVector2D(300.f, 50.f));
+
+        FSlateFontInfo FontInfo;
+        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
+        FontInfo.TypefaceFontName = FName("Default");
+        FontInfo.Size = 40;
+        FontInfo.LetterSpacing = 100;
+
+        MainMenuTextBox->SetFont(FontInfo);
+        MainMenuTextBox->SetJustification(ETextJustify::Center);
+        MainMenuTextBox->SetText(FText::FromString(TEXT("Main Menu")));
+    }
+
+    // TitleTextBox Setting
+    UCanvasPanelSlot* ExitTextSlot = Cast<UCanvasPanelSlot>(ExitTextBox->Slot);
+    if (ExitTextSlot)
+    {
+        ExitTextSlot->SetAnchors(FAnchors(0.5f, 0.5f)); // Button Center Ref.
+        ExitTextSlot->SetAlignment(FVector2D(0.5f, 0.5f)); // Alignment
+        ExitTextSlot->SetPosition(FVector2D(0.0f, 250.f));
+        ExitTextSlot->SetSize(FVector2D(300.f, 50.f));
+
+        FSlateFontInfo FontInfo;
+        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
+        FontInfo.TypefaceFontName = FName("Default");
+        FontInfo.Size = 40;
+        FontInfo.LetterSpacing = 100;
+
+        ExitTextBox->SetFont(FontInfo);
+        ExitTextBox->SetJustification(ETextJustify::Center);
+        ExitTextBox->SetText(FText::FromString(TEXT("Exit")));
+    }
+
     MenuType = ETitleMenuType::None;
 
     // Before Activated, Hidden
     TitleStartButton->SetVisibility(ESlateVisibility::Hidden);
     TitleExitButton->SetVisibility(ESlateVisibility::Hidden);
+    MainMenuTextBox->SetVisibility(ESlateVisibility::Hidden);
+    ExitTextBox->SetVisibility(ESlateVisibility::Hidden);
 
     bIsHovered = false;
     bIsEnd = false;
@@ -111,6 +157,8 @@ void UTitleWidget::StartButtonHovered()
     }
 
     MenuType = ETitleMenuType::MainMenu;
+    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
+    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     // Move SizeImage when hovering
     UCanvasPanelSlot* StartButtonSlot = Cast<UCanvasPanelSlot>(TitleStartButton->Slot);
@@ -149,6 +197,8 @@ void UTitleWidget::ExitButtonHovered()
     }
 
     MenuType = ETitleMenuType::Exit;
+    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
 
     // Move SizeImage when hovering
     UCanvasPanelSlot* ExitButtonSlot = Cast<UCanvasPanelSlot>(TitleExitButton->Slot);
@@ -186,6 +236,8 @@ void UTitleWidget::SetVisibileButton()
 {
     TitleStartButton->SetVisibility(ESlateVisibility::Visible);
     TitleExitButton->SetVisibility(ESlateVisibility::Visible);
+    MainMenuTextBox->SetVisibility(ESlateVisibility::Visible);
+    ExitTextBox->SetVisibility(ESlateVisibility::Visible);
 }
 
 ETitleMenuType UTitleWidget::GetMenuType()
