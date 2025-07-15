@@ -10,15 +10,20 @@
 UENUM(BlueprintType)
 enum class EPlayerState :uint8
 {
-	IDLE		UMETA(DisplayName = "IDLE"),
-	RUN			UMETA(DisplayName = "RUN"),
-	JUMP		UMETA(DisplayName = "JUMP"),
-	FALL		UMETA(DisplayName = "FALL"),
-	ATTACK		UMETA(DisplayName = "ATTACK"),
-	EVADE		UMETA(DisplayName = "EVADE"),
-	LOCKON		UMETA(DisplayName = "LOCKON"),
-	JUMPBACK	UMETA(DisplayName = "JUMPBACK"),
-	COMBOCHECK	UMETA(DisplayName = "COMBOCHECK"),
+	IDLE				UMETA(DisplayName = "IDLE"),
+	RUN					UMETA(DisplayName = "RUN"),
+	JUMP				UMETA(DisplayName = "JUMP"),
+	FALL				UMETA(DisplayName = "FALL"),
+	ATTACK				UMETA(DisplayName = "ATTACK"),
+	EVADE				UMETA(DisplayName = "EVADE"),
+	LOCKON				UMETA(DisplayName = "LOCKON"),
+	JUMPBACK			UMETA(DisplayName = "JUMPBACK"),
+	COMBOCHECK			UMETA(DisplayName = "COMBOCHECK"),
+	Z_ACTION			UMETA(DisplayName = "Z_ACTION"),
+	R_CLICK				UMETA(DisplayName = "R_CLICK"),
+	R_CLICKDELAY		UMETA(DisplayName = "R_CLICKDELAY"),
+	SHIFTWHEELCLICK		UMETA(DisplayName = "SHIFTWHEELCLICK"),
+	WHEELCLICK			UMETA(DisplayName = "WHEELCLICK"),
 };
 
 
@@ -74,10 +79,14 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_LeftClickComplete();
 
-
-	virtual void RightClick();
-
-	virtual void WheelClick();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_WheelClickStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_WheelClickStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_WheelClickComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_WheelClickComplete();
 
 	virtual void EKey();
 
@@ -103,16 +112,41 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_SpaceKeyComplete();
 
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ZKeyStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ZKeyStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_ZKeyComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_ZKeyComplete();
 
-	virtual void DefaultEvade();
-	virtual void DefaultAttack();
-	virtual void DefaultJump(float JumpHeight, FVector2D Dir);
+	UFUNCTION(Server, Reliable)
+	virtual void Server_RightClickStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_RightClickStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_RightClickComplete();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_RightClickComplete();
 
-	UFUNCTION(BlueprintImplementableEvent)
+
+	virtual void LockOnEvade();
+	virtual void Attack();
+	virtual void Jumping(float JumpHeight, FVector2D Dir, bool bBack = false);
+	virtual void ZKeyStart();
+	virtual void ZKeyEnd();
+	virtual void RightClick();
+	virtual void Shift_WheelClick(); 
+	virtual void WheelClick();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	bool EnemyCameraCheck();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnemyCheck();
+
+	void WallCheck();
 
 
 	//PlayerState
@@ -126,9 +160,11 @@ protected:
 
 private:
 	void CameraInit();
+	void CenterCamera(float DeltaTime);
+	void ResetCamera(float DeltaTime);
 	void TurnToEnemy(float DeltaTime);
-	void LockOn();
-	void LockOff();
+	void LockOn(float DeltaTime);
+	void SetStrafe(bool Value);
 	void SetupFsm();
 
 	UFUNCTION(BlueprintCallable)
@@ -146,6 +182,8 @@ private:
 	//Move
 	float RunSpeed = 600.f;
 	float WalkSpeed = 400.f;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bMoveOk = true;
 	UPROPERTY(BlueprintReadOnly , meta = (AllowPrivateAccess = "true"))
 	FVector2D MoveDir = FVector2D::ZeroVector;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -171,7 +209,7 @@ private:
 	//LockOn
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
-	float LockOnRatio = 5.f;
+	float LockOnRatio = 10.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float SearchRadius = 2000.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -181,8 +219,21 @@ private:
 	//Attack
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int CurComboCount = 0;
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool bMoveOk = false;
-
 	bool bAttackKey = false;
+
+	//R Click
+	bool bRightClick = false;
+	float RightClickDelay = 0.f;
+
+
+	//AnimEnd
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool AnimEnd = false;
+
+
+	//WheelClickKey
+	bool bWheelClick = false;
+
+	//ZKey
+	bool bZKey = false;
 };

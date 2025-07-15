@@ -4,6 +4,8 @@
 #include "ParentCharacter.h"
 #include "../FsmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "../Enemy/EnemyBase.h"
 
 
 
@@ -17,14 +19,41 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			SetStrafe(false);
+			bMoveOk = true;
+			CurComboCount = 0;
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+				return;
+			}
+			if (!bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::WHEELCLICK);
+				return;
+			}
+
+			if (bZKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::Z_ACTION);
+				return;
+			}
+
 			if (bAttackKey == true)
 			{
-				DefaultAttack();
+				Attack();
+				return;
+			}
+
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
 			}
 
 			if (bLockOnKey == true)
@@ -62,14 +91,39 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			bMoveOk = true;
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+				return;
+			}
+			if (!bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::WHEELCLICK);
+				return;
+			}
+			if (bZKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::Z_ACTION);
+				return;
+			}
+
+
 			if (bAttackKey == true)
 			{
-				DefaultAttack();
+				Attack();
+				return;
+			}
+
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
 			}
 
 			if (GetCharacterMovement()->IsFalling())
@@ -107,14 +161,32 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJump(MaxJumpHeight,MoveDir);
+			Jumping(MaxJumpHeight, MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+				return;
+			}
+			if (!bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::WHEELCLICK);
+				return;
+			}
+			if (bZKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::Z_ACTION);
+				return;
+			}
+
+
 			if (bAttackKey == true)
 			{
-				DefaultAttack();
+				Attack();
+				return;
 			}
 
 			if (!GetCharacterMovement()->IsFalling())
@@ -126,7 +198,6 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			GetCharacterMovement()->GravityScale = 1.f;
 		}
 	);
 
@@ -134,13 +205,32 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			GetCharacterMovement()->GravityScale = 5.f;
 		},
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+				return;
+			}
+			if (!bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::WHEELCLICK);
+				return;
+			}
+			if (bZKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::Z_ACTION);
+				return;
+			}
+
+
 			if (bAttackKey == true)
 			{
-				DefaultAttack();
+				Attack();
+				return;
 			}
 
 			if (!GetCharacterMovement()->IsFalling())
@@ -152,6 +242,7 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
+			bMoveOk = true;
 		}
 	);
 
@@ -163,16 +254,13 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
-			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (bMoveOk || AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
-				if (bLockOnKey)
+				if (bLockOnKey && bWheelClick)
 				{
-					FsmComp->ChangeState(EPlayerState::LOCKON);
-				}
-				else
-				{
-					FsmComp->ChangeState(EPlayerState::IDLE);
+					FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+					return;
 				}
 			}
 		},
@@ -191,16 +279,24 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
+				if (bLockOnKey && bWheelClick)
+				{
+					FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+					return;
+				}
+
 				if (bLockOnKey)
 				{
 					FsmComp->ChangeState(EPlayerState::LOCKON);
+					return;
 				}
 				else
 				{
 					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
 				}
 			}
 		},
@@ -214,23 +310,44 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			SetStrafe(true);
 		},
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+				return;
+			}
+
 			if (bAttackKey == true)
 			{
-				DefaultAttack();
+				Attack();
+				return;
+			}
+			if (bZKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::Z_ACTION);
+				return;
+			}
+
+			if (bRightClick == true)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
 			}
 
 			if (bLockOnKey == false)
 			{
 				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
 			}
 
 			if (bJumpKey)
 			{
-				DefaultEvade();
+				LockOnEvade();
+				return;
 			}
 		},
 		//End
@@ -244,13 +361,12 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			DefaultJump(MaxJumpHeight,MoveDir);
+			Jumping(MaxJumpHeight, MoveDir, true);
 		},
 		//Update
 		[this](float DeltaTime)
 		{
-
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
 				if (GetCharacterMovement()->IsFalling())
@@ -268,7 +384,7 @@ void AParentCharacter::SetupFsm()
 				}
 
 				FsmComp->ChangeState(EPlayerState::IDLE);
-
+				return;
 			}
 		},
 		//End
@@ -288,14 +404,37 @@ void AParentCharacter::SetupFsm()
 		{
 			if (bAttackKey == true)
 			{
-				DefaultAttack();
+				Attack();
+				return;
 			}
 
-			TWeakObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (bMoveOk && MoveDir != FVector2D::ZeroVector)
+			{
+				if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+				{
+					AnimIns->StopAllMontages(0.25f);
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
+			}
+			if (bLockOnKey)
+			{
+				FsmComp->ChangeState(EPlayerState::LOCKON);
+				return;
+			}
 			if (AnimIns.Get() && !AnimIns->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EPlayerState::IDLE);
-				return;
+				if (GetCharacterMovement()->IsFalling())
+				{
+					FsmComp->ChangeState(EPlayerState::FALL);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
 			}
 		},
 		//End
@@ -303,6 +442,247 @@ void AParentCharacter::SetupFsm()
 		{
 		}
 	);
+
+	FsmComp->CreateState(EPlayerState::WHEELCLICK,
+		//Start
+		[this]()
+		{
+			bMoveOk = false;
+
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->GravityScale = 0.1f;
+			}
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->Velocity = FVector::ZeroVector;
+			}
+
+			if (AnimEnd)
+			{
+				if (GetCharacterMovement()->IsFalling())
+				{
+					FsmComp->ChangeState(EPlayerState::FALL);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
+			}
+		},
+		//End
+		[this]()
+		{
+			AnimEnd = false;
+		}
+	);
+
+	FsmComp->CreateState(EPlayerState::R_CLICK,
+		//Start
+		[this]()
+		{
+			bMoveOk = true;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			if (AnimEnd)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICKDELAY);
+				return;
+			}
+
+			if (LockOnEnemy != nullptr)
+			{
+				FVector Direction = LockOnEnemy->GetActorLocation() - GetActorLocation();
+
+				//서치 범위 벗어나면 종료
+				if (Direction.Length() > SearchRadius)
+				{
+					SetStrafe(false);
+					return;
+				}
+
+				TurnToEnemy(DeltaTime);
+			}
+		},
+		//End
+		[this]()
+		{
+
+			AnimEnd = false;
+		}
+	);
+
+
+	FsmComp->CreateState(EPlayerState::R_CLICKDELAY,
+		//Start
+		[this]()
+		{
+			bMoveOk = true;
+			RightClickDelay = 0.f;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			RightClickDelay += DeltaTime;
+
+			if (bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
+				return;
+			}
+			if (!bLockOnKey && bWheelClick)
+			{
+				FsmComp->ChangeState(EPlayerState::WHEELCLICK);
+				return;
+			}
+
+
+			if (bRightClick)
+			{
+				FsmComp->ChangeState(EPlayerState::R_CLICK);
+				return;
+			}
+
+			if (bJumpKey == true)
+			{
+				FsmComp->ChangeState(EPlayerState::JUMP);
+				return;
+			}
+
+			if (bLockOnKey)
+			{
+				FsmComp->ChangeState(EPlayerState::LOCKON);
+				bPrevEvade = true;
+				return;
+			}
+
+			if (RightClickDelay >= 1.f)
+			{
+				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
+			}
+
+
+			if (LockOnEnemy != nullptr)
+			{
+				FVector Direction = LockOnEnemy->GetActorLocation() - GetActorLocation();
+
+				//서치 범위 벗어나면 종료
+				if (Direction.Length() > SearchRadius)
+				{
+					SetStrafe(false);
+					return;
+				}
+
+				TurnToEnemy(DeltaTime);
+			}
+		},
+		//End
+		[this]()
+		{
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+			if (AnimIns.Get() && AnimIns->IsAnyMontagePlaying())
+			{
+				AnimIns->StopAllMontages(0.25f);
+			}
+
+			ZKeyEnd();
+		}
+	);
+
+	FsmComp->CreateState(EPlayerState::SHIFTWHEELCLICK,
+		//Start
+		[this]()
+		{
+			bMoveOk = false;
+			WallCheck();
+
+			Shift_WheelClick();
+
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->GravityScale = 0.1f;
+			}
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->Velocity = FVector::ZeroVector;
+			}
+
+			if (AnimEnd)
+			{
+				if (GetCharacterMovement()->IsFalling())
+				{
+					FsmComp->ChangeState(EPlayerState::FALL);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
+			}
+		},
+		//End
+		[this]()
+		{
+			AnimEnd = false;
+			bMoveOk = true;
+		}
+	);
+
+	FsmComp->CreateState(EPlayerState::Z_ACTION,
+		//Start
+		[this]()
+		{
+			bMoveOk = false;
+
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->GravityScale = 0.1f;
+			}
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->Velocity = FVector::ZeroVector;
+			}
+
+			if (AnimEnd)
+			{
+				if (GetCharacterMovement()->IsFalling())
+				{
+					FsmComp->ChangeState(EPlayerState::FALL);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EPlayerState::IDLE);
+					return;
+				}
+			}
+		},
+		//End
+		[this]()
+		{
+			AnimEnd = false; 
+			ZKeyEnd();
+		}
+	);
+
 
 	FsmComp->ChangeState(EPlayerState::IDLE);
 }

@@ -44,8 +44,8 @@ void ACharacterController::KeyBinding()
 	UEnhancedInputComponent* EIComp = Cast<UEnhancedInputComponent>(InputComponent);
 
 	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Triggered, this, &ACharacterController::MoveKey);
-	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Completed, this, &ACharacterController::MoveComplete)
-		;
+	EIComp->BindAction(InputActions->MoveInput, ETriggerEvent::Completed, this, &ACharacterController::MoveComplete);
+
 	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Started, this, &ACharacterController::JumpStart);
 	EIComp->BindAction(InputActions->JumpInput, ETriggerEvent::Completed, this, &ACharacterController::JumpComplete);
 
@@ -58,11 +58,16 @@ void ACharacterController::KeyBinding()
 	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Started, this, &ACharacterController::LeftClickStart);
 	EIComp->BindAction(InputActions->LeftClickInput, ETriggerEvent::Completed, this, &ACharacterController::LeftClickComplete);
 
-	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClick);
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Started, this, &ACharacterController::RightClickStart);
+	EIComp->BindAction(InputActions->RightClickInput, ETriggerEvent::Completed, this, &ACharacterController::RightClickComplete);
 
-	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClick);
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Started, this, &ACharacterController::WheelClickStart);
+	EIComp->BindAction(InputActions->WheelClickInput, ETriggerEvent::Completed, this, &ACharacterController::WheelClickComplete);
 
 	EIComp->BindAction(InputActions->EKeyInput, ETriggerEvent::Started, this, &ACharacterController::EKey);
+
+	EIComp->BindAction(InputActions->ZKeyInput, ETriggerEvent::Started, this, &ACharacterController::ZKeyStart);
+	EIComp->BindAction(InputActions->ZKeyInput, ETriggerEvent::Completed, this, &ACharacterController::ZKeyComplete);
 }
 
 
@@ -74,9 +79,9 @@ void ACharacterController::MoveKey(const FInputActionValue& Value)
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	
+
 	GetCharacter()->AddMovementInput(ForwardVector, MovementVector.Y);
 	GetCharacter()->AddMovementInput(RightVector, MovementVector.X);*/
 
@@ -198,14 +203,78 @@ void ACharacterController::LeftClickComplete(const FInputActionValue& Value)
 	}
 }
 
-void ACharacterController::RightClick(const FInputActionValue& Value)
+void ACharacterController::RightClickStart(const FInputActionValue& Value)
 {
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_RightClickStart();
+	}
+	else
+	{
+		ParentChar->Server_RightClickStart();
+	}
 }
 
-void ACharacterController::WheelClick(const FInputActionValue& Value)
+void ACharacterController::RightClickComplete(const FInputActionValue& Value)
 {
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_RightClickComplete();
+	}
+	else
+	{
+		ParentChar->Server_RightClickComplete();
+	}
+}
+
+void ACharacterController::WheelClickStart(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_WheelClickStart();
+	}
+	else
+	{
+		ParentChar->Server_WheelClickStart();
+	}
+}
+
+void ACharacterController::WheelClickComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_WheelClickComplete();
+	}
+	else
+	{
+		ParentChar->Server_WheelClickComplete();
+	}
 }
 
 void ACharacterController::EKey(const FInputActionValue& Value)
 {
+}
+
+void ACharacterController::ZKeyStart(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_ZKeyStart();
+	}
+	else
+	{
+		ParentChar->Server_ZKeyStart();
+	}
+}
+
+void ACharacterController::ZKeyComplete(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		ParentChar->Multicast_ZKeyComplete();
+	}
+	else
+	{
+		ParentChar->Server_ZKeyComplete();
+	}
 }

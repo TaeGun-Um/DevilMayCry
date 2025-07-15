@@ -3,15 +3,24 @@
 
 #include "Nero.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "ArmComponent.h"
+#include "SnatchActor.h"
+#include "../../Enemy/EnemyBase.h"
 
 ANero::ANero()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	ArmComp = CreateDefaultSubobject<UArmComponent>(TEXT("ArmComp"));
+	
 }
 
 void ANero::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Snatcher = GetWorld()->SpawnActor<ASnatchActor>(GetMesh()->GetBoneLocation("R_Forearm"), FRotator::ZeroRotator);
+	Snatcher->SetOwnerActor(this);
 }
 
 void ANero::Tick(float DeltaTime)
@@ -19,7 +28,7 @@ void ANero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ANero::DefaultAttack()
+void ANero::Attack()
 {
 	if (GetCharacterMovement()->IsFalling())
 	{
@@ -32,12 +41,12 @@ void ANero::DefaultAttack()
 
 }
 
-void ANero::DefaultEvade()
+void ANero::LockOnEvade()
 {
 	Evade();
 }
 
-void ANero::DefaultJump(float JumpHeight, FVector2D Dir)
+void ANero::Jumping(float JumpHeight, FVector2D Dir, bool bBack)
 {
 	GetCharacterMovement()->GravityScale = 5.f;
 
@@ -48,13 +57,43 @@ void ANero::DefaultJump(float JumpHeight, FVector2D Dir)
 	float VerticalSpeed = FMath::Sqrt(GravitySpeed * JumpHeight * 2.f);
 
 	//체공 시간 = 올라가는시간이 수직/중력 이니까 *2
-	float AirTime = 2.f * VerticalSpeed / GravitySpeed;
+	float AirTime =VerticalSpeed / GravitySpeed;
+
+	if (!bBack)
+	{
+		AirTime *= 2.f;
+	}
 
 	//수평 속도 = 공중에 있는 동안 이동해야하니까 거리/체공시간
 	float HorizontalSpeed = JumpDistance / AirTime;
 
-	FVector LaunchVel = FVector(Dir.X, Dir.Y, 0.f) * HorizontalSpeed + FVector::UpVector * VerticalSpeed;
+	FVector LaunchVel;
+	if (!bBack)
+	{
+		LaunchVel = FVector(Dir.X, Dir.Y, 0.f)* HorizontalSpeed + FVector::UpVector * VerticalSpeed;
+	}
+	else
+	{
+		LaunchVel = -GetActorForwardVector() * HorizontalSpeed + FVector::UpVector * VerticalSpeed;
+	}
 
 	//bool파라미터는 더해지는 가속도의 영향을 받을지
 	LaunchCharacter(LaunchVel, true, true);
+}
+
+void ANero::ZKeyStart()
+{
+}
+
+void ANero::ZKeyEnd()
+{
+	ArmComp->ChangeNextArm();
+}
+void ANero::Shift_WheelClick()
+{
+	Snatcher->StartFire(GetLockOnEnemy());
+}
+
+void ANero::WheelClick()
+{
 }
