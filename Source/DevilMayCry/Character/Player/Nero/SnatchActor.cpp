@@ -77,6 +77,7 @@ void ASnatchActor::Launch(float DeltaTime)
 	}
 	else if (bFire && bPullActor)
 	{
+
 		//ui 만들어지기 전까지 사용할 락온 디버깅용 구체
 		DrawDebugSphere(GetWorld(), GetActorLocation(), ColRadius, 12, FColor::Blue);
 
@@ -94,7 +95,8 @@ void ASnatchActor::Launch(float DeltaTime)
 			Reset();
 		}
 	}
-	else if (bFire && !bPullActor&& Ratio>=1.f)
+
+	if (bFire && !bPullActor&& Ratio>=1.f)
 	{
 		Reset();
 	}
