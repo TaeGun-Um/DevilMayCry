@@ -9,9 +9,9 @@
 UENUM(BlueprintType)
 enum class EMenuType : uint8
 {
-    MainMenu     UMETA(DisplayName = "MainMenu"),
+    Start            UMETA(DisplayName = "Start"),
     Setting         UMETA(DisplayName = "Setting"),
-    Exit              UMETA(DisplayName = "Exit"),
+    Prev             UMETA(DisplayName = "Prev"),
     None            UMETA(DisplayName = "None"),
 };
 
@@ -22,6 +22,40 @@ class DEVILMAYCRY_API USelectMenuWidget : public UUserWidget
 	
 public:
     void PlayFadeAnimation();
+
+    // Getter, Setter
+    EMenuType GetMenuType();
+    void SetUnHovered();
+    bool IsButtonHovered();
+    void SetIsEnd();
+    bool GetIsEnd();
+
+    UFUNCTION()
+    void StartButtonClicked();
+
+    UFUNCTION()
+    void StartButtonHovered();
+
+    UFUNCTION()
+    void StartButtonUnHovered();
+
+    UFUNCTION()
+    void SettingButtonClicked();
+
+    UFUNCTION()
+    void SettingButtonHovered();
+
+    UFUNCTION()
+    void SettingButtonUnHovered();
+
+    UFUNCTION()
+    void PrevButtonClicked();
+
+    UFUNCTION()
+    void PrevButtonHovered();
+
+    UFUNCTION()
+    void PrevButtonUnHovered();
 
 protected:
     virtual bool Initialize() override;
@@ -38,16 +72,33 @@ private:
     TObjectPtr<class UImage> MenuBGImage;
 
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> MenuSizeImage;
+
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> MenuStartButton;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> MenuSettingButton;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> MenuExitButton;
+    TObjectPtr<class UButton> MenuPrevButton;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MenuStartTextBox;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MenuSettingTextBox;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MenuPrevTextBox;
 
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
     TObjectPtr<class UWidgetAnimation> FadeAnimation;
 
+    UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
+    TObjectPtr<class UWidgetAnimation> SizeUpAnimation;
+
     EMenuType MenuType = EMenuType::None;
+    uint8 bIsHovered : 1;
+    uint8 bIsEnd : 1;
 };

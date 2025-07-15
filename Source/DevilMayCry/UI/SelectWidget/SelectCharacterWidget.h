@@ -52,6 +52,9 @@ protected:
 	virtual bool Initialize() override;
 
 private:
+	void ResetNeroSelect();
+	void ResetVergilSelect();
+
 	// BackGround Image
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UCanvasPanel> CharacterCanvas;
