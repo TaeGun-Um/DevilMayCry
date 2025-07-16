@@ -7,17 +7,6 @@
 #include "EnemyBase.generated.h"
 
 
-UENUM(BlueprintType)
-enum class EEnemyState :uint8
-{
-	IDLE		UMETA(DisplayName = "IDLE"),
-	PARRY		UMETA(DisplayName = "PARRY"),
-	RUN			UMETA(DisplayName = "RUN"),
-	HIT			UMETA(DisplayName = "HIT"),
-	ATTACK		UMETA(DisplayName = "ATTACK"),
-	DEAD		UMETA(DisplayName = "DEAD"),
-};
-
 UCLASS()
 class DEVILMAYCRY_API AEnemyBase : public ACharacter
 {
@@ -34,6 +23,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -44,10 +34,15 @@ public:
 	void RandomAttack();
 
 protected:
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	EEnemyState Fsm = EEnemyState::IDLE;
+	UFUNCTION(BlueprintImplementableEvent)
+	void DamagedAnimation(FVector Dir);
 
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AParentCharacter> TargetPlayer = nullptr;
+
+
+	//HP
+	float MaxHP = 100.f;
+	float CurHP = MaxHP;
 };

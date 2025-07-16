@@ -236,4 +236,9 @@ private:
 
 	//ZKey
 	bool bZKey = false;
+
+
+	//HP
+	float MaxHP = 100.f;
+	float CurHP = MaxHP;
 };
