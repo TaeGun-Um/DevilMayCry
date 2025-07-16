@@ -8,4 +8,5 @@ AUIGameModeBase::AUIGameModeBase()
 {
 	HUDClass = ATitleHUD::StaticClass();
 	DefaultPawnClass = nullptr;
+	bUseSeamlessTravel = false; // 이걸 해야 Scene전환 시 게임모드 변경됨
 }

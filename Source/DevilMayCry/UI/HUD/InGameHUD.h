@@ -14,4 +14,17 @@ class DEVILMAYCRY_API AInGameHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+    /////////////////// Common
+public:
+    AInGameHUD();
+
+    /////////////////// TitleStep
+public:
+
+protected:
+    virtual void BeginPlay() override;
+    virtual void Tick(float DeltaTime) override;
+
+    int Count = 0;
+    bool bLoggedOnce = false;
 };

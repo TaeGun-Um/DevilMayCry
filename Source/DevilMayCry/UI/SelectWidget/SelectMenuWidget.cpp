@@ -148,7 +148,9 @@ void USelectMenuWidget::PlayFadeAnimation()
 
 void USelectMenuWidget::StartButtonClicked()
 {
-    UGameplayStatics::OpenLevel(this, TEXT("Location2"));
+    // UGameplayStatics::OpenLevel(this, TEXT("Location2"));
+    // UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/Location2")));
+    GetWorld()->ServerTravel(TEXT("/Game/Scene/Location2?listen"), false);
 }
 
 void USelectMenuWidget::StartButtonHovered()
