@@ -488,6 +488,7 @@ void AParentCharacter::SetupFsm()
 		[this]()
 		{
 			bMoveOk = true;
+			SetStrafe(true);
 		},
 		//Update
 		[this](float DeltaTime)

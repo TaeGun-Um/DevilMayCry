@@ -29,22 +29,14 @@ class DEVILMAYCRY_API AEnemyController : public AAIController
 public:
 	AEnemyController();
 
-	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	UFUNCTION()
-	void StateUpdate();
-	UFUNCTION()
-	void TargetSearch(AActor* Actor, FAIStimulus AIStimulus);
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAIPerceptionComponent> AIPerceptionComp;
 protected:
+	virtual void BeginPlay() override;
 
 private:
-
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UBehaviorTree> EnemyBehaviorTree; 
-
 };

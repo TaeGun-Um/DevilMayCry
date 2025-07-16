@@ -11,9 +11,9 @@ UENUM(BlueprintType)
 enum class EEnemyState :uint8
 {
 	IDLE		UMETA(DisplayName = "IDLE"),
-	PATROL		UMETA(DisplayName = "PATROL"),
+	PARRY		UMETA(DisplayName = "PARRY"),
 	RUN			UMETA(DisplayName = "RUN"),
-	FALL		UMETA(DisplayName = "FALL"),
+	HIT			UMETA(DisplayName = "HIT"),
 	ATTACK		UMETA(DisplayName = "ATTACK"),
 	DEAD		UMETA(DisplayName = "DEAD"),
 };
@@ -39,11 +39,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWalkSpeed(float Value);
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RandomAttack();
+
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EEnemyState Fsm = EEnemyState::IDLE;
 
 private:
-
-private:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class AParentCharacter> TargetPlayer = nullptr;
 };

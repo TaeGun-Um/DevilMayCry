@@ -28,8 +28,6 @@ void AEnemyBase::Tick(float DeltaTime)
 }
 
 void AEnemyBase::SetWalkSpeed(float Value)
-{
-	
-	GetCharacterMovement()->MaxWalkSpeed = Value;
-	
+{	
+	GetCharacterMovement()->MaxWalkSpeed = Value;	
 }

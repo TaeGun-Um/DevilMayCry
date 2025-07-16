@@ -4,7 +4,7 @@
 #include "Empusa.h"
 #include "GameFramework/Controller.h"
 #include "AIController.h"
-#include "../EnemyController.h"
+#include "../AI/EnemyController.h"
 
 AEmpusa::AEmpusa()
 {
