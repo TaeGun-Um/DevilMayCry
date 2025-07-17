@@ -22,6 +22,8 @@ void AParentCharacter::SetupFsm()
 			SetStrafe(false);
 			bMoveOk = true;
 			CurComboCount = 0;
+			CurJumpCount = 0;
+			bCanNextJump = false;
 		},
 
 		//Update
@@ -161,11 +163,27 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			++CurJumpCount;
 			Jumping(MaxJumpHeight, MoveDir);
 		},
 		//Update
 		[this](float DeltaTime)
 		{
+			if (GetCharacterMovement()->Velocity.Z <0)
+			{
+				FsmComp->ChangeState(EPlayerState::FALL);
+				return;
+			}
+
+			if (bJumpKey == true&&bCanNextJump == true&& CurJumpCount<MaxJumpCount)
+			{
+				++CurJumpCount;
+				bCanNextJump = false;
+				Jumping(MaxJumpHeight, MoveDir);
+				FsmComp->ChangeState(EPlayerState::JUMP);
+				return;
+			}
+
 			if (bLockOnKey && bWheelClick)
 			{
 				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
@@ -181,7 +199,6 @@ void AParentCharacter::SetupFsm()
 				FsmComp->ChangeState(EPlayerState::Z_ACTION);
 				return;
 			}
-
 
 			if (bAttackKey == true)
 			{
@@ -210,6 +227,13 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bJumpKey == true && bCanNextJump == true && CurJumpCount < MaxJumpCount)
+			{
+				bCanNextJump = false;
+				FsmComp->ChangeState(EPlayerState::JUMP);
+				return;
+			}
+
 			if (bLockOnKey && bWheelClick)
 			{
 				FsmComp->ChangeState(EPlayerState::SHIFTWHEELCLICK);
@@ -225,7 +249,6 @@ void AParentCharacter::SetupFsm()
 				FsmComp->ChangeState(EPlayerState::Z_ACTION);
 				return;
 			}
-
 
 			if (bAttackKey == true)
 			{
@@ -250,6 +273,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			ToggleCollision(true);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -267,6 +291,7 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
+			ToggleCollision(false);
 		}
 	);
 
@@ -488,6 +513,8 @@ void AParentCharacter::SetupFsm()
 		[this]()
 		{
 			bMoveOk = true;
+			SetStrafe(true); 
+			RightClick();
 		},
 		//Update
 		[this](float DeltaTime)

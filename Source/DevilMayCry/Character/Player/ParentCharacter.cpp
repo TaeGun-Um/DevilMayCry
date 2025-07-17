@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -38,6 +39,7 @@ AParentCharacter::AParentCharacter()
 void AParentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	ToggleCollision(false);
 }
 
 // Called every frame
@@ -376,6 +378,18 @@ void AParentCharacter::WallCheck()
 	if (EnemyCameraCheck())
 	{
 		LockOnEnemy = nullptr;
+	}
+}
+
+void AParentCharacter::ToggleCollision(bool Value)
+{
+	if (Value)
+	{
+		SwordCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+	else
+	{
+		SwordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 

@@ -148,16 +148,22 @@ protected:
 
 	void WallCheck();
 
+	void ToggleCollision(bool Value);
 
-	//PlayerState
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
+
 
 protected:
 	//Jump
 	float MaxJumpHeight = 300.f;
 	float JumpDistance = 200.f;
 
+	//PlayerState
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
+
+	//Weapon
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCapsuleComponent> SwordCollision = nullptr;
 private:
 	void CameraInit();
 	void CenterCamera(float DeltaTime);
@@ -178,10 +184,11 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetKeyDir(const FVector2D& Value);
 
+
 private:
 	//Move
-	float RunSpeed = 600.f;
-	float WalkSpeed = 400.f;
+	const float RunSpeed = 600.f;
+	const float WalkSpeed = 400.f;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bMoveOk = true;
 	UPROPERTY(BlueprintReadOnly , meta = (AllowPrivateAccess = "true"))
@@ -192,6 +199,11 @@ private:
 	//Jump
 	bool bJumpKey = false;
 	FCollisionObjectQueryParams CheckParam;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int32 CurJumpCount = 0;
+	const int32 MaxJumpCount = 2;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bCanNextJump;
 
 	//Evade
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -209,7 +221,7 @@ private:
 	//LockOn
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AEnemyBase> LockOnEnemy = nullptr;
-	float LockOnRatio = 10.f;
+	const float LockOnRatio = 10.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float SearchRadius = 2000.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -236,4 +248,10 @@ private:
 
 	//ZKey
 	bool bZKey = false;
+
+
+	//HP
+	const float MaxHP = 100.f;
+	float CurHP = MaxHP;
+
 };

@@ -6,13 +6,23 @@
 #include "ArmComponent.h"
 #include "SnatchActor.h"
 #include "../../Enemy/EnemyBase.h"
+#include "Components/CapsuleComponent.h"
+#include "Engine/DamageEvents.h" 
 
 ANero::ANero()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
 	ArmComp = CreateDefaultSubobject<UArmComponent>(TEXT("ArmComp"));
-	
+
+	TObjectPtr<USkeletalMesh> SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Player/Vergil/Mesh/Vergil.Vergil'"));
+
+	if (SKM)
+	{
+		GetMesh()->SetSkeletalMesh(SKM);
+		SwordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollision"));
+		SwordCollision->SetupAttachment(GetMesh(), "L_Hand");
+	}
 }
 
 void ANero::BeginPlay()
@@ -21,6 +31,8 @@ void ANero::BeginPlay()
 
 	Snatcher = GetWorld()->SpawnActor<ASnatchActor>(GetMesh()->GetBoneLocation("R_Forearm"), FRotator::ZeroRotator);
 	Snatcher->SetOwnerActor(this);
+
+	SwordCollision->OnComponentBeginOverlap.AddDynamic(this, &ANero::OverlapBegin);
 }
 
 void ANero::Tick(float DeltaTime)
@@ -96,4 +108,30 @@ void ANero::Shift_WheelClick()
 
 void ANero::WheelClick()
 {
+}
+
+void ANero::RightClick()
+{
+	if (GetLockOnEnemy()==nullptr)
+	{
+		return;
+	}
+
+	FPointDamageEvent DamageEvent;
+
+	GetLockOnEnemy()->TakeDamage(GunDamage, DamageEvent,GetController(),this);
+}
+
+void ANero::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != this)
+	{
+		TObjectPtr<AEnemyBase> Enemy = Cast<AEnemyBase>(SweepResult.GetActor());
+		if (Enemy!= nullptr)
+		{			
+			FPointDamageEvent DamageEvent(SwordDamage, SweepResult, GetMesh()->GetRightVector(), nullptr);
+
+			Enemy->TakeDamage(SwordDamage, DamageEvent, GetController(), this);
+		}
+	}
 }

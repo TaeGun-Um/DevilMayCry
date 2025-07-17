@@ -20,21 +20,23 @@ public:
 	ANero();
 
 protected:
-	// Called when the game starts or when spawned
+	// Called when the game starts or when spawnedS
 	virtual void BeginPlay() override;
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
 protected:
 	virtual void Attack() override;
 	virtual void LockOnEvade() override;
-	virtual void Jumping(float JumpHeight, FVector2D Dir,bool bBack = false) override;
+	virtual void Jumping(float JumpHeight, FVector2D Dir, bool bBack = false) override;
 	virtual void ZKeyStart()override;
 	virtual void ZKeyEnd()override;
 	virtual void Shift_WheelClick()override;
 	virtual void WheelClick()override;
+	virtual void RightClick()override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -44,12 +46,21 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Evade();
-	
+
+	UFUNCTION()
+	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
+
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ASnatchActor> Snatcher = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UArmComponent> ArmComp = nullptr;
+
 private:
+	float SwordDamage = 10.f;
+	float GunDamage = 10.f;
+
 };
