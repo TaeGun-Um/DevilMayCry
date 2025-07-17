@@ -21,7 +21,6 @@ UArmComponent::UArmComponent()
 	if (Overture)
 	{
 		arrDevilBreaker[static_cast<int>(EArmType::OVERTURE)] = Overture;
-		UE_LOG(LogTemp, Warning, TEXT("Overture Load Success"));
 	}
 
 	TObjectPtr<USkeletalMesh> Gerbera = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/UI/UIMesh/NeroItemMesh/NeroArm/Gerbera/GerberaArmUI.GerberaArmUI'"));
@@ -29,7 +28,6 @@ UArmComponent::UArmComponent()
 	if (Gerbera)
 	{
 		arrDevilBreaker[static_cast<int>(EArmType::GERBERA)] = Gerbera;
-		UE_LOG(LogTemp, Warning, TEXT("Gerbera Load Success"));
 	}
 	
 	/*TObjectPtr<USkeletalMesh> Buster = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/UI/UIMesh/NeroItemMesh/NeroArm/Buster_Arm/BusterArmUI.BusterArmUI'"));
