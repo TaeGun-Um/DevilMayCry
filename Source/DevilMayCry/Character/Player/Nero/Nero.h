@@ -36,6 +36,7 @@ protected:
 	virtual void ZKeyEnd()override;
 	virtual void Shift_WheelClick()override;
 	virtual void WheelClick()override;
+	virtual void RightClick()override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
@@ -58,9 +59,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UArmComponent> ArmComp = nullptr;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCapsuleComponent> SwordCollision = nullptr;
 private:
 	float SwordDamage = 10.f;
+	float GunDamage = 10.f;
 
 };
