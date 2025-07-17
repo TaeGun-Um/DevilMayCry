@@ -6,7 +6,7 @@
 
 bool UBlackBGWidget::Initialize()
 {
-	Super::Initialize()
+	Super::Initialize();
 
 	return true;
 }
