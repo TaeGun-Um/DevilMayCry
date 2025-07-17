@@ -1,4 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AnimationWidget.h"
+#include "FSM.h"
+
+FSM::FSM()
+{
+}
+
+FSM::~FSM()
+{
+}

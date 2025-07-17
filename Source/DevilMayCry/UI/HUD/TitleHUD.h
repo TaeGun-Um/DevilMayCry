@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "DevilMayCry/UI/Interface/FSM.h"
 #include "TitleHUD.generated.h"
 
 /**
@@ -14,17 +15,35 @@ class DEVILMAYCRY_API ATitleHUD : public AHUD
 {
 	GENERATED_BODY()
 	
-    /////////////////// Common
 public:
     ATitleHUD();
-
-    /////////////////// TitleStep
-public:
 
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
 
+private:
+    void TitleStep();
+    void SelectStep();
+    void MenuStep();
+
+    UFUNCTION()
+    void TitleDelayEvent();
+
+    TArray<FKey> AllKeys;
+    FTimerHandle TitleLogoAnimEndHandle;
+    FSM TitleFSM;
+
+    bool bIsTitleLogoHandled = false;
+    bool bIsTitleDelayEventHandled = false;
+    bool bIsTitleMenuHandled = false;
+    bool bIsCharacterSelectHandle = false;
+    bool bIsMenuSelectHandle = false;
+
+    /// <summary>
+    /// Widget Value
+    /// </summary>
+private:
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> BGBlackWidgetClass;
 
@@ -40,53 +59,22 @@ protected:
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> MenuWidgetClass;
 
-private:
-     UPROPERTY()
-     TObjectPtr<class UBlackBGWidget> BGBlackWidgetInstance;
+    UPROPERTY()
+    TObjectPtr<class UBlackBGWidget> BGBlackWidgetInstance;
 
-     UPROPERTY()
-     TObjectPtr<class UTitleLogoWidget> TitleLogoWidgetInstance;
+    UPROPERTY()
+    TObjectPtr<class UTitleLogoWidget> TitleLogoWidgetInstance;
 
-     UPROPERTY()
-     TObjectPtr<class UTitleWidget> TitleWidgetInstance;
+    UPROPERTY()
+    TObjectPtr<class UTitleWidget> TitleWidgetInstance;
 
-     UPROPERTY()
-     TObjectPtr<class USelectCharacterWidget> CharacterWidgetInstance;
+    UPROPERTY()
+    TObjectPtr<class USelectCharacterWidget> CharacterWidgetInstance;
 
-     UPROPERTY()
-     TObjectPtr<class USelectMenuWidget> MenuWidgetInstance;
+    UPROPERTY()
+    TObjectPtr<class USelectMenuWidget> MenuWidgetInstance;
 
-     UPROPERTY()
-     TObjectPtr<class APlayerController> HUDPlayerController;
-
-     TArray<FKey> AllKeys;
-     FTimerHandle TitleLogoAnimEndHandle;
-
-     bool bIsTitleLogoHandled = false;
-     bool bIsTitleBackHandled = false;
-     bool bIsTitleMenuHandled = false;
-     bool bIsCharacterSelectHandle = false;
-     bool bIsMenuSelectHandle = false;
-
-     UFUNCTION()
-     void OnTitleLogoAnimEndDelay();
-
-     void TitleStep();
-
-     /////////////////// SelectStep
-public:
-
-protected:
-
-private:
-     void SelectStep();
-
-     /////////////////// MenuStep
-public:
-
-protected:
-
-private:
-    void MenuStep();
+    UPROPERTY()
+    TObjectPtr<class APlayerController> HUDPlayerController;
 
 };

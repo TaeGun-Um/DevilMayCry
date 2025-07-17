@@ -21,6 +21,7 @@ class DEVILMAYCRY_API USelectMenuWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+    // Animation
     void PlayFadeAnimation();
 
     // Getter, Setter
@@ -30,6 +31,7 @@ public:
     void SetIsEnd();
     bool GetIsEnd();
 
+    ///////////////// Start Button Options
     UFUNCTION()
     void StartButtonClicked();
 
@@ -39,6 +41,7 @@ public:
     UFUNCTION()
     void StartButtonUnHovered();
 
+    ///////////////// Setting Button Options
     UFUNCTION()
     void SettingButtonClicked();
 
@@ -48,6 +51,7 @@ public:
     UFUNCTION()
     void SettingButtonUnHovered();
 
+    ///////////////// Prev Button Options
     UFUNCTION()
     void PrevButtonClicked();
 
@@ -61,6 +65,16 @@ protected:
     virtual bool Initialize() override;
 
 private:
+    void VariableSetting();
+
+    EMenuType MenuType = EMenuType::None;
+    uint8 bIsHovered : 1;
+    uint8 bIsEnd : 1;
+
+/// <summary>
+/// Widget Value
+/// </summary>
+private:
     // BackGround Image
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> MenuCanvas;
@@ -73,6 +87,21 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> MenuSizeImage;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserBackImage;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage00;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage01;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage02;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage03;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> MenuStartButton;
@@ -91,6 +120,18 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MenuPrevTextBox;
+    
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox00;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox01;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox02;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox03;
 
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
     TObjectPtr<class UWidgetAnimation> FadeAnimation;
@@ -98,7 +139,4 @@ private:
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
     TObjectPtr<class UWidgetAnimation> SizeUpAnimation;
 
-    EMenuType MenuType = EMenuType::None;
-    uint8 bIsHovered : 1;
-    uint8 bIsEnd : 1;
 };

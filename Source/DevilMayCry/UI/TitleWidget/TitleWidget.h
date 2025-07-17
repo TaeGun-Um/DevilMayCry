@@ -22,18 +22,19 @@ class DEVILMAYCRY_API UTitleWidget : public UUserWidget
 
 public:
     // Getter, Setter
-    ETitleMenuType GetMenuType();
     void SetVisibileButton();
-    void SetUnHovered();
-    bool IsButtonHovered();
-    void SetIsEnd();
-    bool GetIsEnd(); // Is Game Start Select?
+    ETitleMenuType GetMenuType() { return MenuType; }
+    void SetUnHovered() { bIsHovered = false; }
+    bool IsButtonHovered() { return bIsHovered; }
+    void SetIsEnd() { bIsEnd = true; }
+    bool GetIsEnd() { return bIsEnd; }
 
     // Animation
-    void PlayBlinkAnimation();
+    void PlayFadeAnimation() { PlayAnimation(FadeAnimation); }
+    void PlayBlinkAnimation() { PlayAnimation(BlinkAnimation, 0.f, 0); }
     void StopBlinkAnimation();
 
-    // Start Button Options
+    ///////////////// Start Button Options
     UFUNCTION()
     void StartButtonClicked();
 
@@ -43,7 +44,7 @@ public:
     UFUNCTION()
     void StartButtonUnHovered();
 
-    // Exit Button Options
+    ///////////////// Exit Button Options
     UFUNCTION()
     void ExitButtonClicked();
 
@@ -57,6 +58,16 @@ public:
 protected:
     virtual bool Initialize() override;
 
+private:
+    void VariableSetting();
+
+    ETitleMenuType MenuType = ETitleMenuType::None;
+    uint8 bIsHovered : 1;
+    uint8 bIsEnd : 1;
+
+    /// <summary>
+    /// Widget Value
+    /// </summary>
 private:
     // BackGround Image
     UPROPERTY(meta = (BindWidget))
@@ -93,6 +104,9 @@ private:
 
     // Animations
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Anykey Animation
+    TObjectPtr<class UWidgetAnimation> FadeAnimation;
+
+    UPROPERTY(Meta = (BindWidgetAnim), Transient) // Anykey Animation
     TObjectPtr<class UWidgetAnimation> BlinkAnimation;
 
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Title Menu Select Animation
@@ -101,8 +115,5 @@ private:
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Title Menu Select Animation
     TObjectPtr<class UWidgetAnimation> SizeDownAnimation;
 
-    ETitleMenuType MenuType = ETitleMenuType::None;
-    uint8 bIsHovered : 1;
-    uint8 bIsEnd : 1;
 };
  

@@ -6,27 +6,7 @@
 
 bool UBlackBGWidget::Initialize()
 {
-	if (!Super::Initialize())
-	{
-		return false;
-	}
-
-	AnimationEndEventSetting();
+	Super::Initialize()
 
 	return true;
-}
-
-void UBlackBGWidget::PlayAnim()
-{
-	PlayAnimation(FadeAnimation);
-}
-
-void UBlackBGWidget::AnimationEndEventSetting()
-{
-	Super::AnimationEndEventSetting();
-
-	if (FadeAnimation)
-	{
-		BindToAnimationFinished(FadeAnimation, AnimationEndEvent);
-	}
 }

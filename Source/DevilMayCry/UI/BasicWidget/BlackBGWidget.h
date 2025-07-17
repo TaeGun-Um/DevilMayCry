@@ -15,21 +15,15 @@ class DEVILMAYCRY_API UBlackBGWidget : public UAnimationWidget
 	GENERATED_BODY()
 	
 public:
-    void PlayAnim();
 
 protected:
+    virtual bool Initialize() override;
 
 private:
-    virtual bool Initialize() override;
-    void AnimationEndEventSetting() override;
-
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> BlackCanvas;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> BGImage;
-
-    UPROPERTY(Meta = (BindWidgetAnim), Transient)
-    TObjectPtr<class UWidgetAnimation> FadeAnimation;
 
 };

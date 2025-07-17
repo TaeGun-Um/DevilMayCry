@@ -12,7 +12,119 @@
 bool UTitleWidget::Initialize()
 {
     Super::Initialize();
+    VariableSetting();
 
+    MenuType = ETitleMenuType::None;
+
+    // Before Activated, Hidden
+    TitleStartButton->SetVisibility(ESlateVisibility::Hidden);
+    TitleExitButton->SetVisibility(ESlateVisibility::Hidden);
+    MainMenuTextBox->SetVisibility(ESlateVisibility::Hidden);
+    ExitTextBox->SetVisibility(ESlateVisibility::Hidden);
+
+    bIsHovered = false;
+    bIsEnd = false;
+
+    return true;
+}
+
+void UTitleWidget::StartButtonClicked()
+{
+    SetIsEnd();
+    SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UTitleWidget::StartButtonHovered()
+{
+    bIsHovered = true;
+    TitleTextBox->SetText(FText::FromString(TEXT("Start the game")));
+    if (ETitleMenuType::MainMenu == MenuType)
+    {
+        return;
+    }
+
+    MenuType = ETitleMenuType::MainMenu;
+    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
+    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    // Move SizeImage when hovering
+    UCanvasPanelSlot* StartButtonSlot = Cast<UCanvasPanelSlot>(TitleStartButton->Slot);
+    if (StartButtonSlot)
+    {
+        FVector2D CurPos = StartButtonSlot->GetPosition();
+        UCanvasPanelSlot* SizeSlot = Cast<UCanvasPanelSlot>(TitleSizeImage->Slot);
+        if (SizeSlot)
+        {
+            SizeSlot->SetPosition(CurPos);
+        }
+    }
+
+    PlayAnimation(SizeUpAnimation);
+}
+
+void UTitleWidget::StartButtonUnHovered()
+{
+    SetUnHovered();
+}
+
+void UTitleWidget::ExitButtonClicked()
+{
+    UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
+}
+
+void UTitleWidget::ExitButtonHovered()
+{
+    bIsHovered = true;
+    TitleTextBox->SetText(FText::FromString(TEXT("Exit the game")));
+    if (ETitleMenuType::Exit == MenuType)
+    {
+        return;
+    }
+
+    MenuType = ETitleMenuType::Exit;
+    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
+
+    // Move SizeImage when hovering
+    UCanvasPanelSlot* ExitButtonSlot = Cast<UCanvasPanelSlot>(TitleExitButton->Slot);
+    if (ExitButtonSlot)
+    {
+        FVector2D CurPos = ExitButtonSlot->GetPosition();
+        UCanvasPanelSlot* SizeSlot = Cast<UCanvasPanelSlot>(TitleSizeImage->Slot);
+        if (SizeSlot)
+        {
+            SizeSlot->SetPosition(CurPos);
+        }
+    }
+
+    PlayAnimation(SizeUpAnimation);
+}
+
+void UTitleWidget::ExitButtonUnHovered()
+{
+    SetUnHovered();
+}
+
+void UTitleWidget::StopBlinkAnimation()
+{
+     if (IsAnimationPlaying(BlinkAnimation))
+     {
+         StopAnimation(BlinkAnimation);
+     }
+
+    TitleAnyKeyImage->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UTitleWidget::SetVisibileButton()
+{
+    TitleStartButton->SetVisibility(ESlateVisibility::Visible);
+    TitleExitButton->SetVisibility(ESlateVisibility::Visible);
+    MainMenuTextBox->SetVisibility(ESlateVisibility::Visible);
+    ExitTextBox->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UTitleWidget::VariableSetting()
+{
     if (TitleAnyKeyImage) // Anykey Image Setting
     {
         UCanvasPanelSlot* AnikeyImageSlot = Cast<UCanvasPanelSlot>(TitleAnyKeyImage->Slot);
@@ -65,7 +177,7 @@ bool UTitleWidget::Initialize()
     UCanvasPanelSlot* SizeImageSlot = Cast<UCanvasPanelSlot>(TitleSizeImage->Slot);
     if (SizeImageSlot)
     {
-        SizeImageSlot->SetAnchors(FAnchors(0.5f, 0.5f)); 
+        SizeImageSlot->SetAnchors(FAnchors(0.5f, 0.5f));
         SizeImageSlot->SetAlignment(FVector2D(0.5f, 0.5f));
         SizeImageSlot->SetOffsets(FMargin(0.f, -700.f, 300.f, 60.f)); // Initial settings : Position, Size(Width, Height)
     }
@@ -120,147 +232,4 @@ bool UTitleWidget::Initialize()
         ExitTextBox->SetJustification(ETextJustify::Center);
         ExitTextBox->SetText(FText::FromString(TEXT("Exit")));
     }
-
-    MenuType = ETitleMenuType::None;
-
-    // Before Activated, Hidden
-    TitleStartButton->SetVisibility(ESlateVisibility::Hidden);
-    TitleExitButton->SetVisibility(ESlateVisibility::Hidden);
-    MainMenuTextBox->SetVisibility(ESlateVisibility::Hidden);
-    ExitTextBox->SetVisibility(ESlateVisibility::Hidden);
-
-    bIsHovered = false;
-    bIsEnd = false;
-
-    return true;
-}
-
-void UTitleWidget::PlayBlinkAnimation()
-{
-    PlayAnimation(BlinkAnimation, 0.f, 0); // 0 is infinite-loop
-}
-
-void UTitleWidget::StartButtonClicked()
-{
-    SetIsEnd();
-    // UGameplayStatics::OpenLevel(this, TEXT("Location2"));
-    SetVisibility(ESlateVisibility::Hidden);
-}
-
-void UTitleWidget::StartButtonHovered()
-{
-    bIsHovered = true;
-    TitleTextBox->SetText(FText::FromString(TEXT("Start the game")));
-    if (ETitleMenuType::MainMenu == MenuType)
-    {
-        return;
-    }
-
-    MenuType = ETitleMenuType::MainMenu;
-    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
-    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
-
-    // Move SizeImage when hovering
-    UCanvasPanelSlot* StartButtonSlot = Cast<UCanvasPanelSlot>(TitleStartButton->Slot);
-    if (StartButtonSlot)
-    {
-        FVector2D CurPos = StartButtonSlot->GetPosition();
-        UCanvasPanelSlot* SizeSlot = Cast<UCanvasPanelSlot>(TitleSizeImage->Slot);
-        if (SizeSlot)
-        {
-            SizeSlot->SetPosition(CurPos);
-        }
-    }
-
-    PlayAnimation(SizeUpAnimation);
-}
-
-void UTitleWidget::StartButtonUnHovered()
-{
-    SetUnHovered();
-    // PlayAnimation(SizeDownAnimation);
-    // TitleTextBox->SetText(FText::FromString(TEXT("")));
-}
-
-void UTitleWidget::ExitButtonClicked()
-{
-    UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
-}
-
-void UTitleWidget::ExitButtonHovered()
-{
-    bIsHovered = true;
-    TitleTextBox->SetText(FText::FromString(TEXT("Exit the game")));
-    if (ETitleMenuType::Exit == MenuType)
-    {
-        return;
-    }
-
-    MenuType = ETitleMenuType::Exit;
-    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
-    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
-
-    // Move SizeImage when hovering
-    UCanvasPanelSlot* ExitButtonSlot = Cast<UCanvasPanelSlot>(TitleExitButton->Slot);
-    if (ExitButtonSlot)
-    {
-        FVector2D CurPos = ExitButtonSlot->GetPosition();
-        UCanvasPanelSlot* SizeSlot = Cast<UCanvasPanelSlot>(TitleSizeImage->Slot);
-        if (SizeSlot)
-        {
-            SizeSlot->SetPosition(CurPos);
-        }
-    }
-
-    PlayAnimation(SizeUpAnimation);
-}
-
-void UTitleWidget::ExitButtonUnHovered()
-{
-    SetUnHovered();
-    // PlayAnimation(SizeDownAnimation);
-    // TitleTextBox->SetText(FText::FromString(TEXT("")));
-}
-
-void UTitleWidget::StopBlinkAnimation()
-{
-     if (IsAnimationPlaying(BlinkAnimation))
-     {
-         StopAnimation(BlinkAnimation);
-     }
-
-    TitleAnyKeyImage->SetVisibility(ESlateVisibility::Hidden);
-}
-
-void UTitleWidget::SetVisibileButton()
-{
-    TitleStartButton->SetVisibility(ESlateVisibility::Visible);
-    TitleExitButton->SetVisibility(ESlateVisibility::Visible);
-    MainMenuTextBox->SetVisibility(ESlateVisibility::Visible);
-    ExitTextBox->SetVisibility(ESlateVisibility::Visible);
-}
-
-ETitleMenuType UTitleWidget::GetMenuType()
-{
-    return MenuType;
-}
-
-void UTitleWidget::SetUnHovered()
-{
-    bIsHovered = false;
-}
-
-bool UTitleWidget::IsButtonHovered()
-{
-    return bIsHovered;
-}
-
-void UTitleWidget::SetIsEnd()
-{
-    bIsEnd = true;
-}
-
-bool UTitleWidget::GetIsEnd()
-{
-    return bIsEnd;
 }

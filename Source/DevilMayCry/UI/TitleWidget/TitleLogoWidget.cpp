@@ -6,25 +6,15 @@
 
 bool UTitleLogoWidget::Initialize()
 {
-	if (!Super::Initialize())
-	{
-		return false;
-	}
-
-	AnimationEndEventSetting();
+	Super::Initialize();
+	VariableSetting();
 
 	return true;
 }
 
-void UTitleLogoWidget::PlayAnim()
+void UTitleLogoWidget::VariableSetting()
 {
-	PlayAnimation(FadeAnimation);
-}
-
-void UTitleLogoWidget::AnimationEndEventSetting()
-{
-	Super::AnimationEndEventSetting();
-
+	AnimationEndEvent.BindDynamic(this, &UTitleLogoWidget::SetAnimationEnd);
 	if (FadeAnimation)
 	{
 		BindToAnimationFinished(FadeAnimation, AnimationEndEvent);

@@ -15,12 +15,25 @@ class DEVILMAYCRY_API UTitleLogoWidget : public UAnimationWidget
 	GENERATED_BODY()
 	
 public:
-    void PlayAnim();
+    void PlayAnim() { PlayAnimation(FadeAnimation); };
+    bool IsAnimationEnd() const { return bIsAnimationEnd; }
+
+    UFUNCTION()
+    void SetAnimationEnd() { bIsAnimationEnd = true; }
+
+protected:
+    virtual bool Initialize() override;
 
 private:
-    virtual bool Initialize() override;
-    void AnimationEndEventSetting() override;
+    void VariableSetting();
 
+    FWidgetAnimationDynamicEvent AnimationEndEvent;
+    bool bIsAnimationEnd = false;
+
+    /// <summary>
+    /// Widget Value
+    /// </summary>
+private:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> TitleLogoCanvas;
 

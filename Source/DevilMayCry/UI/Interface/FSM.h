@@ -3,18 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "AnimationWidget.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class DEVILMAYCRY_API UAnimationWidget : public UUserWidget
+class DEVILMAYCRY_API FSM
 {
-	GENERATED_BODY()
-	
 public:
+	FSM();
+	~FSM();
 
 protected:
 

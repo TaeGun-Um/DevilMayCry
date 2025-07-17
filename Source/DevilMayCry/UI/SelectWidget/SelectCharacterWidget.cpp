@@ -10,11 +10,170 @@
 
 bool USelectCharacterWidget::Initialize()
 {
-    if (false == Super::Initialize())
+    Super::Initialize();
+    VariableSetting();
+
+    CharacterType = ECharacterType::None;
+
+    return true;
+}
+
+void USelectCharacterWidget::NeroButtonClicked()
+{
+    SetIsEnd();
+    ResetNeroSelect();
+    ResetVergilSelect();
+    CharacterType = ECharacterType::None;
+    SetVisibility(ESlateVisibility::Hidden);
+}
+
+void USelectCharacterWidget::NeroButtonHovered()
+{
+    bIsHovered = true;
+    if (ECharacterType::Nero == CharacterType)
     {
-        return false;
+        return;
     }
 
+    if (ECharacterType::Nero != CharacterType)
+    {
+        ResetVergilSelect();
+    }
+
+    CharacterType = ECharacterType::Nero;
+    PlayAnimation(NeroSelectAnimation);
+}
+
+void USelectCharacterWidget::NeroButtonUnHovered()
+{
+    SetUnHovered();
+}
+
+void USelectCharacterWidget::VergilButtonClicked()
+{
+    SetIsEnd();
+    ResetNeroSelect();
+    ResetVergilSelect();
+    CharacterType = ECharacterType::None;
+    SetVisibility(ESlateVisibility::Hidden);
+}
+
+void USelectCharacterWidget::VergilButtonHovered()
+{
+    bIsHovered = true;
+    if (ECharacterType::Vergil == CharacterType)
+    {
+        return;
+    }
+
+    if (ECharacterType::Vergil != CharacterType)
+    {
+        ResetNeroSelect();
+    }
+
+    CharacterType = ECharacterType::Vergil;
+    PlayAnimation(VergilSelectAnimation);
+}
+
+void USelectCharacterWidget::VergilButtonUnHovered()
+{
+    SetUnHovered();
+}
+
+void USelectCharacterWidget::ResetNeroSelect()
+{
+    if (IsAnimationPlaying(NeroSelectAnimation))
+    {
+        StopAnimation(NeroSelectAnimation);
+    }
+
+    UCanvasPanelSlot* CharacterImageSlot = Cast<UCanvasPanelSlot>(NeroBackImage->Slot);
+    if (CharacterImageSlot)
+    {
+        CharacterImageSlot->SetSize(FVector2D(450.f, 700.f));
+    }
+    UCanvasPanelSlot* NeroImageSlot = Cast<UCanvasPanelSlot>(NeroImage->Slot);
+    if (NeroImageSlot)
+    {
+        NeroImageSlot->SetSize(FVector2D(800.f, 800.f));
+    }
+    UCanvasPanelSlot* NeroTegImageSlot = Cast<UCanvasPanelSlot>(NeroTegImage->Slot);
+    if (NeroTegImageSlot)
+    {
+        NeroTegImageSlot->SetSize(FVector2D(480.f, 120.f));
+    }
+    UCanvasPanelSlot* NeroLineImageSlot = Cast<UCanvasPanelSlot>(NeroLineImage->Slot);
+    if (NeroLineImageSlot)
+    {
+        NeroLineImageSlot->SetSize(FVector2D(240.f, 4.f));
+    }
+    UCanvasPanelSlot* NeroTextSlot = Cast<UCanvasPanelSlot>(NeroTextBox->Slot);
+    if (NeroTextSlot)
+    {
+        NeroTextSlot->SetPosition(FVector2D(-380.0f, 155.f));
+    }
+    UCanvasPanelSlot* NeroEXTextSlot = Cast<UCanvasPanelSlot>(NeroExTextBox->Slot);
+    if (NeroEXTextSlot)
+    {
+        NeroEXTextSlot->SetPosition(FVector2D(-380.0f, 120.f));
+    }
+
+    NeroMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    NeroBackMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    NeroTagMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    NeroLineMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    NeroTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
+    NeroExTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
+}
+
+void USelectCharacterWidget::ResetVergilSelect()
+{
+    if (IsAnimationPlaying(VergilSelectAnimation))
+    {
+        StopAnimation(VergilSelectAnimation);
+    }
+
+    UCanvasPanelSlot* CharacterImageSlot = Cast<UCanvasPanelSlot>(VergilBackImage->Slot);
+    if (CharacterImageSlot)
+    {
+        CharacterImageSlot->SetSize(FVector2D(450.f, 700.f));
+    }
+    UCanvasPanelSlot* VergilImageSlot = Cast<UCanvasPanelSlot>(VergilImage->Slot);
+    if (VergilImageSlot)
+    {
+        VergilImageSlot->SetSize(FVector2D(800.f, 800.f));
+    }
+    UCanvasPanelSlot* VergilTegImageSlot = Cast<UCanvasPanelSlot>(VergilTegImage->Slot);
+    if (VergilTegImageSlot)
+    {
+        VergilTegImageSlot->SetSize(FVector2D(480.f, 120.f));
+    }
+    UCanvasPanelSlot* VergilLineImageSlot = Cast<UCanvasPanelSlot>(VergilLineImage->Slot);
+    if (VergilLineImageSlot)
+    {
+        VergilLineImageSlot->SetSize(FVector2D(240.f, 4.f));
+    }
+    UCanvasPanelSlot* VergilTextSlot = Cast<UCanvasPanelSlot>(VergilTextBox->Slot);
+    if (VergilTextSlot)
+    {
+        VergilTextSlot->SetPosition(FVector2D(420.0f, 155.f));
+    }
+    UCanvasPanelSlot* VergilEXTextSlot = Cast<UCanvasPanelSlot>(VergilExTextBox->Slot);
+    if (VergilEXTextSlot)
+    {
+        VergilEXTextSlot->SetPosition(FVector2D(420.0f, 120.f));
+    }
+
+    VergilMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    VergilBackMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    VergilTagMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    VergilLineMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
+    VergilTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
+    VergilExTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
+}
+
+void USelectCharacterWidget::VariableSetting()
+{
     if (NeroBackImage) // for Nero
     {
         UCanvasPanelSlot* CharacterImageSlot = Cast<UCanvasPanelSlot>(NeroBackImage->Slot);
@@ -115,7 +274,7 @@ bool USelectCharacterWidget::Initialize()
         }
     }
 
-    if (NeroLineImage) 
+    if (NeroLineImage)
     {
         UCanvasPanelSlot* NeroLineImageSlot = Cast<UCanvasPanelSlot>(NeroLineImage->Slot);
         if (NeroLineImageSlot)
@@ -287,192 +446,4 @@ bool USelectCharacterWidget::Initialize()
             VergilButtonSlot->SetSize(FVector2D(450.f, 700.f));
         }
     }
-
-    CharacterType = ECharacterType::None;
-
-    return true;
-}
-
-void USelectCharacterWidget::NeroButtonClicked()
-{
-    SetIsEnd();
-    ResetNeroSelect();
-    ResetVergilSelect();
-    CharacterType = ECharacterType::None;
-    SetVisibility(ESlateVisibility::Hidden);
-}
-
-void USelectCharacterWidget::NeroButtonHovered()
-{
-    bIsHovered = true;
-    if (ECharacterType::Nero == CharacterType)
-    {
-        return;
-    }
-
-    if (ECharacterType::Nero != CharacterType)
-    {
-        ResetVergilSelect();
-    }
-
-    CharacterType = ECharacterType::Nero;
-    PlayAnimation(NeroSelectAnimation);
-}
-
-void USelectCharacterWidget::NeroButtonUnHovered()
-{
-    SetUnHovered();
-}
-
-void USelectCharacterWidget::VergilButtonClicked()
-{
-    SetIsEnd();
-    ResetNeroSelect();
-    ResetVergilSelect();
-    CharacterType = ECharacterType::None;
-    SetVisibility(ESlateVisibility::Hidden);
-}
-
-void USelectCharacterWidget::VergilButtonHovered()
-{
-    bIsHovered = true;
-    if (ECharacterType::Vergil == CharacterType)
-    {
-        return;
-    }
-
-    if (ECharacterType::Vergil != CharacterType)
-    {
-        ResetNeroSelect();
-    }
-
-    CharacterType = ECharacterType::Vergil;
-    PlayAnimation(VergilSelectAnimation);
-}
-
-void USelectCharacterWidget::VergilButtonUnHovered()
-{
-    SetUnHovered();
-}
-
-void USelectCharacterWidget::PlayFadeAnimation()
-{
-    PlayAnimation(FadeAnimation);
-}
-
-ECharacterType USelectCharacterWidget::GetCharacterType()
-{
-    return CharacterType;
-}
-
-void USelectCharacterWidget::SetUnHovered()
-{
-    bIsHovered = false;
-}
-
-bool USelectCharacterWidget::IsButtonHovered()
-{
-    return bIsHovered;
-}
-
-void USelectCharacterWidget::SetIsEnd()
-{
-    bIsEnd = true;
-}
-
-bool USelectCharacterWidget::GetIsEnd()
-{
-    return bIsEnd;
-}
-
-void USelectCharacterWidget::ResetNeroSelect()
-{
-    if (IsAnimationPlaying(NeroSelectAnimation))
-    {
-        StopAnimation(NeroSelectAnimation);
-    }
-
-    UCanvasPanelSlot* CharacterImageSlot = Cast<UCanvasPanelSlot>(NeroBackImage->Slot);
-    if (CharacterImageSlot)
-    {
-        CharacterImageSlot->SetSize(FVector2D(450.f, 700.f));
-    }
-    UCanvasPanelSlot* NeroImageSlot = Cast<UCanvasPanelSlot>(NeroImage->Slot);
-    if (NeroImageSlot)
-    {
-        NeroImageSlot->SetSize(FVector2D(800.f, 800.f));
-    }
-    UCanvasPanelSlot* NeroTegImageSlot = Cast<UCanvasPanelSlot>(NeroTegImage->Slot);
-    if (NeroTegImageSlot)
-    {
-        NeroTegImageSlot->SetSize(FVector2D(480.f, 120.f));
-    }
-    UCanvasPanelSlot* NeroLineImageSlot = Cast<UCanvasPanelSlot>(NeroLineImage->Slot);
-    if (NeroLineImageSlot)
-    {
-        NeroLineImageSlot->SetSize(FVector2D(240.f, 4.f));
-    }
-    UCanvasPanelSlot* NeroTextSlot = Cast<UCanvasPanelSlot>(NeroTextBox->Slot);
-    if (NeroTextSlot)
-    {
-        NeroTextSlot->SetPosition(FVector2D(-380.0f, 155.f));
-    }
-    UCanvasPanelSlot* NeroEXTextSlot = Cast<UCanvasPanelSlot>(NeroExTextBox->Slot);
-    if (NeroEXTextSlot)
-    {
-        NeroEXTextSlot->SetPosition(FVector2D(-380.0f, 120.f));
-    }
-
-    NeroMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    NeroBackMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    NeroTagMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    NeroLineMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    NeroTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
-    NeroExTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
-}
-
-void USelectCharacterWidget::ResetVergilSelect()
-{
-    if (IsAnimationPlaying(VergilSelectAnimation))
-    {
-        StopAnimation(VergilSelectAnimation);
-    }
-
-    UCanvasPanelSlot* CharacterImageSlot = Cast<UCanvasPanelSlot>(VergilBackImage->Slot);
-    if (CharacterImageSlot)
-    {
-        CharacterImageSlot->SetSize(FVector2D(450.f, 700.f));
-    }
-    UCanvasPanelSlot* VergilImageSlot = Cast<UCanvasPanelSlot>(VergilImage->Slot);
-    if (VergilImageSlot)
-    {
-        VergilImageSlot->SetSize(FVector2D(800.f, 800.f));
-    }
-    UCanvasPanelSlot* VergilTegImageSlot = Cast<UCanvasPanelSlot>(VergilTegImage->Slot);
-    if (VergilTegImageSlot)
-    {
-        VergilTegImageSlot->SetSize(FVector2D(480.f, 120.f));
-    }
-    UCanvasPanelSlot* VergilLineImageSlot = Cast<UCanvasPanelSlot>(VergilLineImage->Slot);
-    if (VergilLineImageSlot)
-    {
-        VergilLineImageSlot->SetSize(FVector2D(240.f, 4.f));
-    }
-    UCanvasPanelSlot* VergilTextSlot = Cast<UCanvasPanelSlot>(VergilTextBox->Slot);
-    if (VergilTextSlot)
-    {
-        VergilTextSlot->SetPosition(FVector2D(420.0f, 155.f));
-    }
-    UCanvasPanelSlot* VergilEXTextSlot = Cast<UCanvasPanelSlot>(VergilExTextBox->Slot);
-    if (VergilEXTextSlot)
-    {
-        VergilEXTextSlot->SetPosition(FVector2D(420.0f, 120.f));
-    }
-
-    VergilMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    VergilBackMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    VergilTagMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    VergilLineMaterial->SetScalarParameterValue(FName("ColorAmount"), 0.0f);
-    VergilTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
-    VergilExTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f)));
 }

@@ -52,27 +52,16 @@ void ATitleHUD::BeginPlay()
     HUDPlayerController = GetOwningPlayerController();
 
     // 순서대로 Create해야 Widget이 위에 덮어 씌워짐
-    MenuWidgetInstance = CreateWidget<USelectMenuWidget>(GetWorld(), MenuWidgetClass);
-    CharacterWidgetInstance = CreateWidget<USelectCharacterWidget>(GetWorld(), CharacterWidgetClass);
-
-    TitleWidgetInstance = CreateWidget<UTitleWidget>(GetWorld(), TitleWidgetClass);
-    if (TitleWidgetClass)
-    {
-        TitleWidgetInstance->AddToViewport();
-    }
-
     BGBlackWidgetInstance = CreateWidget<UBlackBGWidget>(GetWorld(), BGBlackWidgetClass);
     if (BGBlackWidgetClass)
     {
         BGBlackWidgetInstance->AddToViewport();
     }
-
+    
+    MenuWidgetInstance = CreateWidget<USelectMenuWidget>(GetWorld(), MenuWidgetClass);
+    CharacterWidgetInstance = CreateWidget<USelectCharacterWidget>(GetWorld(), CharacterWidgetClass);
+    TitleWidgetInstance = CreateWidget<UTitleWidget>(GetWorld(), TitleWidgetClass);
     TitleLogoWidgetInstance = CreateWidget<UTitleLogoWidget>(GetWorld(), TitleLogoWidgetClass);
-    if (TitleLogoWidgetClass)
-    {
-        TitleLogoWidgetInstance->AddToViewport();
-        TitleLogoWidgetInstance->PlayAnim();
-    }
 
     if (HUDPlayerController)
     {
@@ -84,6 +73,9 @@ void ATitleHUD::BeginPlay()
         HUDPlayerController->SetInputMode(InputMode);
         HUDPlayerController->SetShowMouseCursor(true);
     }
+
+    TitleLogoWidgetInstance->AddToViewport();
+    TitleLogoWidgetInstance->PlayAnim();
 }
 
 void ATitleHUD::Tick(float DeltaTime)
@@ -104,32 +96,41 @@ void ATitleHUD::Tick(float DeltaTime)
     }
 }
 
+// BG Animation 바인딩용
+void ATitleHUD::TitleDelayEvent()
+{
+    bIsTitleDelayEventHandled = true;
+    TitleWidgetInstance->AddToViewport();
+}
+
 void ATitleHUD::TitleStep()
 {
-    // Logo Animation 종료 시
+    // Logo Animation End
     if (false == bIsTitleLogoHandled && TitleLogoWidgetInstance->IsAnimationEnd())
     {
         bIsTitleLogoHandled = true;
+
+        // 1초 후 Animation 실시
         TitleLogoWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
         GetWorldTimerManager().SetTimer(
             TitleLogoAnimEndHandle,
             this,
-            &ATitleHUD::OnTitleLogoAnimEndDelay,
+            &ATitleHUD::TitleDelayEvent,
             1.0f,
             false
         );
     }
 
-    // Fade Animation 종료 시
-    if (false == bIsTitleBackHandled && BGBlackWidgetInstance->IsAnimationEnd())
+    // Delay Event End
+    if (true == bIsTitleDelayEventHandled)
     {
-        bIsTitleBackHandled = true;
-        BGBlackWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-        TitleWidgetInstance->PlayBlinkAnimation(); // Press Any Key 재생
+        // TitleMenuWidget 등장 Animation
+        bIsTitleDelayEventHandled = false;
+        TitleWidgetInstance->PlayBlinkAnimation();
     }
 
-    // Any Key 입력 시 Animation 종료 및 타이틀 선택 창 생성
-    if (false == bIsTitleMenuHandled && true == bIsTitleLogoHandled && true == bIsTitleBackHandled)
+    // Any Key 입력 시 Animation 종료 및 TitleMenu 생성
+    if (false == bIsTitleMenuHandled && true == bIsTitleLogoHandled)
     {
         for (const FKey& Key : AllKeys)
         {
@@ -146,11 +147,11 @@ void ATitleHUD::TitleStep()
     // Title 메뉴 선택 창 활성화 상태
     if (true == bIsTitleMenuHandled)
     {
-        if (true == TitleWidgetInstance->IsButtonHovered())
+        if (true == TitleWidgetInstance->IsButtonHovered()) // 마우스 호버링 중에는 작동 X
         {
             return;
         }
-        else
+        else // 마우스 언호버링 중에 작동(키보드 입력)
         {
             ETitleMenuType TypeValue = TitleWidgetInstance->GetMenuType();
             switch (TypeValue)
@@ -192,13 +193,10 @@ void ATitleHUD::TitleStep()
             break;
             case ETitleMenuType::None:
             {
-                if (HUDPlayerController->WasInputKeyJustPressed(EKeys::Up))
+                if (HUDPlayerController->WasInputKeyJustPressed(EKeys::Up) ||
+                    HUDPlayerController->WasInputKeyJustPressed(EKeys::Down))
                 {
                     TitleWidgetInstance->StartButtonHovered();
-                }
-                else if (HUDPlayerController->WasInputKeyJustPressed(EKeys::Down))
-                {
-                    TitleWidgetInstance->ExitButtonHovered();
                 }
 
                 TitleWidgetInstance->SetUnHovered();
@@ -214,12 +212,6 @@ void ATitleHUD::TitleStep()
         CharacterWidgetInstance->PlayFadeAnimation();
         bIsCharacterSelectHandle = true;
     }
-}
-
-// BG Animation 바인딩용
-void ATitleHUD::OnTitleLogoAnimEndDelay()
-{
-    BGBlackWidgetInstance->PlayAnim();
 }
 
 void ATitleHUD::SelectStep()

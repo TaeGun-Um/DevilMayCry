@@ -20,16 +20,17 @@ class DEVILMAYCRY_API USelectCharacterWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void PlayFadeAnimation();
+	// Animation
+	void PlayFadeAnimation() { PlayAnimation(FadeAnimation); }
 
 	// Getter, Setter
-	ECharacterType GetCharacterType();
-	// void SetVisibileButton();
-	void SetUnHovered();
-	bool IsButtonHovered();
-	void SetIsEnd();
-	bool GetIsEnd();
+	ECharacterType GetCharacterType() { return CharacterType; }
+	void SetUnHovered() { bIsHovered = false; }
+	bool IsButtonHovered() { return bIsHovered; }
+	void SetIsEnd() { bIsEnd = true; }
+	bool GetIsEnd() { return bIsEnd; }
 
+	///////////////// Nero Button Options
 	UFUNCTION()
 	void NeroButtonClicked();
 
@@ -39,6 +40,7 @@ public:
 	UFUNCTION()
 	void NeroButtonUnHovered();
 
+	///////////////// Vergil Button Options
 	UFUNCTION()
 	void VergilButtonClicked();
 
@@ -52,9 +54,18 @@ protected:
 	virtual bool Initialize() override;
 
 private:
+	void VariableSetting();
 	void ResetNeroSelect();
 	void ResetVergilSelect();
 
+	ECharacterType CharacterType = ECharacterType::None;
+	uint8 bIsHovered : 1;
+	uint8 bIsEnd : 1;
+
+	/// <summary>
+	/// Widget Value
+	/// </summary>
+private:
 	// BackGround Image
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UCanvasPanel> CharacterCanvas;
@@ -116,7 +127,7 @@ private:
 	UPROPERTY(Meta = (BindWidgetAnim), Transient) // VergilSelect
 	TObjectPtr<class UWidgetAnimation> VergilSelectAnimation;
 
-	// Material
+	//////////////// Material for GrayScale
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> NeroBackMaterial;
 
@@ -140,8 +151,4 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> VergilLineMaterial;
-
-	ECharacterType CharacterType = ECharacterType::None;
-	uint8 bIsHovered : 1;
-	uint8 bIsEnd : 1;
 };

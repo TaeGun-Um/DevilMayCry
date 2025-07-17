@@ -24,10 +24,6 @@ class DEVILMAYCRY_API IUIAnimationInterface
 public:
 
 protected:
-	virtual void AnimInit();
-	virtual void PlayAnim();
-
-	uint8 bIsAnimFinished : 1;
 
 private:
 
