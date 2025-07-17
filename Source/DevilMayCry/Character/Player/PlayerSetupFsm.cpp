@@ -7,6 +7,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "../Enemy/EnemyBase.h"
 
+#include "Engine/DamageEvents.h" 
+#include "../DamageType/SnatchDamageType.h"
+
 
 
 void AParentCharacter::SetupFsm()
@@ -273,7 +276,6 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			ToggleCollision(true);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -291,7 +293,6 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			ToggleCollision(false);
 		}
 	);
 
@@ -666,6 +667,14 @@ void AParentCharacter::SetupFsm()
 		{
 			AnimEnd = false;
 			bMoveOk = true;
+
+			if (LockOnEnemy != nullptr)
+			{
+				//그랩엔 데미지를 0으로 해서 타격인걸 알리긴 해야함
+				FDamageEvent DamageEvent(USnatchDamageType::StaticClass());
+
+				LockOnEnemy->TakeDamage(0.f, DamageEvent, GetController(), this);
+			}
 		}
 	);
 
@@ -710,6 +719,22 @@ void AParentCharacter::SetupFsm()
 		}
 	);
 
+	FsmComp->CreateState(EPlayerState::DAMAGED,
+		//Start
+		[this]()
+		{
+			bMoveOk = false;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+
+		},
+		//End
+		[this]()
+		{
+		}
+	);
 
 	FsmComp->ChangeState(EPlayerState::IDLE);
 }

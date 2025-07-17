@@ -8,6 +8,7 @@
 #include "../../Enemy/EnemyBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h" 
+#include "../../DamageType/GeneralDamageType.h"
 
 ANero::ANero()
 {
@@ -117,9 +118,19 @@ void ANero::RightClick()
 		return;
 	}
 
-	FPointDamageEvent DamageEvent;
+	FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
 
 	GetLockOnEnemy()->TakeDamage(GunDamage, DamageEvent,GetController(),this);
+}
+
+void ANero::DamagedImpulse()
+{
+	DamagedImpulseAnim();
+}
+
+void ANero::Damagedgeneral()
+{
+	DamagedgeneralAnim();
 }
 
 void ANero::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -129,9 +140,22 @@ void ANero::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor
 		TObjectPtr<AEnemyBase> Enemy = Cast<AEnemyBase>(SweepResult.GetActor());
 		if (Enemy!= nullptr)
 		{			
-			FPointDamageEvent DamageEvent(SwordDamage, SweepResult, GetMesh()->GetRightVector(), nullptr);
+			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
 
 			Enemy->TakeDamage(SwordDamage, DamageEvent, GetController(), this);
 		}
 	}
 }
+
+void ANero::ToggleCollision(bool Value)
+{
+	if (Value)
+	{
+		SwordCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+	else
+	{
+		SwordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+

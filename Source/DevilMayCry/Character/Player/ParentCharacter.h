@@ -24,6 +24,7 @@ enum class EPlayerState :uint8
 	R_CLICKDELAY		UMETA(DisplayName = "R_CLICKDELAY"),
 	SHIFTWHEELCLICK		UMETA(DisplayName = "SHIFTWHEELCLICK"),
 	WHEELCLICK			UMETA(DisplayName = "WHEELCLICK"),
+	DAMAGED				UMETA(DisplayName = "DAMAGED"),
 };
 
 
@@ -50,6 +51,7 @@ public:
 	// Called to bind functionality to input
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 
@@ -57,6 +59,10 @@ public:
 	{
 		return LockOnEnemy;
 	}
+
+	virtual void DamagedImpulse();
+	virtual void Damagedgeneral();
+
 
 protected:
 	UFUNCTION(Server, Reliable)
@@ -148,9 +154,8 @@ protected:
 
 	void WallCheck();
 
-	void ToggleCollision(bool Value);
-
-
+	UFUNCTION(BlueprintCallable)
+	virtual void ToggleCollision(bool Value);
 
 protected:
 	//Jump
@@ -161,9 +166,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 
-	//Weapon
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCapsuleComponent> SwordCollision = nullptr;
 private:
 	void CameraInit();
 	void CenterCamera(float DeltaTime);

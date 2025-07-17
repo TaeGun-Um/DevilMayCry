@@ -5,13 +5,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/DamageEvents.h" 
+#include "../DamageType/DMC5DamageType.h"
 #include "Components/CapsuleComponent.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Net/UnrealNetwork.h"
 
 #include "../Enemy/EnemyBase.h"
-#include "../FsmComponent.h"
-
 
 #include "DrawDebugHelpers.h"
 
@@ -373,6 +371,15 @@ void AParentCharacter::WheelClick()
 {
 }
 
+void AParentCharacter::DamagedImpulse()
+{
+}
+
+void AParentCharacter::Damagedgeneral()
+{
+}
+
+
 void AParentCharacter::WallCheck()
 {
 	if (EnemyCameraCheck())
@@ -383,14 +390,20 @@ void AParentCharacter::WallCheck()
 
 void AParentCharacter::ToggleCollision(bool Value)
 {
-	if (Value)
+}
+
+float AParentCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Dmg = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	CurHP -= std::min(Dmg, CurHP);
+
+	if (DamageEvent.DamageTypeClass)
 	{
-		SwordCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		auto* DmgType = DamageEvent.DamageTypeClass->GetDefaultObject<UDMC5DamageType>();
+		DmgType->TypeProcess(this);
 	}
-	else
-	{
-		SwordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+	return Dmg;
 }
 
 

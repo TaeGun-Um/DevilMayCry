@@ -33,9 +33,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void RandomAttack();
 
+	void DamagedGeneral();
+	void DamagedSnatch();
+	void DamagedDefault();
+
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void DamagedAnimation(FVector Dir);
+
+	void DestroyCheck(float DeltaTime);
+
+	void AirCheck(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ToggleCollision(bool Value,uint8 Where = 0);
 
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -43,6 +54,21 @@ private:
 
 
 	//HP
-	float MaxHP = 100.f;
+	const float MaxHP = 100.f;
 	float CurHP = MaxHP;
+	bool bDead = false;
+	const float MaxDeadTime = 2.f;
+	float CurDeadTime = MaxDeadTime;
+
+	//HitGravity
+	const float AirGravity = 0.2f;
+	const float MaxAirTime = 1.f;
+	float CurAirTime = MaxAirTime;
+
+	//Snatch
+	bool bCanPull = true;
+
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 CollisionNum = 0;
 };
