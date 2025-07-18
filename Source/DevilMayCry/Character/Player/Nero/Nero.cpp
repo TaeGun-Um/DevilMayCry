@@ -34,6 +34,7 @@ void ANero::BeginPlay()
 	Snatcher->SetOwnerActor(this);
 
 	SwordCollision->OnComponentBeginOverlap.AddDynamic(this, &ANero::OverlapBegin);
+	SwordCollision->SetGenerateOverlapEvents(false);
 }
 
 void ANero::Tick(float DeltaTime)
@@ -149,13 +150,6 @@ void ANero::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor
 
 void ANero::ToggleCollision(bool Value)
 {
-	if (Value)
-	{
-		SwordCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	}
-	else
-	{
-		SwordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+	SwordCollision->SetGenerateOverlapEvents(Value);
 }
 

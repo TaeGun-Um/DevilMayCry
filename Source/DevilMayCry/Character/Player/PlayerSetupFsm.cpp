@@ -172,13 +172,13 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			if (GetCharacterMovement()->Velocity.Z <0)
+			if (GetCharacterMovement()->Velocity.Z < 0)
 			{
 				FsmComp->ChangeState(EPlayerState::FALL);
 				return;
 			}
 
-			if (bJumpKey == true&&bCanNextJump == true&& CurJumpCount<MaxJumpCount)
+			if (bJumpKey == true && bCanNextJump == true && CurJumpCount < MaxJumpCount)
 			{
 				++CurJumpCount;
 				bCanNextJump = false;
@@ -514,7 +514,7 @@ void AParentCharacter::SetupFsm()
 		[this]()
 		{
 			bMoveOk = true;
-			SetStrafe(true); 
+			SetStrafe(true);
 			RightClick();
 		},
 		//Update
@@ -714,7 +714,7 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			AnimEnd = false; 
+			AnimEnd = false;
 			ZKeyEnd();
 		}
 	);
@@ -728,6 +728,14 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+
+			if (!AnimIns->IsAnyMontagePlaying())
+			{
+				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
+			}
+
 
 		},
 		//End

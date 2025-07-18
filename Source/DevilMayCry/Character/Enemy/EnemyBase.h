@@ -47,6 +47,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void ToggleCollision(bool Value,uint8 Where = 0);
+	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

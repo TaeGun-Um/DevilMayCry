@@ -4,6 +4,7 @@
 #include "EnemyBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h" 
+#include "Components/ShapeComponent.h"
 #include "../DamageType/DMC5DamageType.h"
 
 // Sets default values

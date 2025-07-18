@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h" 
 #include "../DamageType/DMC5DamageType.h"
+#include "../FsmComponent.h"
+
 #include "Components/CapsuleComponent.h"
 
 #include "../Enemy/EnemyBase.h"
@@ -392,20 +394,6 @@ void AParentCharacter::ToggleCollision(bool Value)
 {
 }
 
-float AParentCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	float Dmg = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
-	CurHP -= std::min(Dmg, CurHP);
-
-	if (DamageEvent.DamageTypeClass)
-	{
-		auto* DmgType = DamageEvent.DamageTypeClass->GetDefaultObject<UDMC5DamageType>();
-		DmgType->TypeProcess(this);
-	}
-	return Dmg;
-}
-
 
 void AParentCharacter::Server_LeftClickStart_Implementation()
 {
@@ -435,4 +423,20 @@ void AParentCharacter::Server_ZKeyComplete_Implementation()
 void AParentCharacter::Multicast_ZKeyComplete_Implementation()
 {
 	bZKey = false;
+}
+
+float AParentCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Dmg = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	CurHP -= std::min(Dmg, CurHP);
+
+	FsmComp->ChangeState(EPlayerState::DAMAGED);
+
+	if (DamageEvent.DamageTypeClass)
+	{
+		auto* DmgType = DamageEvent.DamageTypeClass->GetDefaultObject<UDMC5DamageType>();
+		DmgType->TypeProcess(this);
+	}
+	return Dmg;
 }

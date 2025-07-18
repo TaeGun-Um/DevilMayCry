@@ -12,7 +12,6 @@
 UENUM(BlueprintType)
 enum class ECollisionSwitch :uint8
 {
-	NONE,
 	LEFT,
 	RIGHT,
 	ALL,
@@ -46,6 +45,7 @@ protected:
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void AttackCheck();
 protected:
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

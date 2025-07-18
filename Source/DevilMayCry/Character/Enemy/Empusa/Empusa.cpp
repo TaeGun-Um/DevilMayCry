@@ -6,11 +6,12 @@
 #include "Engine/DamageEvents.h" 
 #include "../../Player/ParentCharacter.h"
 #include "../../DamageType/GeneralDamageType.h"
-#include "../../DamageType/ImpulseDamageType.h"
 
 #include "GameFramework/Controller.h"
 #include "AIController.h"
 #include "../AI/EnemyController.h"
+
+#include "DrawDebugHelpers.h"
 
 AEmpusa::AEmpusa()
 {
@@ -25,6 +26,10 @@ AEmpusa::AEmpusa()
 		LeftHand->SetupAttachment(GetMesh(), "L_Hand");
 		RightHand = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHand"));
 		RightHand->SetupAttachment(GetMesh(), "R_Hand");
+
+		CollisionArray.SetNum(static_cast<uint8>(ECollisionSwitch::ALL));
+		CollisionArray[static_cast<uint8>(ECollisionSwitch::LEFT)] = LeftHand;
+		CollisionArray[static_cast<uint8>(ECollisionSwitch::RIGHT)] = RightHand;
 	}
 
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
@@ -34,10 +39,9 @@ AEmpusa::AEmpusa()
 void AEmpusa::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 	LeftHand->OnComponentBeginOverlap.AddDynamic(this, &AEmpusa::OverlapBegin);
 	RightHand->OnComponentBeginOverlap.AddDynamic(this, &AEmpusa::OverlapBegin);
+	ToggleCollision(false, ECollisionSwitch::ALL);
 }
 
 void AEmpusa::Tick(float DeltaTime)
@@ -54,49 +58,16 @@ void AEmpusa::ToggleCollision(bool Value, uint8 Where)
 
 void AEmpusa::ToggleCollision(bool Value, ECollisionSwitch Where)
 {
-	switch (Where)
+	if (Where == ECollisionSwitch::ALL)
 	{
-	case ECollisionSwitch::NONE:
-	{
+		for (auto Iter : CollisionArray)
+		{
+			Iter->SetGenerateOverlapEvents(Value);
+		}
 	}
-	case ECollisionSwitch::LEFT:
+	else
 	{
-		if (Value)
-		{
-			LeftHand->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		}
-		else
-		{
-			LeftHand->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-		break;
-	}
-	case ECollisionSwitch::RIGHT:
-	{
-		if (Value)
-		{
-			RightHand->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		}
-		else
-		{
-			RightHand->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-		break;
-	}
-	case ECollisionSwitch::ALL:
-	{
-		if (Value)
-		{
-			LeftHand->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			RightHand->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		}
-		else
-		{
-			LeftHand->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			RightHand->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-		break;
-	}
+		CollisionArray[static_cast<uint8>(Where)]->SetGenerateOverlapEvents(Value);
 	}
 }
 
@@ -107,7 +78,7 @@ void AEmpusa::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
 		if (Enemy != nullptr)
 		{
-			FDamageEvent DamageEvent(UImpulseDamageType::StaticClass());
+			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
 
 			Enemy->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 		}
