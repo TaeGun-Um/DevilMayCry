@@ -30,8 +30,25 @@ bool UTitleWidget::Initialize()
 
 void UTitleWidget::StartButtonClicked()
 {
-    SetIsEnd();
-    SetVisibility(ESlateVisibility::Hidden);
+    MenuType = ETitleMenuType::None;
+
+    TitleTextBox->SetText(FText::FromString(TEXT("")));
+    MainMenuTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    ExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    TitleAnyKeyImage->SetVisibility(ESlateVisibility::Visible);
+    TitleStartButton->SetVisibility(ESlateVisibility::Hidden);
+    TitleExitButton->SetVisibility(ESlateVisibility::Hidden);
+    MainMenuTextBox->SetVisibility(ESlateVisibility::Hidden);
+    ExitTextBox->SetVisibility(ESlateVisibility::Hidden);
+
+    UCanvasPanelSlot* SizeImageSlot = Cast<UCanvasPanelSlot>(TitleSizeImage->Slot);
+    if (SizeImageSlot)
+    {
+        SizeImageSlot->SetOffsets(FMargin(0.f, -700.f, 300.f, 60.f));
+    }
+
+    bIsEnd = true;
 }
 
 void UTitleWidget::StartButtonHovered()

@@ -20,11 +20,10 @@ bool USelectCharacterWidget::Initialize()
 
 void USelectCharacterWidget::NeroButtonClicked()
 {
-    SetIsEnd();
     ResetNeroSelect();
     ResetVergilSelect();
     CharacterType = ECharacterType::None;
-    SetVisibility(ESlateVisibility::Hidden);
+    bIsEnd = true;
 }
 
 void USelectCharacterWidget::NeroButtonHovered()
@@ -51,11 +50,10 @@ void USelectCharacterWidget::NeroButtonUnHovered()
 
 void USelectCharacterWidget::VergilButtonClicked()
 {
-    SetIsEnd();
     ResetNeroSelect();
     ResetVergilSelect();
     CharacterType = ECharacterType::None;
-    SetVisibility(ESlateVisibility::Hidden);
+    bIsEnd = true;
 }
 
 void USelectCharacterWidget::VergilButtonHovered()

@@ -15,7 +15,7 @@ class DEVILMAYCRY_API UTitleLogoWidget : public UAnimationWidget
 	GENERATED_BODY()
 	
 public:
-    void PlayAnim() { PlayAnimation(FadeAnimation); };
+    void PlayFadeAnimation() { PlayAnimation(FadeAnimation); };
     bool IsAnimationEnd() const { return bIsAnimationEnd; }
 
     UFUNCTION()

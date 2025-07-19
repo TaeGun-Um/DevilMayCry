@@ -27,7 +27,7 @@ public:
 	ECharacterType GetCharacterType() { return CharacterType; }
 	void SetUnHovered() { bIsHovered = false; }
 	bool IsButtonHovered() { return bIsHovered; }
-	void SetIsEnd() { bIsEnd = true; }
+	void SetIsEnd(bool _IsEnd) { bIsEnd = _IsEnd; }
 	bool GetIsEnd() { return bIsEnd; }
 
 	///////////////// Nero Button Options

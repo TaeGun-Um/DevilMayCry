@@ -7,6 +7,16 @@
 #include "DevilMayCry/UI/Interface/FSM.h"
 #include "TitleHUD.generated.h"
 
+UENUM(BlueprintType)
+enum class ETitleFSMState : uint8
+{
+    LOGO,
+    TITLE,
+    CHARACTERSELECT,
+    MENU,
+    NONE UMETA(Hidden)
+};
+
 /**
  * 
  */
@@ -23,20 +33,20 @@ protected:
     virtual void Tick(float DeltaTime) override;
 
 private:
-    void TitleStep();
-    void SelectStep();
-    void MenuStep();
+    void ClassSetting();
+    void VariableSetting();
+    void CreateFSM();
 
     UFUNCTION()
     void TitleDelayEvent();
 
-    TArray<FKey> AllKeys;
     FTimerHandle TitleLogoAnimEndHandle;
-    FSM TitleFSM;
+    TArray<FKey> AllKeys;
+    ETitleFSMState State;
+    TObjectPtr<class UFSM> TitleFSM;
 
-    bool bIsTitleLogoHandled = false;
-    bool bIsTitleDelayEventHandled = false;
-    bool bIsTitleMenuHandled = false;
+    bool bIsLogoHandled = false;
+    bool bIsAnykeyHandled = false;
     bool bIsCharacterSelectHandle = false;
     bool bIsMenuSelectHandle = false;
 

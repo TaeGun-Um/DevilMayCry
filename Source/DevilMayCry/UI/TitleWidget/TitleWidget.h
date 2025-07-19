@@ -26,7 +26,7 @@ public:
     ETitleMenuType GetMenuType() { return MenuType; }
     void SetUnHovered() { bIsHovered = false; }
     bool IsButtonHovered() { return bIsHovered; }
-    void SetIsEnd() { bIsEnd = true; }
+    void SetIsEnd(bool _IsEnd) { bIsEnd = _IsEnd; }
     bool GetIsEnd() { return bIsEnd; }
 
     // Animation
