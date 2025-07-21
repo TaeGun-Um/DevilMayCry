@@ -6,6 +6,9 @@
 #include "Engine/DamageEvents.h" 
 #include "Components/ShapeComponent.h"
 #include "../DamageType/DMC5DamageType.h"
+#include "AIController.h"
+#include "../Player/ParentCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AEnemyBase::AEnemyBase()
@@ -21,6 +24,7 @@ void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AiController = Cast<AAIController>(GetController());
 }
 
 // Called every frame
@@ -85,8 +89,63 @@ void AEnemyBase::AirCheck(float DeltaTime)
 	}
 }
 
-void AEnemyBase::ToggleCollision(bool Value,uint8 Where)
+void AEnemyBase::TurnToTarget(float DeltaTime)
 {
+	if (TargetPlayer != nullptr)
+	{
+		FVector Direction = TargetPlayer->GetActorLocation() - GetActorLocation();
+
+		//액터 방향 돌리기
+		FRotator SmoothRot = FMath::RInterpTo(GetActorForwardVector().Rotation(), Direction.Rotation().GetNormalized(), DeltaTime, 1.f);
+		SmoothRot.Roll = 0.f;
+		SmoothRot.Pitch = 0.f;
+
+		SetActorRotation(SmoothRot);
+	}
+
+}
+
+void AEnemyBase::ToggleCollision(bool Value, uint8 Where)
+{
+}
+
+bool AEnemyBase::LimitAngleOver(float Limit)
+{
+	FVector Forward = GetActorForwardVector();
+	Forward.Z = 0;
+	Forward.Normalize();
+
+	FVector ToTarget = TargetPlayer->GetActorLocation() - GetActorLocation();
+	ToTarget.Z = 0;
+	ToTarget.Normalize();
+
+	//내적으로 코사인
+	float Dot = FVector::DotProduct(Forward, ToTarget);
+	//외적으로 Z축
+	float CrossZ = FVector::CrossProduct(Forward, ToTarget).Z;
+	//아크탄젠트로 라디안 각도
+	float Angle = FMath::Abs(FMath::RadiansToDegrees(FMath::Atan2(CrossZ, Dot)));
+
+	if (Limit < Angle)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void AEnemyBase::TurnToActor(float DeltaTime)
+{
+	FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPlayer->GetActorLocation());
+	Rotation.Pitch = 0;
+	Rotation.Roll = 0;
+
+	// 부드럽게 보간
+	Rotation = FMath::RInterpConstantTo(GetActorRotation(), Rotation, DeltaTime, 360.f);
+	SetActorRotation(Rotation);
+
 }
 
 void AEnemyBase::DamagedGeneral()

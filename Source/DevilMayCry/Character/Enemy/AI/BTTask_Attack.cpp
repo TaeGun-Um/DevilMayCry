@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	Enemy->RandomAttack();
+	//Enemy->RandomAttack();
 
 	return EBTNodeResult::Succeeded;
 }

@@ -10,11 +10,21 @@
  * 
  */
 UENUM(BlueprintType)
-enum class ECollisionSwitch :uint8
+enum class EEmpusaCollision :uint8
 {
 	LEFT,
 	RIGHT,
 	ALL,
+};
+
+UENUM(BlueprintType)
+enum class EEmpusaFsm :uint8
+{
+	IDLE,
+	RUN,
+	ATTACK,
+	DAMAGED,
+	DEAD,
 };
 
 UCLASS()
@@ -36,8 +46,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void ToggleCollision(bool Value, uint8 Where);
-	void ToggleCollision(bool Value, ECollisionSwitch Where);
+	virtual void ToggleCollision(bool Value, uint8 Where)override;
+	void ToggleCollision(bool Value, EEmpusaCollision Where);
 
 public:
 
@@ -45,8 +55,15 @@ protected:
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void AttackCheck();
+	void SetupFsm();
+
+
+	virtual void DamagedDefault() override;
+
+
 protected:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> Fsmcomp = nullptr;
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCapsuleComponent> LeftHand = nullptr;
@@ -54,5 +71,4 @@ protected:
 	TObjectPtr<class UCapsuleComponent> RightHand = nullptr;
 
 private:
-	float AttackDamage = 10.f;
 };

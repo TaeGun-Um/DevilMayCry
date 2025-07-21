@@ -9,6 +9,23 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class EAngeloCollision :uint8
+{
+	SWORD,
+	ALL,
+};
+
+UENUM(BlueprintType)
+enum class EAngeloFsm :uint8
+{
+	IDLE,
+	RUN,
+	ATTACK,
+	DAMAGED,
+	DEAD,
+};
+
 UCLASS()
 class DEVILMAYCRY_API AAngelo : public AEnemyBase
 {
@@ -28,10 +45,27 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void ToggleCollision(bool Value, uint8 Where)override;
+	void ToggleCollision(bool Value, EAngeloCollision Where);
 
 public:
 
 protected:
+	UFUNCTION()
+	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void SetupFsm();
+
+
+	virtual void DamagedDefault() override;
+
+
+protected:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
+	//Weapon
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCapsuleComponent> Sword = nullptr;
 private:
+
 };
