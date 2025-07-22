@@ -155,8 +155,17 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::ATTACK);
-				return;
+				int Random = FMath::RandRange(0, 6);
+				if (Random)
+				{
+					FsmComp->ChangeState(EAngeloFsm::ATTACK);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EAngeloFsm::RAKURAI);
+					return;
+				}
 			}
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > DengekiStart)
