@@ -7,6 +7,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "../Enemy/EnemyBase.h"
 
+#include "Engine/DamageEvents.h" 
+#include "../DamageType/SnatchDamageType.h"
+
 
 
 void AParentCharacter::SetupFsm()
@@ -169,13 +172,13 @@ void AParentCharacter::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			if (GetCharacterMovement()->Velocity.Z <0)
+			if (GetCharacterMovement()->Velocity.Z < 0)
 			{
 				FsmComp->ChangeState(EPlayerState::FALL);
 				return;
 			}
 
-			if (bJumpKey == true&&bCanNextJump == true&& CurJumpCount<MaxJumpCount)
+			if (bJumpKey == true && bCanNextJump == true && CurJumpCount < MaxJumpCount)
 			{
 				++CurJumpCount;
 				bCanNextJump = false;
@@ -273,7 +276,6 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
-			ToggleCollision(true);
 		},
 		//Update
 		[this](float DeltaTime)
@@ -291,7 +293,6 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			ToggleCollision(false);
 		}
 	);
 
@@ -513,7 +514,7 @@ void AParentCharacter::SetupFsm()
 		[this]()
 		{
 			bMoveOk = true;
-			SetStrafe(true); 
+			SetStrafe(true);
 			RightClick();
 		},
 		//Update
@@ -666,6 +667,14 @@ void AParentCharacter::SetupFsm()
 		{
 			AnimEnd = false;
 			bMoveOk = true;
+
+			if (LockOnEnemy != nullptr)
+			{
+				//그랩엔 데미지를 0으로 해서 타격인걸 알리긴 해야함
+				FDamageEvent DamageEvent(USnatchDamageType::StaticClass());
+
+				LockOnEnemy->TakeDamage(0.f, DamageEvent, GetController(), this);
+			}
 		}
 	);
 
@@ -705,11 +714,35 @@ void AParentCharacter::SetupFsm()
 		//End
 		[this]()
 		{
-			AnimEnd = false; 
+			AnimEnd = false;
 			ZKeyEnd();
 		}
 	);
 
+	FsmComp->CreateState(EPlayerState::DAMAGED,
+		//Start
+		[this]()
+		{
+			bMoveOk = false;
+		},
+		//Update
+		[this](float DeltaTime)
+		{
+			TObjectPtr<UAnimInstance> AnimIns = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+
+			if (!AnimIns->IsAnyMontagePlaying())
+			{
+				FsmComp->ChangeState(EPlayerState::IDLE);
+				return;
+			}
+
+
+		},
+		//End
+		[this]()
+		{
+		}
+	);
 
 	FsmComp->ChangeState(EPlayerState::IDLE);
 }

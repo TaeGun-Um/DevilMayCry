@@ -38,6 +38,15 @@ protected:
 	virtual void WheelClick()override;
 	virtual void RightClick()override;
 
+
+
+	virtual void DamagedImpulse()override;
+	virtual void Damagedgeneral()override;
+
+
+
+	virtual void ToggleCollision(bool Value)override;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void RedQueenCombo();
 
@@ -46,6 +55,12 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Evade();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DamagedImpulseAnim();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DamagedgeneralAnim();
 
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -58,6 +73,10 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UArmComponent> ArmComp = nullptr;
+
+	//Weapon
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCapsuleComponent> SwordCollision = nullptr;
 
 private:
 	float SwordDamage = 10.f;

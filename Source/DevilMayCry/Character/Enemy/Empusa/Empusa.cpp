@@ -2,69 +2,234 @@
 
 
 #include "Empusa.h"
-#include "GameFramework/Controller.h"
+#include "Components/CapsuleComponent.h"
+#include "Engine/DamageEvents.h" 
+#include "../../Player/ParentCharacter.h"
+#include "../../DamageType/GeneralDamageType.h"
+#include "../../FsmComponent.h"
 #include "AIController.h"
+
+#include "GameFramework/Controller.h"
 #include "../AI/EnemyController.h"
+
+#include "DrawDebugHelpers.h"
 
 AEmpusa::AEmpusa()
 {
-	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
-	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-
-
-	ConstructorHelpers::FObjectFinder<AController> AIController(TEXT("/Script/Engine.Blueprint'/Game/Enemy/BP_EnemyController.BP_EnemyController'"));
-
-	//AI컨트롤러 세팅
-	//TObjectPtr<UClass> AIController = LoadObject<UClass>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Enemy/BP_EnemyController.BP_EnemyController'"));
-
-	if (AIController.Succeeded())
-	{
-		AIControllerClass = AIController.Object.GetClass();
-		AutoPossessAI = EAutoPossessAI::Spawned;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AIController Fail"));
-	}
-	//AIControllerClass = AEnemyController
-}
-
-void AEmpusa::BeginPlay()
-{
-	Super::BeginPlay();
-
 	//메시 세팅
 	TObjectPtr<USkeletalMesh> SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Enemy/Empusa/mesh/em0100.em0100'"));
 
 	if (SKM)
 	{
 		GetMesh()->SetSkeletalMesh(SKM);
+
+		LeftHand = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHand"));
+		LeftHand->SetupAttachment(GetMesh(), "L_Hand");
+		RightHand = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHand"));
+		RightHand->SetupAttachment(GetMesh(), "R_Hand");
+
+		CollisionArray.SetNum(static_cast<uint8>(EEmpusaCollision::ALL));
+		CollisionArray[static_cast<uint8>(EEmpusaCollision::LEFT)] = LeftHand;
+		CollisionArray[static_cast<uint8>(EEmpusaCollision::RIGHT)] = RightHand;
 	}
 
+	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
+	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	/*
-	//애니메이션 세팅
-	UAnimBlueprint* AnimSeq = LoadObject<UAnimBlueprint>(nullptr, TEXT("/Script/Engine.AnimBlueprint'/Game/Player/Nero/ABP_Nero.ABP_Nero'"));
+	SetupFsm();
+}
 
-	if (AnimSeq)
-	{
-		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-		GetMesh()->SetAnimInstanceClass(*AnimSeq->GeneratedClass);
-		UE_LOG(LogTemp, Warning, TEXT("Anim success"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Anim Fail"));
-	}*/
+void AEmpusa::BeginPlay()
+{
+	Super::BeginPlay();
 
-
+	LeftHand->OnComponentBeginOverlap.AddDynamic(this, &AEmpusa::OverlapBegin);
+	RightHand->OnComponentBeginOverlap.AddDynamic(this, &AEmpusa::OverlapBegin);
+	ToggleCollision(false, EEmpusaCollision::ALL);
 }
 
 void AEmpusa::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void AEmpusa::ToggleCollision(bool Value, uint8 Where)
+{
+	ToggleCollision(Value, static_cast<EEmpusaCollision>(Where));
+}
 
+void AEmpusa::ToggleCollision(bool Value, EEmpusaCollision Where)
+{
+	if (Where == EEmpusaCollision::ALL)
+	{
+		for (auto Iter : CollisionArray)
+		{
+			Iter->SetGenerateOverlapEvents(Value);
+		}
+	}
+	else
+	{
+		CollisionArray[static_cast<uint8>(Where)]->SetGenerateOverlapEvents(Value);
+	}
+}
+
+void AEmpusa::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != this)
+	{
+		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
+		if (Enemy != nullptr)
+		{
+			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
+
+			Enemy->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		}
+	}
+}
+
+void AEmpusa::SetupFsm()
+{
+	FsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("EmpusaFsmComp"));
+	FsmComp->SetIsReplicated(true);
+
+	FsmComp->CreateState(EEmpusaFsm::IDLE,
+		//Start
+		[this]()
+		{
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			if (TargetPlayer != nullptr)
+			{
+				FsmComp->ChangeState(EEmpusaFsm::RUN);
+				return;
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->CreateState(EEmpusaFsm::RUN,
+		//Start
+		[this]()
+		{
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			auto Result = AiController->MoveToActor(TargetPlayer);
+
+			if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
+			{
+				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
+				return;
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->CreateState(EEmpusaFsm::ATTACK,
+		//Start
+		[this]()
+		{
+			RandomAttack();
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			{
+				if (TargetPlayer&&LimitAngleOver(LimitAngle))
+				{
+					TurnToActor(DeltaTime);
+				}
+				else
+				{
+					if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
+					{
+						FsmComp->ChangeState(EEmpusaFsm::RUN);
+						return;
+					}
+					else
+					{
+						RandomAttack();
+					}
+				}
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->CreateState(EEmpusaFsm::DAMAGED,
+		//Start
+		[this]()
+		{
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			{
+				if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
+				{
+					FsmComp->ChangeState(EEmpusaFsm::RUN);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EEmpusaFsm::ATTACK);
+					return;
+				}
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->CreateState(EEmpusaFsm::DEAD,
+		//Start
+		[this]()
+		{
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->ChangeState(EEmpusaFsm::IDLE);
+}
+
+void AEmpusa::DamagedDefault()
+{
+	FsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+
+	DamagedAnimation(FVector::ZeroVector);
 }
 
 void AEmpusa::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

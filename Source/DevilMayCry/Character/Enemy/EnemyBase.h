@@ -30,19 +30,68 @@ public:
 	void SetWalkSpeed(float Value);
 
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void RandomAttack();
+	virtual void DamagedGeneral();
+	virtual void DamagedSnatch();
+	virtual void DamagedDefault();
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
-	void DamagedAnimation(FVector Dir);
+	void RandomAttack();
 
-private:
+
+	void DestroyCheck(float DeltaTime);
+
+	void AirCheck(float DeltaTime);
+
+	void TurnToTarget(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ToggleCollision(bool Value,uint8 Where = 0);
+
+	bool LimitAngleOver(float Limit);
+
+	void TurnToActor(float DeltaTime);
+
+	void SetCollisionNum(int32 Num)
+	{
+		CollisionNum = Num;
+	}
+
+
+	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
+
+
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AParentCharacter> TargetPlayer = nullptr;
+
+	TObjectPtr<class AAIController> AiController = nullptr;
+
+	TObjectPtr<class UAnimInstance> AnimInst = nullptr;
 
 
 	//HP
 	float MaxHP = 100.f;
 	float CurHP = MaxHP;
+	bool bDead = false;
+	const float MaxDeadTime = 2.f;
+	float CurDeadTime = MaxDeadTime;
+
+	//Attack
+	float AttackDamage = 10.f;
+	float AttackRange = 170.f;
+	const float LimitAngle = 5.f;
+
+	//HitGravity
+	const float AirGravity = 0.2f;
+	const float MaxAirTime = 1.f;
+	float CurAirTime = MaxAirTime;
+
+	//Snatch
+	bool bCanPull = true;
+
+	
+private:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 CollisionNum = 0;
+
 };
