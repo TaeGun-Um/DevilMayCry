@@ -14,6 +14,7 @@ enum class ETitleFSMState : uint8
     TITLE,
     CHARACTERSELECT,
     MENU,
+    MULTIPLAY,
     NONE UMETA(Hidden)
 };
 
@@ -43,6 +44,8 @@ private:
     FTimerHandle TitleLogoAnimEndHandle;
     TArray<FKey> AllKeys;
     ETitleFSMState State;
+
+    UPROPERTY()
     TObjectPtr<class UFSM> TitleFSM;
 
     bool bIsLogoHandled = false;
@@ -69,6 +72,9 @@ private:
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> MenuWidgetClass;
 
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> MultiPlayWidgetClass;
+
     UPROPERTY()
     TObjectPtr<class UBlackBGWidget> BGBlackWidgetInstance;
 
@@ -83,6 +89,9 @@ private:
 
     UPROPERTY()
     TObjectPtr<class USelectMenuWidget> MenuWidgetInstance;
+
+    UPROPERTY()
+    TObjectPtr<class USelectMultiplayWidget> MultiPlayWidgetInstance;
 
     UPROPERTY()
     TObjectPtr<class APlayerController> HUDPlayerController;

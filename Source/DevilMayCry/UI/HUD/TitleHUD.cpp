@@ -8,6 +8,7 @@
 #include "DevilMayCry/UI/TitleWidget/TitleWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectCharacterWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectMenuWidget.h"
+#include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 ATitleHUD::ATitleHUD()
@@ -25,7 +26,11 @@ void ATitleHUD::BeginPlay()
 void ATitleHUD::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    TitleFSM->Update(DeltaTime);
+    
+    if (IsValid(TitleFSM))
+    {
+        TitleFSM->Update(DeltaTime);
+    }
 }
 
 // BG Animation 바인딩용
@@ -254,16 +259,59 @@ void ATitleHUD::CreateFSM()
         },
         .Update = [this](float DeltaTime)  // Update
         {
+            if (true == MenuWidgetInstance->GetIsChangeLocation2())
+            {
 
+            }
+            if (true == MenuWidgetInstance->GetIsChangeMulti())
+            {
+                TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MULTIPLAY));
+            }
+            if (true == MenuWidgetInstance->GetIsChangePrev())
+            {
+                TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::CHARACTERSELECT));
+            }
         },
         .End = [this]() // End
         {
             MenuWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+            MenuWidgetInstance->SetIsChangeLocation2(false);
+            MenuWidgetInstance->SetIsChangeMulti(false);
+            MenuWidgetInstance->SetIsChangePrev(false);
         }
         }
     );
 
-    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+    // Multiplay
+    TitleFSM->CreateState({
+        .StateValue = static_cast<int64>(ETitleFSMState::MULTIPLAY),
+        .Start = [this]()  // Start
+        {
+            MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+            MultiPlayWidgetInstance->PlayFadeAnimation();
+        },
+        .Update = [this](float DeltaTime)  // Update
+        {
+            if (true == MultiPlayWidgetInstance->GetIsChangeLocation2())
+            {
+
+            }
+
+            if (true == MultiPlayWidgetInstance->GetIsChangeMenu())
+            {
+                TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+            }
+        },
+        .End = [this]() // End
+        {
+            MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+            MultiPlayWidgetInstance->SetIsChangeLocation2(false);
+            MultiPlayWidgetInstance->SetIsChangeMenu(false);
+        }
+        }
+    );
+
+    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::LOGO));
 }
 
 void ATitleHUD::ClassSetting()
@@ -298,6 +346,12 @@ void ATitleHUD::ClassSetting()
         MenuWidgetClass = MenuWidgetClassFinder.Class;
     }
 
+    static ConstructorHelpers::FClassFinder<UUserWidget> MultiWidgetClassFinder(TEXT("/Game/UI/Select/WBP_SelectMultiplayWidget"));
+    if (MultiWidgetClassFinder.Succeeded())
+    {
+        MultiPlayWidgetClass = MultiWidgetClassFinder.Class;
+    }
+
     EKeys::GetAllKeys(AllKeys);
 }
 
@@ -308,6 +362,10 @@ void ATitleHUD::VariableSetting()
     // 순서대로 Create해야 Widget이 위에 덮어 씌워짐
     BGBlackWidgetInstance = CreateWidget<UBlackBGWidget>(GetWorld(), BGBlackWidgetClass);
     BGBlackWidgetInstance->AddToViewport();
+
+    MultiPlayWidgetInstance = CreateWidget<USelectMultiplayWidget>(GetWorld(), MultiPlayWidgetClass);
+    MultiPlayWidgetInstance->AddToViewport();
+    MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 
     MenuWidgetInstance = CreateWidget<USelectMenuWidget>(GetWorld(), MenuWidgetClass);
     MenuWidgetInstance->AddToViewport();

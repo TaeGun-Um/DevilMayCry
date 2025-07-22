@@ -13,6 +13,10 @@ bool USelectMenuWidget::Initialize()
 {
     Super::Initialize();
     VariableSetting();
+    bIsExtraWindowsHandled = false;
+    bIsChangeLocation2 = false;
+    bIsChangeMultiMenu = false;
+    bIsChangePrev = false;
 
 	return true;
 }
@@ -26,7 +30,7 @@ void USelectMenuWidget::PlayFadeAnimation()
 /////////////////////////////////////////////////////////////
 void USelectMenuWidget::StartButtonClicked()
 {
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -38,7 +42,7 @@ void USelectMenuWidget::StartButtonClicked()
 
 void USelectMenuWidget::StartButtonHovered()
 {
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -91,7 +95,7 @@ void USelectMenuWidget::StartButtonUnHovered()
 {
     SetUnHovered();
 
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -102,19 +106,19 @@ void USelectMenuWidget::StartButtonUnHovered()
 
 void USelectMenuWidget::SettingButtonClicked()
 {
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
 
-    bIsMultiplayHandled = true;
+    bIsExtraWindowsHandled = true;
     MessageBox00Visible();
     PlayAnimation(MultiplayAnimation);
 }
 
 void USelectMenuWidget::SettingButtonHovered()
 {
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -167,7 +171,7 @@ void USelectMenuWidget::SettingButtonUnHovered()
 {
     SetUnHovered();
 
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -178,15 +182,45 @@ void USelectMenuWidget::SettingButtonUnHovered()
 
 void USelectMenuWidget::PrevButtonClicked()
 {
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
+
+    bIsHovered = false;
+    MenuType = EMenuType::None;
+
+    UCanvasPanelSlot* MenuStartTextSlot = Cast<UCanvasPanelSlot>(MenuStartTextBox->Slot);
+    if (MenuStartTextSlot)
+    {
+        MenuStartTextSlot->SetPosition(FVector2D(160.0f, -200.f));
+    }
+    UCanvasPanelSlot* MenuSettingTextSlot = Cast<UCanvasPanelSlot>(MenuSettingTextBox->Slot);
+    if (MenuSettingTextSlot)
+    {
+        MenuSettingTextSlot->SetPosition(FVector2D(160.0f, -120.f));
+    }
+    UCanvasPanelSlot* MenuPrevTextSlot = Cast<UCanvasPanelSlot>(MenuPrevTextBox->Slot);
+    if (MenuPrevTextSlot)
+    {
+        MenuPrevTextSlot->SetPosition(FVector2D(160.0f, -40.f));
+    }
+    UCanvasPanelSlot* SizeImageSlot = Cast<UCanvasPanelSlot>(MenuSizeImage->Slot);
+    if (SizeImageSlot)
+    {
+        SizeImageSlot->SetPosition(FVector2D(0.f, -700.f));
+    }
+
+    MenuSettingTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    MenuPrevTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    MenuStartTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SetIsChangePrev();
 }
 
 void USelectMenuWidget::PrevButtonHovered()
 {
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -239,7 +273,7 @@ void USelectMenuWidget::PrevButtonUnHovered()
 {
     SetUnHovered();
 
-    if (true == bIsMultiplayHandled)
+    if (true == bIsExtraWindowsHandled)
     {
         return;
     }
@@ -342,9 +376,9 @@ void USelectMenuWidget::JoinButtonUnHovered()
 
 void USelectMenuWidget::ResetClicked()
 {
-    if (bIsMultiplayHandled)
+    if (bIsExtraWindowsHandled)
     {
-        bIsMultiplayHandled = false;
+        bIsExtraWindowsHandled = false;
         MessageBox00Hidden();
         MenuType = EMenuType::None;
     }
@@ -367,7 +401,7 @@ void USelectMenuWidget::ResetClicked()
 
 void USelectMenuWidget::YesButtonClicked()
 {
-    bIsMultiplayHandled = false;
+    bIsExtraWindowsHandled = false;
     bIsHovered = false;
     MenuType = EMenuType::None;
     MessageBox00Hidden();
@@ -389,6 +423,8 @@ void USelectMenuWidget::YesButtonClicked()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SetIsChangeMulti();
 }
 
 void USelectMenuWidget::YesButtonHovered()
@@ -411,7 +447,7 @@ void USelectMenuWidget::YesButtonUnHovered()
 
 void USelectMenuWidget::NoButtonClicked()
 {
-    bIsMultiplayHandled = false;
+    bIsExtraWindowsHandled = false;
     bIsHovered = false;
     MenuType = EMenuType::None;
     MessageBox00Hidden();
@@ -455,7 +491,7 @@ void USelectMenuWidget::NoButtonUnHovered()
 
 void USelectMenuWidget::EnterButtonClicked()
 {
-    bIsMultiplayHandled = false;
+    bIsExtraWindowsHandled = false;
     bIsHovered = false;
     MenuType = EMenuType::None;
     MessageBox00Hidden();
@@ -477,6 +513,8 @@ void USelectMenuWidget::EnterButtonClicked()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SetIsChangeMulti();
 }
 
 void USelectMenuWidget::EnterButtonHovered()
@@ -499,7 +537,7 @@ void USelectMenuWidget::EnterButtonUnHovered()
 
 void USelectMenuWidget::BackButtonClicked()
 {
-    bIsMultiplayHandled = false;
+    bIsExtraWindowsHandled = false;
     bIsHovered = false;
     MenuType = EMenuType::None;
     MessageBox00Hidden();
@@ -539,34 +577,6 @@ void USelectMenuWidget::BackButtonHovered()
 void USelectMenuWidget::BackButtonUnHovered()
 {
     SetUnHovered();
-}
-
-///////////////// etc function ////////////////////
-///////////////////////////////////////////////////
-
-EMenuType USelectMenuWidget::GetMenuType()
-{
-    return MenuType;
-}
-
-void USelectMenuWidget::SetUnHovered()
-{
-    bIsHovered = false;
-}
-
-bool USelectMenuWidget::IsButtonHovered()
-{
-    return bIsHovered;
-}
-
-void USelectMenuWidget::SetIsEnd()
-{
-    bIsEnd = true;
-}
-
-bool USelectMenuWidget::GetIsEnd()
-{
-    return bIsEnd;
 }
 
 void USelectMenuWidget::MessageBox00Visible()
@@ -769,131 +779,6 @@ void USelectMenuWidget::VariableSetting()
         MenuPrevTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     }
 
-    UCanvasPanelSlot* UserBackImageSlot = Cast<UCanvasPanelSlot>(UserBackImage->Slot);
-    if (UserBackImageSlot)
-    {
-        UserBackImageSlot->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserBackImageSlot->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserBackImageSlot->SetPosition(FVector2D(0.f, 270.f));
-        UserBackImageSlot->SetSize(FVector2D(800.f, 200.f));
-    }
-
-    UCanvasPanelSlot* UserImageSlot00 = Cast<UCanvasPanelSlot>(UserImage00->Slot);
-    if (UserImageSlot00)
-    {
-        UserImageSlot00->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserImageSlot00->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserImageSlot00->SetPosition(FVector2D(-612.5f, 270.f));
-        UserImageSlot00->SetSize(FVector2D(150.f, 140.f));
-    }
-
-    UCanvasPanelSlot* UserImageSlot01 = Cast<UCanvasPanelSlot>(UserImage01->Slot);
-    if (UserImageSlot01)
-    {
-        UserImageSlot01->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserImageSlot01->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserImageSlot01->SetPosition(FVector2D(-420.f, 270.f));
-        UserImageSlot01->SetSize(FVector2D(150.f, 140.f));
-    }
-
-    UCanvasPanelSlot* UserImageSlot02 = Cast<UCanvasPanelSlot>(UserImage02->Slot);
-    if (UserImageSlot02)
-    {
-        UserImageSlot02->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserImageSlot02->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserImageSlot02->SetPosition(FVector2D(-227.5f, 270.f));
-        UserImageSlot02->SetSize(FVector2D(150.f, 140.f));
-    }
-
-    UCanvasPanelSlot* UserImageSlot03 = Cast<UCanvasPanelSlot>(UserImage03->Slot);
-    if (UserImageSlot03)
-    {
-        UserImageSlot03->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserImageSlot03->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserImageSlot03->SetPosition(FVector2D(-35.f, 270.f));
-        UserImageSlot03->SetSize(FVector2D(150.f, 140.f));
-    }
-
-    UCanvasPanelSlot* UserTextSlot00 = Cast<UCanvasPanelSlot>(UserTextBox00->Slot);
-    if (UserTextSlot00)
-    {
-        UserTextSlot00->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserTextSlot00->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserTextSlot00->SetPosition(FVector2D(-630.0f, 390.0));
-        UserTextSlot00->SetSize(FVector2D(115, 40.f));
-
-        FSlateFontInfo FontInfo;
-        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
-        FontInfo.TypefaceFontName = FName("Default");
-        // FontInfo.Size = 40;
-        FontInfo.LetterSpacing = 100;
-
-        UserTextBox00->SetFont(FontInfo);
-        UserTextBox00->SetJustification(ETextJustify::Center);
-        UserTextBox00->SetText(FText::FromString(TEXT("Ready")));
-        UserTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 0.7f, 0.0f, 1.0f)));
-    }
-
-    UCanvasPanelSlot* UserTextSlot01 = Cast<UCanvasPanelSlot>(UserTextBox01->Slot);
-    if (UserTextSlot01)
-    {
-        UserTextSlot01->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserTextSlot01->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserTextSlot01->SetPosition(FVector2D(-437.5f, 390.0f));
-        UserTextSlot01->SetSize(FVector2D(115, 40.f));
-
-        FSlateFontInfo FontInfo;
-        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
-        FontInfo.TypefaceFontName = FName("Default");
-        // FontInfo.Size = 40;
-        FontInfo.LetterSpacing = 100;
-
-        UserTextBox01->SetFont(FontInfo);
-        UserTextBox01->SetJustification(ETextJustify::Center);
-        UserTextBox01->SetText(FText::FromString(TEXT("Ready")));
-        UserTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 0.7f, 0.0f, 1.0f)));
-    }
-
-    UCanvasPanelSlot* UserTextSlot02 = Cast<UCanvasPanelSlot>(UserTextBox02->Slot);
-    if (UserTextSlot02)
-    {
-        UserTextSlot02->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserTextSlot02->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserTextSlot02->SetPosition(FVector2D(-243.5f, 390.0f));
-        UserTextSlot02->SetSize(FVector2D(115, 40.f));
-
-        FSlateFontInfo FontInfo;
-        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
-        FontInfo.TypefaceFontName = FName("Default");
-        // FontInfo.Size = 40;
-        FontInfo.LetterSpacing = 100;
-
-        UserTextBox02->SetFont(FontInfo);
-        UserTextBox02->SetJustification(ETextJustify::Center);
-        UserTextBox02->SetText(FText::FromString(TEXT("Ready")));
-        UserTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 0.7f, 0.0f, 1.0f)));
-    }
-
-    UCanvasPanelSlot* UserTextSlot03 = Cast<UCanvasPanelSlot>(UserTextBox03->Slot);
-    if (UserTextSlot03)
-    {
-        UserTextSlot03->SetAnchors(FAnchors(1.0f, 0.5f));
-        UserTextSlot03->SetAlignment(FVector2D(1.0f, 0.5f));
-        UserTextSlot03->SetPosition(FVector2D(-51.5, 390.0f));
-        UserTextSlot03->SetSize(FVector2D(115, 40.f));
-
-        FSlateFontInfo FontInfo;
-        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
-        FontInfo.TypefaceFontName = FName("Default");
-        // FontInfo.Size = 40;
-        FontInfo.LetterSpacing = 100;
-
-        UserTextBox03->SetFont(FontInfo);
-        UserTextBox03->SetJustification(ETextJustify::Center);
-        UserTextBox03->SetText(FText::FromString(TEXT("Ready")));
-        UserTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 0.7f, 0.0f, 1.0f)));
-    }
-
     UCanvasPanelSlot* MenuMissionSlot = Cast<UCanvasPanelSlot>(MenuMissionImage->Slot);
     if (MenuMissionSlot)
     {
@@ -957,7 +842,7 @@ void USelectMenuWidget::VariableSetting()
 
         // MenuBarTextBox00->SetFont(FontInfo);
         MenuBarTextBox01->SetJustification(ETextJustify::Left);
-        MenuBarTextBox01->SetText(FText::FromString(TEXT("CONNECTED")));
+        MenuBarTextBox01->SetText(FText::FromString(TEXT("INFORMATION")));
         MenuBarTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     }
 

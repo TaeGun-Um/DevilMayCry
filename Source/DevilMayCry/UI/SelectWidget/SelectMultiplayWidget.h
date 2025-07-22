@@ -4,45 +4,40 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SelectMenuWidget.generated.h"
+#include "SelectMultiplayWidget.generated.h"
 
 UENUM(BlueprintType)
-enum class EMenuType : uint8
+enum class EMenuMultiPlayType : uint8
 {
     Start            UMETA(DisplayName = "Start"),
-    Setting         UMETA(DisplayName = "Setting"),
-    Prev             UMETA(DisplayName = "Prev"),
-    Create          UMETA(DisplayName = "Create"),
-    Join              UMETA(DisplayName = "Join"),
+    Ready           UMETA(DisplayName = "Ready"),
+    Exit              UMETA(DisplayName = "Exit"),
     Message       UMETA(DisplayName = "Message"),
     YesCheck      UMETA(DisplayName = "YesCheck"),
     NoCheck       UMETA(DisplayName = "NoCheck"),
     EnterCheck   UMETA(DisplayName = "EnterCheck"),
-    BackCheck    UMETA(DisplayName = "BackCheck"),
-    None            UMETA(DisplayName = "None"),
+    None
 };
 
 UCLASS()
-class DEVILMAYCRY_API USelectMenuWidget : public UUserWidget
+class DEVILMAYCRY_API USelectMultiplayWidget : public UUserWidget
 {
-    GENERATED_BODY()
-
+	GENERATED_BODY()
+	
 public:
     // Animation
     void PlayFadeAnimation();
 
     // Getter, Setter
-    EMenuType GetMenuType() { return MenuType; }
+    EMenuMultiPlayType GetMenuType() { return MenuType; }
     void SetUnHovered() { bIsHovered = false; }
     bool IsButtonHovered() { return bIsHovered; }
     void SetIsEnd() { bIsEnd = true; }
     bool GetIsEnd() { return bIsEnd; }
-    void SetIsChangeMulti(bool _Is = true) { bIsChangeMultiMenu = _Is; }
-    bool GetIsChangeMulti() { return bIsChangeMultiMenu; }
+    void SetIsChangeMenu(bool _Is = true) { bIsChangeSelectMenu = _Is; }
+    bool GetIsChangeMenu() { return bIsChangeSelectMenu; }
     void SetIsChangeLocation2(bool _Is = true) { bIsChangeLocation2 = _Is; }
     bool GetIsChangeLocation2() { return bIsChangeLocation2; }
-    void SetIsChangePrev(bool _Is = true) { bIsChangePrev = _Is; }
-    bool GetIsChangePrev() { return bIsChangePrev; }
 
     ///////////////// Start Button Options
     UFUNCTION()
@@ -54,47 +49,25 @@ public:
     UFUNCTION()
     void StartButtonUnHovered();
 
-    ///////////////// Setting Button Options
+    ///////////////// Ready Button Options
     UFUNCTION()
-    void SettingButtonClicked();
+    void ReadyButtonClicked();
 
     UFUNCTION()
-    void SettingButtonHovered();
+    void ReadyButtonHovered();
 
     UFUNCTION()
-    void SettingButtonUnHovered();
+    void ReadyButtonUnHovered();
 
     ///////////////// Prev Button Options
     UFUNCTION()
-    void PrevButtonClicked();
+    void ExitButtonClicked();
 
     UFUNCTION()
-    void PrevButtonHovered();
+    void ExitButtonHovered();
 
     UFUNCTION()
-    void PrevButtonUnHovered();
-
-    ///////////////// Server Button Options
-    UFUNCTION()
-    void CreateButtonClicked();
-
-    UFUNCTION()
-    void CreateButtonHovered();
-
-    UFUNCTION()
-    void CreateButtonUnHovered();
-
-    UFUNCTION()
-    void JoinButtonClicked();
-
-    UFUNCTION()
-    void JoinButtonHovered();
-
-    UFUNCTION()
-    void JoinButtonUnHovered();
-    
-    UFUNCTION()
-    void ResetClicked();
+    void ExitButtonUnHovered();
 
     UFUNCTION()
     void YesButtonClicked();
@@ -123,15 +96,6 @@ public:
     UFUNCTION()
     void EnterButtonUnHovered();
 
-    UFUNCTION()
-    void BackButtonClicked();
-
-    UFUNCTION()
-    void BackButtonHovered();
-
-    UFUNCTION()
-    void BackButtonUnHovered();
-
 protected:
     virtual bool Initialize() override;
 
@@ -141,22 +105,14 @@ private:
     void MessageBox00Hidden();
     void MessageBox01Visible();
     void MessageBox01Hidden();
-    void MessageBox02Visible();
-    void MessageBox02Hidden();
 
-    EMenuType MenuType = EMenuType::None;
+    EMenuMultiPlayType MenuType = EMenuMultiPlayType::None;
     uint8 bIsHovered : 1;
     uint8 bIsEnd : 1;
-    uint8 bIsExtraWindowsHandled : 1;
+    uint8 bIsMessageHandled : 1;
     uint8 bIsChangeLocation2 : 1;
-    uint8 bIsChangeMultiMenu : 1;
-    uint8 bIsChangePrev : 1;
+    uint8 bIsChangeSelectMenu : 1;
 
-/// <summary>
-/// Widget Value
-/// </summary>
-private:
-    // BackGround Image
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> MenuCanvas;
 
@@ -179,47 +135,55 @@ private:
     TObjectPtr<class UImage> MenuBarImage01;
 
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserBackImage;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage00;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage01;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage02;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> UserImage03;
+
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> MenuStartButton;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> MenuSettingButton;
+    TObjectPtr<class UButton> MenuReadyButton;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> MenuPrevButton;
+    TObjectPtr<class UButton> MenuExitButton;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MenuStartTextBox;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> MenuSettingTextBox;
+    TObjectPtr<class UTextBlock> MenuReadyTextBox;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> MenuPrevTextBox;
-    
+    TObjectPtr<class UTextBlock> MenuExitTextBox;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox00;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox01;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox02;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> UserTextBox03;
+
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MenuBarTextBox00;
-    
+
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MenuBarTextBox01;
-
-    UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
-    TObjectPtr<class UWidgetAnimation> FadeAnimation;
-
-    UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
-    TObjectPtr<class UWidgetAnimation> SizeUpAnimation;
-
-    ///// Server UI
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> ResetStateButton;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> CreateRoomButton;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> JoinRoomButton;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> MultiPlayImage;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> MessageImage;
@@ -234,12 +198,6 @@ private:
     TObjectPtr<class UImage> MessageCheckImage02;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> MessageCheckImage03;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> IPAddressImage;
-
-    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MessageTextBox;
 
     UPROPERTY(meta = (BindWidget))
@@ -252,9 +210,6 @@ private:
     TObjectPtr<class UTextBlock> MessageCheckTextBox02;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> MessageCheckTextBox03;
-
-    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> MessageCheckButton00;
 
     UPROPERTY(meta = (BindWidget))
@@ -262,21 +217,12 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UButton> MessageCheckButton02;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UButton> MessageCheckButton03;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> MultiPlayTextBox00;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> MultiPlayTextBox01;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UEditableText> IPAddressTextBox;
+    
+    UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
+    TObjectPtr<class UWidgetAnimation> FadeAnimation;
 
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
-    TObjectPtr<class UWidgetAnimation> MultiplayAnimation;
+    TObjectPtr<class UWidgetAnimation> SizeUpAnimation;
 
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
     TObjectPtr<class UWidgetAnimation> MessageAnimation00;
