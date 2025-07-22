@@ -38,8 +38,6 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void RandomAttack();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void DamagedAnimation(FVector Dir);
 
 	void DestroyCheck(float DeltaTime);
 
@@ -54,6 +52,11 @@ protected:
 
 	void TurnToActor(float DeltaTime);
 
+	void SetCollisionNum(int32 Num)
+	{
+		CollisionNum = Num;
+	}
+
 
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 
@@ -63,9 +66,11 @@ protected:
 
 	TObjectPtr<class AAIController> AiController = nullptr;
 
+	TObjectPtr<class UAnimInstance> AnimInst = nullptr;
+
 
 	//HP
-	const float MaxHP = 100.f;
+	float MaxHP = 100.f;
 	float CurHP = MaxHP;
 	bool bDead = false;
 	const float MaxDeadTime = 2.f;
@@ -84,6 +89,7 @@ protected:
 	//Snatch
 	bool bCanPull = true;
 
+	
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 CollisionNum = 0;

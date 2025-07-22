@@ -4,10 +4,24 @@
 #include "Angelo.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h" 
+#include "AIController.h"
+
+
 #include "../../Player/ParentCharacter.h"
 #include "../../DamageType/GeneralDamageType.h"
+#include "../../DamageType/ImpulseDamageType.h"
 #include "../../FsmComponent.h"
-#include "AIController.h"
+#include "../Attack/EnemyProjectile.h"
+#include "../Attack/DelayDamage.h"
+
+#include "Algo/RandomShuffle.h"
+
+#include "Kismet/KismetMathLibrary.h"
+
+#include "GameFramework/Controller.h"
+#include "../AI/EnemyController.h"
+
+#include "DrawDebugHelpers.h"
 
 AAngelo::AAngelo()
 {
@@ -19,8 +33,7 @@ AAngelo::AAngelo()
 		GetMesh()->SetSkeletalMesh(SKM);
 
 		Sword = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sword"));
-
-		Sword->SetupAttachment(GetMesh(), TEXT("R_WeaponHand"));
+		Sword->SetupAttachment(GetMesh(), "R_WeaponHand");
 
 		CollisionArray.SetNum(static_cast<uint8>(EAngeloCollision::ALL));
 		CollisionArray[static_cast<uint8>(EAngeloCollision::SWORD)] = Sword;
@@ -31,26 +44,39 @@ AAngelo::AAngelo()
 
 	SetupFsm();
 
-	AttackRange = 200.f;
 	bCanPull = false;
+	AttackRange = 300.f;
+	SetWalkSpeed(200.f);
+
+	RakuraiPos.SetNum(RakuraiMaxCount);
 }
 
 void AAngelo::BeginPlay()
 {
-	Sword->OnComponentBeginOverlap.AddDynamic(this, &AAngelo::OverlapBegin);
-	ToggleCollision(false, EAngeloCollision::ALL);
-}
+	Super::BeginPlay();
 
-void AAngelo::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+	Sword->OnComponentBeginOverlap.AddDynamic(this, &AAngelo::OverlapBegin);
+
+	ToggleCollision(false, EAngeloCollision::ALL);
+
+	FDelayDamageSetting Setter;
+	Setter.Damage = 10.f;
+	Setter.MaxDamageDelay = 1.5f;
+	Setter.DamageType = UGeneralDamageType::StaticClass();
+	Setter.IgnoreList.Add(this);
+	Setter.Radius = 10.f;
+
+	RakuraiPool.Reserve(RakuraiMaxCount);
+	for (size_t i = 0; i < RakuraiMaxCount; i++)
+	{
+		RakuraiPool.Add(GetWorld()->SpawnActor<ADelayDamage>());
+		RakuraiPool[i]->Setter = Setter;
+	}
 }
 
 void AAngelo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	UE_LOG(LogTemp, Warning, TEXT("TickAngelo"));
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), FsmComp->GetCurrentState());
 }
 
 void AAngelo::ToggleCollision(bool Value, uint8 Where)
@@ -80,8 +106,7 @@ void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
 		if (Enemy != nullptr)
 		{
-			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
-
+			FDamageEvent DamageEvent(UImpulseDamageType::StaticClass());
 			Enemy->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 		}
 	}
@@ -101,6 +126,7 @@ void AAngelo::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+
 			if (TargetPlayer != nullptr)
 			{
 				FsmComp->ChangeState(EAngeloFsm::RUN);
@@ -118,16 +144,30 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
+			WalkAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			TurnToActor(DeltaTime);
 			auto Result = AiController->MoveToActor(TargetPlayer);
 
-			if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
+			if (!AnimInst->IsAnyMontagePlaying())
 			{
 				FsmComp->ChangeState(EAngeloFsm::ATTACK);
+				return;
+			}
+
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > DengekiStart)
+			{
+				FsmComp->ChangeState(EAngeloFsm::DENGEKI);
+				return;
+			}
+
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= 500.f)
+			{
+				AnimInst->Montage_Stop(0.25f);
 				return;
 			}
 		},
@@ -156,7 +196,7 @@ void AAngelo::SetupFsm()
 				}
 				else
 				{
-					if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
+					if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 					{
 						FsmComp->ChangeState(EAngeloFsm::RUN);
 						return;
@@ -186,7 +226,7 @@ void AAngelo::SetupFsm()
 		{
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
-				if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
+				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
 					FsmComp->ChangeState(EAngeloFsm::RUN);
 					return;
@@ -204,6 +244,94 @@ void AAngelo::SetupFsm()
 		{
 		}
 	);
+
+	FsmComp->CreateState(EAngeloFsm::PARRY,
+		//Start
+		[this]()
+		{
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->CreateState(EAngeloFsm::DENGEKI,
+		//Start
+		[this]()
+		{
+			DengekiAnimation();
+			CurDengekiDelay = 0.f;
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			TurnToActor(DeltaTime);
+
+			if (!AnimInst->IsAnyMontagePlaying())
+			{
+				FsmComp->ChangeState(EAngeloFsm::RUN);
+				return;
+			}
+
+			if (AnimInst->Montage_GetCurrentSection() == Loop)
+			{
+				FireDengeki(DeltaTime);
+			}
+
+			if (AnimInst->Montage_GetCurrentSection() != End &&
+				FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) < DengekiEnd)
+			{
+				AnimInst->Montage_JumpToSection(End);
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+
+	FsmComp->CreateState(EAngeloFsm::RAKURAI,
+		//Start
+		[this]()
+		{
+			RakuraiAnimation();
+			CurRakuraiDelay = 0.f;
+			RakuraiIndex = 0;
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			TurnToActor(DeltaTime);
+
+			if (AnimInst->Montage_GetCurrentSection() == Loop)
+			{
+				FireRakurai(DeltaTime);
+			}
+
+			if (!AnimInst->IsAnyMontagePlaying())
+			{
+				FsmComp->ChangeState(EAngeloFsm::IDLE);
+				return;
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
 
 	FsmComp->CreateState(EAngeloFsm::DEAD,
 		//Start
@@ -225,7 +353,90 @@ void AAngelo::SetupFsm()
 	FsmComp->ChangeState(EAngeloFsm::IDLE);
 }
 
+void AAngelo::FireDengeki(float DeltaTime)
+{
+	CurDengekiDelay -= DeltaTime;
+
+	if (CurDengekiDelay <= 0.f)
+	{
+		FVector SocketPos = GetMesh()->GetSocketLocation(TEXT("L_WeaponHand"));
+		FVector TargetPos = TargetPlayer->GetActorLocation();
+
+		TObjectPtr<AEnemyProjectile> Dengeki = GetWorld()->SpawnActor<AEnemyProjectile>(SocketPos, FRotator::ZeroRotator);
+
+		FVector Dir = TargetPos - SocketPos;
+		Dir.Normalize();
+		Dengeki->Fire(Dir);
+
+		CurDengekiDelay += MaxDengekiDelay;
+	}
+}
+
+void AAngelo::InitRakurai()
+{
+	FVector Center = GetActorLocation();
+
+	for (size_t i = 0; i < RakuraiMaxCount - 1; i++)
+	{
+		FVector2D Rand2D = FMath::RandPointInCircle(RakuraiRadius);
+	
+		RakuraiPos[i] = FVector(Center.X + Rand2D.X, Center.Y + Rand2D.Y, Center.Z+100.f);
+	}
+
+	RakuraiPos[RakuraiMaxCount - 1] = TargetPlayer->GetActorLocation();
+	RakuraiPos[RakuraiMaxCount - 1].Z = Center.Z + 100.f;
+
+
+	Algo::RandomShuffle(RakuraiPos);
+}
+
+void AAngelo::FireRakurai(float DeltaTime)
+{
+	CurRakuraiDelay -= DeltaTime;
+
+	while (RakuraiIndex < RakuraiMaxCount && CurRakuraiDelay <= 0.f)
+	{
+		FVector AttackPos = RakuraiPos[RakuraiIndex];
+		FVector EndPos = AttackPos - FVector(0.f, 0.f, 1000.f);
+
+		FHitResult Hit;
+
+		FCollisionQueryParams Params;
+		Params.bTraceComplex = false;
+		Params.AddIgnoredActor(this);
+		Params.AddIgnoredActor(TargetPlayer);
+
+		// Pawn 채널로 레이캐스트
+		bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, AttackPos, EndPos, ECC_WorldStatic, Params);
+
+		DrawDebugLine(GetWorld(), AttackPos, EndPos, FColor::Green, false, 1.f, 0, 1.f);
+
+		if (bHit)
+		{
+			//생성해둔 데미지 풀에 포지션 전달하고 on
+			RakuraiPool[RakuraiIndex]->SetPos(Hit.ImpactPoint);
+			RakuraiPool[RakuraiIndex]->ActiveSwitch(true);
+		}
+
+
+		CurRakuraiDelay += MaxRakuraiDelay;
+		++RakuraiIndex;
+	}
+}
+
 void AAngelo::DamagedDefault()
 {
+	if (FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::ATTACK) || FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DENGEKI))
+	{
+		return;
+	}
+
 	FsmComp->ChangeState(EAngeloFsm::DAMAGED);
+
+	DamagedAnimation();
+}
+
+void AAngelo::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }

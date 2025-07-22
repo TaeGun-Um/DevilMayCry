@@ -89,10 +89,10 @@ void AEmpusa::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 
 void AEmpusa::SetupFsm()
 {
-	Fsmcomp = CreateDefaultSubobject<UFsmComponent>(TEXT("EmpusaFsmComp"));
-	Fsmcomp->SetIsReplicated(true);
+	FsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("EmpusaFsmComp"));
+	FsmComp->SetIsReplicated(true);
 
-	Fsmcomp->CreateState(EEmpusaFsm::IDLE,
+	FsmComp->CreateState(EEmpusaFsm::IDLE,
 		//Start
 		[this]()
 		{
@@ -103,7 +103,7 @@ void AEmpusa::SetupFsm()
 		{
 			if (TargetPlayer != nullptr)
 			{
-				Fsmcomp->ChangeState(EEmpusaFsm::RUN);
+				FsmComp->ChangeState(EEmpusaFsm::RUN);
 				return;
 			}
 		},
@@ -114,7 +114,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	Fsmcomp->CreateState(EEmpusaFsm::RUN,
+	FsmComp->CreateState(EEmpusaFsm::RUN,
 		//Start
 		[this]()
 		{
@@ -127,7 +127,7 @@ void AEmpusa::SetupFsm()
 
 			if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{
-				Fsmcomp->ChangeState(EEmpusaFsm::ATTACK);
+				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
 				return;
 			}
 		},
@@ -138,7 +138,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	Fsmcomp->CreateState(EEmpusaFsm::ATTACK,
+	FsmComp->CreateState(EEmpusaFsm::ATTACK,
 		//Start
 		[this]()
 		{
@@ -158,7 +158,7 @@ void AEmpusa::SetupFsm()
 				{
 					if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 					{
-						Fsmcomp->ChangeState(EEmpusaFsm::RUN);
+						FsmComp->ChangeState(EEmpusaFsm::RUN);
 						return;
 					}
 					else
@@ -175,7 +175,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	Fsmcomp->CreateState(EEmpusaFsm::DAMAGED,
+	FsmComp->CreateState(EEmpusaFsm::DAMAGED,
 		//Start
 		[this]()
 		{
@@ -188,12 +188,12 @@ void AEmpusa::SetupFsm()
 			{
 				if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
-					Fsmcomp->ChangeState(EEmpusaFsm::RUN);
+					FsmComp->ChangeState(EEmpusaFsm::RUN);
 					return;
 				}
 				else
 				{
-					Fsmcomp->ChangeState(EEmpusaFsm::ATTACK);
+					FsmComp->ChangeState(EEmpusaFsm::ATTACK);
 					return;
 				}
 			}
@@ -205,7 +205,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	Fsmcomp->CreateState(EEmpusaFsm::DEAD,
+	FsmComp->CreateState(EEmpusaFsm::DEAD,
 		//Start
 		[this]()
 		{
@@ -222,12 +222,14 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	Fsmcomp->ChangeState(EEmpusaFsm::IDLE);
+	FsmComp->ChangeState(EEmpusaFsm::IDLE);
 }
 
 void AEmpusa::DamagedDefault()
 {
-	Fsmcomp->ChangeState(EEmpusaFsm::DAMAGED);
+	FsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+
+	DamagedAnimation(FVector::ZeroVector);
 }
 
 void AEmpusa::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

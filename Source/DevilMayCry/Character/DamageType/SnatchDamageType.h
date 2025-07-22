@@ -15,6 +15,6 @@ class DEVILMAYCRY_API USnatchDamageType : public UDMC5DamageType
 	GENERATED_BODY()
 
 public:
-	virtual void TypeProcess(TObjectPtr<class AEnemyBase> Enemy);
-	virtual void TypeProcess(TObjectPtr<class AParentCharacter> Player);
+	virtual void TypeProcess(TObjectPtr<class AEnemyBase> Enemy, TObjectPtr<class AActor> DamageCauser);
+	virtual void TypeProcess(TObjectPtr<class AParentCharacter> Player, TObjectPtr<class AActor> DamageCauser);
 };

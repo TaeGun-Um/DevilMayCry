@@ -60,10 +60,10 @@ protected:
 
 	virtual void DamagedDefault() override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DamagedAnimation(FVector Dir);
 
 protected:
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UFsmComponent> Fsmcomp = nullptr;
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCapsuleComponent> LeftHand = nullptr;
@@ -71,4 +71,6 @@ protected:
 	TObjectPtr<class UCapsuleComponent> RightHand = nullptr;
 
 private:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 };

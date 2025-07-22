@@ -5,15 +5,15 @@
 #include "../Player/ParentCharacter.h"
 #include "../Enemy/EnemyBase.h"
 
-void USnatchDamageType::TypeProcess(TObjectPtr<class AEnemyBase> Enemy)
+void USnatchDamageType::TypeProcess(TObjectPtr<class AEnemyBase> Enemy, TObjectPtr<class AActor> DamageCauser)
 {
-	Super::TypeProcess(Enemy);
+	Super::TypeProcess(Enemy, DamageCauser);
 
 	Enemy->DamagedSnatch();
 }
 
-void USnatchDamageType::TypeProcess(TObjectPtr<class AParentCharacter> Player)
+void USnatchDamageType::TypeProcess(TObjectPtr<class AParentCharacter> Player, TObjectPtr<class AActor> DamageCauser)
 {
-	Super::TypeProcess(Player);
+	Super::TypeProcess(Player, DamageCauser);
 
 }

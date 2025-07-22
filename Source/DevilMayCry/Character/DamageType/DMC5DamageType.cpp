@@ -5,12 +5,12 @@
 #include "../Player/ParentCharacter.h"
 #include "../Enemy/EnemyBase.h"
 
-void UDMC5DamageType::TypeProcess(TObjectPtr<class AEnemyBase> Enemy)
+void UDMC5DamageType::TypeProcess(TObjectPtr<class AEnemyBase> Enemy, TObjectPtr<class AActor> DamageCauser)
 {
 	Enemy->DamagedDefault();
 }
 
-void UDMC5DamageType::TypeProcess(TObjectPtr<class AParentCharacter> Player)
+void UDMC5DamageType::TypeProcess(TObjectPtr<class AParentCharacter> Player, TObjectPtr<class AActor> DamageCauser)
 {
 
 }

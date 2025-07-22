@@ -23,6 +23,9 @@ enum class EAngeloFsm :uint8
 	RUN,
 	ATTACK,
 	DAMAGED,
+	PARRY,
+	DENGEKI,
+	RAKURAI,
 	DEAD,
 };
 
@@ -56,16 +59,55 @@ protected:
 
 	void SetupFsm();
 
+	void FireDengeki(float DeltaTime);
+	
+	UFUNCTION(BlueprintCallable)
+	void InitRakurai();
+
+	void FireRakurai(float DeltaTime);
 
 	virtual void DamagedDefault() override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DamagedAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DengekiAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RakuraiAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void WalkAnimation();
 
 protected:
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCapsuleComponent> Sword = nullptr;
-private:
 
+private:
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
+
+	//Dengeki
+	const float MaxDengekiDelay = 0.5f;
+	float CurDengekiDelay = 0.f;
+	const float DengekiStart = 2500.f;
+	const float DengekiEnd = 1500.f;
+	
+	//Rakurai
+	const float RakuraiRadius = 1000.f;
+	TArray<FVector> RakuraiPos;
+	int32 RakuraiMaxCount = 30;
+	int32 RakuraiIndex = 0;
+	const float MaxRakuraiDelay = 1.4f / RakuraiMaxCount;
+	float CurRakuraiDelay = 0.f;
+
+
+	TArray<class ADelayDamage*> RakuraiPool;
+	
+	//SectionName
+	FName Start = TEXT("Start");
+	FName Loop = TEXT("Loop");
+	FName End = TEXT("End");
 };

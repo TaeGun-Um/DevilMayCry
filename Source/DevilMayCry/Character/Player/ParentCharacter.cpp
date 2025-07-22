@@ -436,7 +436,7 @@ float AParentCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 	if (DamageEvent.DamageTypeClass)
 	{
 		auto* DmgType = DamageEvent.DamageTypeClass->GetDefaultObject<UDMC5DamageType>();
-		DmgType->TypeProcess(this);
+		DmgType->TypeProcess(this, DamageCauser);
 	}
 	return Dmg;
 }

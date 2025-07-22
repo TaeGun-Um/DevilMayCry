@@ -24,7 +24,8 @@ void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AiController = Cast<AAIController>(GetController());
+	AiController = Cast<AAIController>(GetController()); 
+	AnimInst = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
 // Called every frame
@@ -51,9 +52,7 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 	if (DamageEvent.DamageTypeClass)
 	{
 		auto* DmgType = DamageEvent.DamageTypeClass->GetDefaultObject<UDMC5DamageType>();
-		DmgType->TypeProcess(this);
-
-		DamagedAnimation(FVector::ZeroVector);
+		DmgType->TypeProcess(this,DamageCauser);
 	}
 	return Dmg;
 }
