@@ -104,7 +104,7 @@ void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 	if (OtherActor && OtherActor != this)
 	{
 		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
-		if (Enemy != nullptr)
+		if (Enemy!=nullptr)
 		{
 			FDamageEvent DamageEvent(UImpulseDamageType::StaticClass());
 			Enemy->TakeDamage(AttackDamage, DamageEvent, GetController(), this);

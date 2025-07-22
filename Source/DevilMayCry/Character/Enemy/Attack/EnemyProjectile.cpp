@@ -5,6 +5,11 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Engine/DamageEvents.h" 
+
+#include "../../Player/ParentCharacter.h"
+#include "../../DamageType/GeneralDamageType.h"
+
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -15,17 +20,17 @@ AEnemyProjectile::AEnemyProjectile()
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 
-	SphereCollision->InitSphereRadius(10.0f);
+	SphereCollision->InitSphereRadius(10.f);
 	RootComponent = SphereCollision;
 
-	//SphereCollision->BodyInstance.SetCollisionProfileName(TEXT(""));
+	SphereCollision->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
 
 
 
 	ProjectileComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileComp->SetUpdatedComponent(SphereCollision);
-	ProjectileComp->InitialSpeed = 3000.0f;
-	ProjectileComp->MaxSpeed = 3000.0f;
+	ProjectileComp->InitialSpeed = 4000.0f;
+	ProjectileComp->MaxSpeed = 4000.0f;
 	ProjectileComp->bRotationFollowsVelocity = true;
 	ProjectileComp->bShouldBounce = false;
 	ProjectileComp->ProjectileGravityScale = 0.0f;
@@ -38,7 +43,7 @@ void AEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, );
+	SphereCollision->OnComponentHit.AddDynamic(this, &AEnemyProjectile::OnHit);
 }
 
 // Called every frame
@@ -48,6 +53,21 @@ void AEnemyProjectile::Tick(float DeltaTime)
 
 	DrawDebugSphere(GetWorld(),GetActorLocation(), 10.f, 12, FColor::Red);
 
+}
+
+void AEnemyProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor)
+	{
+		TObjectPtr<AParentCharacter> Player = Cast<AParentCharacter>(OtherActor);
+
+		if (Player)
+		{
+			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
+			Player->TakeDamage(10.f, DamageEvent,nullptr,this);
+		}		
+	}
+	Destroy();
 }
 
 void AEnemyProjectile::Fire(FVector Dir)
