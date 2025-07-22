@@ -45,7 +45,7 @@ AAngelo::AAngelo()
 	SetupFsm();
 
 	bCanPull = false;
-	AttackRange = 300.f;
+	AttackRange = 800.f;
 	SetWalkSpeed(200.f);
 
 	RakuraiPos.SetNum(RakuraiMaxCount);
@@ -155,7 +155,7 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				int Random = FMath::RandRange(0, 6);
+				int Random = FMath::RandRange(0, 5);
 				if (Random)
 				{
 					FsmComp->ChangeState(EAngeloFsm::ATTACK);
@@ -174,7 +174,7 @@ void AAngelo::SetupFsm()
 				return;
 			}
 
-			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= 500.f)
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{
 				AnimInst->Montage_Stop(0.25f);
 				return;
@@ -191,29 +191,25 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			RandomAttack();
+			//RandomAttack();
+			AttackAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			TurnToActor(DeltaTime);
+
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
-				if (TargetPlayer && LimitAngleOver(LimitAngle))
+				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
-					TurnToActor(DeltaTime);
+					FsmComp->ChangeState(EAngeloFsm::RUN);
+					return;
 				}
 				else
 				{
-					if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
-					{
-						FsmComp->ChangeState(EAngeloFsm::RUN);
-						return;
-					}
-					else
-					{
-						RandomAttack();
-					}
+					AttackAnimation();
 				}
 			}
 		},

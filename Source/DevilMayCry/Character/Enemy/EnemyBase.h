@@ -78,6 +78,7 @@ protected:
 
 	//Attack
 	float AttackDamage = 10.f;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float AttackRange = 170.f;
 	const float LimitAngle = 5.f;
 
@@ -88,7 +89,6 @@ protected:
 
 	//Snatch
 	bool bCanPull = true;
-
 	
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

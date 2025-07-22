@@ -80,6 +80,12 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkAnimation();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ParryAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AttackAnimation();
+
 protected:
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
