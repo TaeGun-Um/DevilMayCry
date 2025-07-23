@@ -23,6 +23,7 @@ ANero::ANero()
 		GetMesh()->SetSkeletalMesh(SKM);
 		SwordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollision"));
 		SwordCollision->SetupAttachment(GetMesh(), "L_Hand");
+		SwordCollision->ComponentTags.Add(TEXT("Weapon"));
 	}
 }
 

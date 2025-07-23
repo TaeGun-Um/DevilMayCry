@@ -29,6 +29,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWalkSpeed(float Value);
 
+	UFUNCTION(BlueprintCallable)
+	void SetCanParry(bool Value)
+	{
+		bCanParry = Value;
+	}
+
 
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
@@ -89,9 +95,15 @@ protected:
 
 	//Snatch
 	bool bCanPull = true;
+
+	//Parry
+	bool bCanParry = false;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FName PrevSection;
 	
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 CollisionNum = 0;
+
 
 };

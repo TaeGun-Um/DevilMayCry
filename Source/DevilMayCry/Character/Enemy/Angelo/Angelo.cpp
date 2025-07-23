@@ -101,6 +101,15 @@ void AAngelo::ToggleCollision(bool Value, EAngeloCollision Where)
 
 void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (bCanParry == true && OverlappedComp->ComponentHasTag(TEXT("Weapon")))
+	{
+		PrevSection = AnimInst->Montage_GetCurrentSection();
+		AnimInst->Montage_JumpToSection("Parry");
+		bCanParry = false;
+		UE_LOG(LogTemp, Warning, TEXT("Parry"));
+		return;
+	}
+
 	if (OtherActor && OtherActor != this)
 	{
 		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
