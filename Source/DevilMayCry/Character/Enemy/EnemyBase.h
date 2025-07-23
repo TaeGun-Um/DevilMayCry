@@ -64,6 +64,7 @@ protected:
 	}
 
 
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 
 
@@ -92,13 +93,13 @@ protected:
 	const float AirGravity = 0.2f;
 	const float MaxAirTime = 1.f;
 	float CurAirTime = MaxAirTime;
-
+	
 	//Snatch
 	bool bCanPull = true;
 
 	//Parry
 	bool bCanParry = false;
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FName PrevSection;
 	
 private:

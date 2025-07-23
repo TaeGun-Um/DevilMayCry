@@ -74,6 +74,7 @@ void AAngelo::BeginPlay()
 	}
 }
 
+FName PrevSectionName;
 void AAngelo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -101,17 +102,21 @@ void AAngelo::ToggleCollision(bool Value, EAngeloCollision Where)
 
 void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bCanParry == true && OverlappedComp->ComponentHasTag(TEXT("Weapon")))
+	if (bCanParry == true && SweepResult.Component->ComponentHasTag(TEXT("Weapon")))
 	{
 		PrevSection = AnimInst->Montage_GetCurrentSection();
-		AnimInst->Montage_JumpToSection("Parry");
+		AnimInst->Montage_JumpToSection(TEXT("Parry"));
 		bCanParry = false;
-		UE_LOG(LogTemp, Warning, TEXT("Parry"));
+		ToggleCollision(false,EAngeloCollision::ALL);
 		return;
 	}
 
 	if (OtherActor && OtherActor != this)
 	{
+		if (AnimInst->Montage_GetCurrentSection() == TEXT("Parry"))
+		{
+			return;
+		}
 		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
 		if (Enemy!=nullptr)
 		{
