@@ -7,8 +7,9 @@
 #include "Components/ShapeComponent.h"
 #include "../DamageType/DMC5DamageType.h"
 #include "AIController.h"
-#include "../Player/ParentCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "../FsmComponent.h"
+#include "../Player/ParentCharacter.h"
 
 // Sets default values
 AEnemyBase::AEnemyBase()
@@ -44,7 +45,7 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 
 
 	//죽었을때 계속 때릴수 있어야함
-	if (CurHP <= 0.f)
+	if (bCanPull&&CurHP <= 0.f)
 	{
 		bDead = true;
 		CurDeadTime = MaxDeadTime;
@@ -141,7 +142,7 @@ void AEnemyBase::TurnToActor(float DeltaTime)
 	Rotation.Pitch = 0;
 	Rotation.Roll = 0;
 
-	// 부드럽게 보간
+	// 정속 보간
 	Rotation = FMath::RInterpConstantTo(GetActorRotation(), Rotation, DeltaTime, 360.f);
 	SetActorRotation(Rotation);
 

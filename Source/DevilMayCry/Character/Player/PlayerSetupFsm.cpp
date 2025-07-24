@@ -276,6 +276,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			DamagedActor.Empty();
 		},
 		//Update
 		[this](float DeltaTime)

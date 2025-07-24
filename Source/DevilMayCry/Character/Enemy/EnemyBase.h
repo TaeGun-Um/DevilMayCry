@@ -75,6 +75,8 @@ protected:
 
 	TObjectPtr<class UAnimInstance> AnimInst = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 
 	//HP
 	float MaxHP = 100.f;
@@ -88,6 +90,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float AttackRange = 170.f;
 	const float LimitAngle = 5.f;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 CollisionNum = 0;
+
 
 	//HitGravity
 	const float AirGravity = 0.2f;
@@ -101,10 +106,13 @@ protected:
 	bool bCanParry = false;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FName PrevSection;
-	
-private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int32 CollisionNum = 0;
+	int32 CurParryCount = 0;
+	const int32 ParryToStunCount = 3;
+
+
+
+private:
 
 
 };

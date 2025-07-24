@@ -71,6 +71,6 @@ protected:
 	TObjectPtr<class UCapsuleComponent> RightHand = nullptr;
 
 private:
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
+	//UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	//TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 };

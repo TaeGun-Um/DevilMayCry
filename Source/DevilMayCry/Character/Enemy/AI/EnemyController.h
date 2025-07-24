@@ -37,6 +37,4 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "AI")
-	TObjectPtr<UBehaviorTree> EnemyBehaviorTree; 
 };
