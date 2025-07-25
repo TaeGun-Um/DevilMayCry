@@ -17,7 +17,7 @@
 AEmpusa::AEmpusa()
 {
 	//메시 세팅
-	TObjectPtr<USkeletalMesh> SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Enemy/Empusa/mesh/em0100.em0100'"));
+	TObjectPtr<USkeletalMesh> SKM = LoadObject<USkeletalMesh>(nullptr, TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Enemy/Empusa/mesh/EmpusaFix.EmpusaFix'"));
 
 	if (SKM)
 	{
@@ -164,15 +164,6 @@ void AEmpusa::SetupFsm()
 
 			float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
 			if (Dist <= AttackRange)
-			{
-				AnimInst->Montage_SetNextSection(AnimInst->Montage_GetCurrentSection(), End);
-			}
-			else if (RunEndRange <Dist&& Dist<= RunAttackRange)
-			{
-				AnimInst->Montage_SetNextSection(AnimInst->Montage_GetCurrentSection(), Attack);
-			}
-
-			if (!AnimInst->IsAnyMontagePlaying())
 			{
 				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
 				return;

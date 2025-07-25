@@ -82,9 +82,8 @@ protected:
 
 private:
 	//Move
-	float RunAttackRange = 500.f;
 	float RunEndRange = 400.f;
 
 	//Name
-	FName Attack;
+	FName Attack = TEXT("Attack");
 };

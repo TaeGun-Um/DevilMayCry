@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Animation/AnimInstance.h"
-#include "EmpusaAnimInstance.generated.h"
+#include "../EnemyBase.h"
+#include "HellCaina.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEVILMAYCRY_API UEmpusaAnimInstance : public UAnimInstance
+class DEVILMAYCRY_API AHellCaina : public AEnemyBase
 {
 	GENERATED_BODY()
 	
