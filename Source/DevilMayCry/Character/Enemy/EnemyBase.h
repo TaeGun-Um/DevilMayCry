@@ -41,8 +41,6 @@ public:
 	virtual void DamagedDefault();
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
-	void RandomAttack();
 
 
 	void DestroyCheck(float DeltaTime);
@@ -89,7 +87,7 @@ protected:
 	float AttackDamage = 10.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float AttackRange = 170.f;
-	const float LimitAngle = 5.f;
+	const float LimitAngle = 2.f;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 CollisionNum = 0;
 
@@ -111,6 +109,10 @@ protected:
 	const int32 ParryToStunCount = 3;
 
 
+	//Name
+	FName Start = TEXT("Start");
+	FName Loop = TEXT("Loop");
+	FName End = TEXT("End");
 
 private:
 

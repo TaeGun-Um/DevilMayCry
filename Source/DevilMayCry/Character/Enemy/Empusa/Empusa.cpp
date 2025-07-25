@@ -103,7 +103,41 @@ void AEmpusa::SetupFsm()
 		{
 			if (TargetPlayer != nullptr)
 			{
-				FsmComp->ChangeState(EEmpusaFsm::RUN);
+				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) < RunEndRange)
+				{
+					FsmComp->ChangeState(EEmpusaFsm::WALK);
+					return;
+				}
+				else
+				{
+					FsmComp->ChangeState(EEmpusaFsm::RUN);
+					return;
+				}
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	FsmComp->CreateState(EEmpusaFsm::WALK,
+		//Start
+		[this]()
+		{
+			WalkAnimation();
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			TurnToActor(DeltaTime);
+			auto Result = AiController->MoveToActor(TargetPlayer);
+
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
+			{
+				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
 				return;
 			}
 		},
@@ -114,18 +148,31 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
+
 	FsmComp->CreateState(EEmpusaFsm::RUN,
 		//Start
 		[this]()
 		{
+			RunAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			TurnToActor(DeltaTime);
 			auto Result = AiController->MoveToActor(TargetPlayer);
 
-			if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
+			float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
+			if (Dist <= AttackRange)
+			{
+				AnimInst->Montage_SetNextSection(AnimInst->Montage_GetCurrentSection(), End);
+			}
+			else if (RunEndRange <Dist&& Dist<= RunAttackRange)
+			{
+				AnimInst->Montage_SetNextSection(AnimInst->Montage_GetCurrentSection(), Attack);
+			}
+
+			if (!AnimInst->IsAnyMontagePlaying())
 			{
 				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
 				return;
@@ -150,15 +197,21 @@ void AEmpusa::SetupFsm()
 		{
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
-				if (TargetPlayer&&LimitAngleOver(LimitAngle))
+				if (TargetPlayer && LimitAngleOver(LimitAngle))
 				{
 					TurnToActor(DeltaTime);
 				}
 				else
 				{
-					if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
+					float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
+					if (Dist > AttackRange&& Dist> RunEndRange)
 					{
 						FsmComp->ChangeState(EEmpusaFsm::RUN);
+						return;
+					}
+					else if (Dist > AttackRange&& Dist<= RunEndRange)
+					{
+						FsmComp->ChangeState(EEmpusaFsm::WALK);
 						return;
 					}
 					else
@@ -186,15 +239,20 @@ void AEmpusa::SetupFsm()
 		{
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
-				if (FVector::Distance(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
+				float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
+				if (Dist > AttackRange && Dist > RunEndRange)
 				{
 					FsmComp->ChangeState(EEmpusaFsm::RUN);
 					return;
 				}
+				else if (Dist > AttackRange && Dist <= RunEndRange)
+				{
+					FsmComp->ChangeState(EEmpusaFsm::WALK);
+					return;
+				}
 				else
 				{
-					FsmComp->ChangeState(EEmpusaFsm::ATTACK);
-					return;
+					RandomAttack();
 				}
 			}
 		},
@@ -229,7 +287,7 @@ void AEmpusa::DamagedDefault()
 {
 	FsmComp->ChangeState(EEmpusaFsm::DAMAGED);
 
-	DamagedAnimation(FVector::ZeroVector);
+	DamagedAnimation();
 }
 
 void AEmpusa::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

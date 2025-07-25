@@ -21,6 +21,7 @@ UENUM(BlueprintType)
 enum class EEmpusaFsm :uint8
 {
 	IDLE,
+	WALK,
 	RUN,
 	ATTACK,
 	DAMAGED,
@@ -52,6 +53,9 @@ public:
 public:
 
 protected:
+	UFUNCTION(BlueprintImplementableEvent)
+	void RandomAttack();
+
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -61,7 +65,13 @@ protected:
 	virtual void DamagedDefault() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void DamagedAnimation(FVector Dir);
+	void DamagedAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RunAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void WalkAnimation();
 
 protected:
 	//Weapon
@@ -71,6 +81,10 @@ protected:
 	TObjectPtr<class UCapsuleComponent> RightHand = nullptr;
 
 private:
-	//UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	//TObjectPtr<class UFsmComponent> FsmComp = nullptr;
+	//Move
+	float RunAttackRange = 500.f;
+	float RunEndRange = 400.f;
+
+	//Name
+	FName Attack;
 };

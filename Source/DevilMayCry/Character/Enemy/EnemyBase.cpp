@@ -119,11 +119,11 @@ bool AEnemyBase::LimitAngleOver(float Limit)
 	ToTarget.Z = 0;
 	ToTarget.Normalize();
 
-	//내적으로 코사인
+	//내적으로 코사인세타 뽑기
 	float Dot = FVector::DotProduct(Forward, ToTarget);
-	//외적으로 Z축
+	//외적해서 Z축 뽑기
 	float CrossZ = FVector::CrossProduct(Forward, ToTarget).Z;
-	//아크탄젠트로 라디안 각도
+	//아크탄젠트로 각도변환
 	float Angle = FMath::Abs(FMath::RadiansToDegrees(FMath::Atan2(CrossZ, Dot)));
 
 	if (Limit < Angle)

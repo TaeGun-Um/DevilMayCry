@@ -131,10 +131,6 @@ private:
 
 	
 	//Name
-	FName Start = TEXT("Start");
-	FName Loop = TEXT("Loop");
-	FName End = TEXT("End");
-
 	FName Parry = TEXT("Parry");
 	FName Weapon = TEXT("Weapon");
 
