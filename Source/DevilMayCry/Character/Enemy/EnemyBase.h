@@ -73,8 +73,6 @@ protected:
 
 	TObjectPtr<class UAnimInstance> AnimInst = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 
 	//HP
 	float MaxHP = 100.f;
@@ -87,7 +85,7 @@ protected:
 	float AttackDamage = 10.f;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float AttackRange = 170.f;
-	const float LimitAngle = 2.f;
+	const float LimitAngle = 1.f;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 CollisionNum = 0;
 

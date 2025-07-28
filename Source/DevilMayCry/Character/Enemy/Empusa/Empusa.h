@@ -73,6 +73,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkAnimation();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DeadAnimation();
+
 protected:
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -84,6 +87,8 @@ private:
 	//Move
 	float RunEndRange = 400.f;
 
-	//Name
-	FName Attack = TEXT("Attack");
+
+	//PlayerState
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> EmpusaFsmComp = nullptr;
 };

@@ -34,9 +34,6 @@ AAngelo::AAngelo()
 
 		Sword = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sword"));
 		Sword->SetupAttachment(GetMesh(), "R_WeaponHand");
-
-		CollisionArray.SetNum(static_cast<uint8>(EAngeloCollision::ALL));
-		CollisionArray[static_cast<uint8>(EAngeloCollision::SWORD)] = Sword;
 	}
 
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
@@ -56,6 +53,9 @@ void AAngelo::BeginPlay()
 	Super::BeginPlay();
 
 	Sword->OnComponentBeginOverlap.AddDynamic(this, &AAngelo::OverlapBegin);
+
+	CollisionArray.SetNum(static_cast<uint8>(EAngeloCollision::ALL));
+	CollisionArray[static_cast<uint8>(EAngeloCollision::SWORD)] = Sword;
 
 	ToggleCollision(false, EAngeloCollision::ALL);
 
@@ -103,7 +103,7 @@ void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 {
 	if (bCanParry == true && SweepResult.Component->ComponentHasTag(Weapon))
 	{
-		FsmComp->ChangeState(EAngeloFsm::PARRY);
+		AngeloFsmComp->ChangeState(EAngeloFsm::PARRY);
 		return;
 	}
 
@@ -124,10 +124,10 @@ void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 
 void AAngelo::SetupFsm()
 {
-	FsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("AngeloFsmComp"));
-	FsmComp->SetIsReplicated(true);
+	AngeloFsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("AngeloFsmComp"));
+	AngeloFsmComp->SetIsReplicated(true);
 
-	FsmComp->CreateState(EAngeloFsm::IDLE,
+	AngeloFsmComp->CreateState(EAngeloFsm::IDLE,
 		//Start
 		[this]()
 		{
@@ -138,7 +138,7 @@ void AAngelo::SetupFsm()
 		{
 			if (TargetPlayer != nullptr)
 			{
-				FsmComp->ChangeState(EAngeloFsm::RUN);
+				AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 				return;
 			}
 		},
@@ -149,7 +149,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::RUN,
+	AngeloFsmComp->CreateState(EAngeloFsm::RUN,
 		//Start
 		[this]()
 		{
@@ -167,19 +167,19 @@ void AAngelo::SetupFsm()
 				int Random = FMath::RandRange(0, 5);
 				if (Random)
 				{
-					FsmComp->ChangeState(EAngeloFsm::ATTACK);
+					AngeloFsmComp->ChangeState(EAngeloFsm::ATTACK);
 					return;
 				}
 				else
 				{
-					FsmComp->ChangeState(EAngeloFsm::RAKURAI);
+					AngeloFsmComp->ChangeState(EAngeloFsm::RAKURAI);
 					return;
 				}
 			}
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > DengekiStart)
 			{
-				FsmComp->ChangeState(EAngeloFsm::DENGEKI);
+				AngeloFsmComp->ChangeState(EAngeloFsm::DENGEKI);
 				return;
 			}
 
@@ -196,7 +196,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::ATTACK,
+	AngeloFsmComp->CreateState(EAngeloFsm::ATTACK,
 		//Start
 		[this]()
 		{
@@ -215,7 +215,7 @@ void AAngelo::SetupFsm()
 			{
 				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
-					FsmComp->ChangeState(EAngeloFsm::RUN);
+					AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 					return;
 				}
 				else
@@ -231,7 +231,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::DAMAGED,
+	AngeloFsmComp->CreateState(EAngeloFsm::DAMAGED,
 		//Start
 		[this]()
 		{
@@ -240,16 +240,22 @@ void AAngelo::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bDead)
+			{
+				AngeloFsmComp->ChangeState(EAngeloFsm::DEAD);
+				return;
+			}
+
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
 				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
-					FsmComp->ChangeState(EAngeloFsm::RUN);
+					AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 					return;
 				}
 				else
 				{
-					FsmComp->ChangeState(EAngeloFsm::ATTACK);
+					AngeloFsmComp->ChangeState(EAngeloFsm::ATTACK);
 					return;
 				}
 			}
@@ -261,7 +267,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::PARRY,
+	AngeloFsmComp->CreateState(EAngeloFsm::PARRY,
 		//Start
 		[this]()
 		{
@@ -278,12 +284,12 @@ void AAngelo::SetupFsm()
 			if (CurParryCount == ParryToStunCount)
 			{
 				CurParryCount = 0;
-				FsmComp->ChangeState(EAngeloFsm::STUN);
+				AngeloFsmComp->ChangeState(EAngeloFsm::STUN);
 				return;
 			}
 			else
 			{
-				FsmComp->ChangeState(EAngeloFsm::ATTACK);
+				AngeloFsmComp->ChangeState(EAngeloFsm::ATTACK);
 				return;
 			}
 		},
@@ -295,7 +301,7 @@ void AAngelo::SetupFsm()
 	);
 
 
-	FsmComp->CreateState(EAngeloFsm::DENGEKI,
+	AngeloFsmComp->CreateState(EAngeloFsm::DENGEKI,
 		//Start
 		[this]()
 		{
@@ -310,7 +316,7 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::RUN);
+				AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 				return;
 			}
 
@@ -333,7 +339,7 @@ void AAngelo::SetupFsm()
 	);
 
 
-	FsmComp->CreateState(EAngeloFsm::RAKURAI,
+	AngeloFsmComp->CreateState(EAngeloFsm::RAKURAI,
 		//Start
 		[this]()
 		{
@@ -354,7 +360,7 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::IDLE);
+				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
 				return;
 			}
 		},
@@ -365,7 +371,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::WARP,
+	AngeloFsmComp->CreateState(EAngeloFsm::WARP,
 		//Start
 		[this]()
 		{
@@ -380,13 +386,13 @@ void AAngelo::SetupFsm()
 			{
 				if (CurHP<=WarpHP*WarpHPRatio)
 				{
-					FsmComp->ChangeState(EAngeloFsm::STUN);
+					AngeloFsmComp->ChangeState(EAngeloFsm::STUN);
 					return;
 				}
 			}
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::IDLE);
+				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
 				return;
 			}
 		},
@@ -397,7 +403,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::STUN,
+	AngeloFsmComp->CreateState(EAngeloFsm::STUN,
 		//Start
 		[this]()
 		{
@@ -409,7 +415,7 @@ void AAngelo::SetupFsm()
 		{
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::IDLE);
+				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
 				return;
 			}
 		},
@@ -420,15 +426,21 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::DEAD,
+	AngeloFsmComp->CreateState(EAngeloFsm::DEAD,
 		//Start
 		[this]()
 		{
+			DeadAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			if (!AnimInst->IsAnyMontagePlaying())
+			{
+				Destroy();
+				return;
+			}
 		},
 
 		//End
@@ -437,12 +449,12 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->ChangeState(EAngeloFsm::IDLE);
+	AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
 }
 
 void AAngelo::BlueprintChangeState(EAngeloFsm State)
 {
-	FsmComp->ChangeState(State);
+	AngeloFsmComp->ChangeState(State);
 }
 
 void AAngelo::FireDengeki(float DeltaTime)
@@ -520,20 +532,20 @@ void AAngelo::DamagedDefault()
 {
 	if (CurHP <= MaxHP * WarpHPRatio && bWarpDone == false)
 	{
-		FsmComp->ChangeState(EAngeloFsm::WARP);
+		AngeloFsmComp->ChangeState(EAngeloFsm::WARP);
 		bWarpDone = true;
 		return;
 	}
 
-	if (FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::ATTACK)
-		|| FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DENGEKI)
-		|| FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::WARP))
+	if (AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::ATTACK)
+		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DENGEKI)
+		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::WARP))
 	{
 		return;
 	}
 
 
-	FsmComp->ChangeState(EAngeloFsm::DAMAGED);
+	AngeloFsmComp->ChangeState(EAngeloFsm::DAMAGED);
 
 	DamagedAnimation();
 }

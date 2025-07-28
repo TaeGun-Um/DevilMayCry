@@ -27,10 +27,6 @@ AEmpusa::AEmpusa()
 		LeftHand->SetupAttachment(GetMesh(), "L_Hand");
 		RightHand = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHand"));
 		RightHand->SetupAttachment(GetMesh(), "R_Hand");
-
-		CollisionArray.SetNum(static_cast<uint8>(EEmpusaCollision::ALL));
-		CollisionArray[static_cast<uint8>(EEmpusaCollision::LEFT)] = LeftHand;
-		CollisionArray[static_cast<uint8>(EEmpusaCollision::RIGHT)] = RightHand;
 	}
 
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
@@ -45,6 +41,11 @@ void AEmpusa::BeginPlay()
 
 	LeftHand->OnComponentBeginOverlap.AddDynamic(this, &AEmpusa::OverlapBegin);
 	RightHand->OnComponentBeginOverlap.AddDynamic(this, &AEmpusa::OverlapBegin);
+
+	CollisionArray.SetNum(static_cast<uint8>(EEmpusaCollision::ALL));
+	CollisionArray[static_cast<uint8>(EEmpusaCollision::LEFT)] = LeftHand;
+	CollisionArray[static_cast<uint8>(EEmpusaCollision::RIGHT)] = RightHand;
+
 	ToggleCollision(false, EEmpusaCollision::ALL);
 }
 
@@ -89,10 +90,10 @@ void AEmpusa::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 
 void AEmpusa::SetupFsm()
 {
-	FsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("EmpusaFsmComp"));
-	FsmComp->SetIsReplicated(true);
+	EmpusaFsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("EmpusaFsmComp"));
+	EmpusaFsmComp->SetIsReplicated(true);
 
-	FsmComp->CreateState(EEmpusaFsm::IDLE,
+	EmpusaFsmComp->CreateState(EEmpusaFsm::IDLE,
 		//Start
 		[this]()
 		{
@@ -105,12 +106,12 @@ void AEmpusa::SetupFsm()
 			{
 				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) < RunEndRange)
 				{
-					FsmComp->ChangeState(EEmpusaFsm::WALK);
+					EmpusaFsmComp->ChangeState(EEmpusaFsm::WALK);
 					return;
 				}
 				else
 				{
-					FsmComp->ChangeState(EEmpusaFsm::RUN);
+					EmpusaFsmComp->ChangeState(EEmpusaFsm::RUN);
 					return;
 				}
 			}
@@ -122,7 +123,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EEmpusaFsm::WALK,
+	EmpusaFsmComp->CreateState(EEmpusaFsm::WALK,
 		//Start
 		[this]()
 		{
@@ -137,7 +138,7 @@ void AEmpusa::SetupFsm()
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{
-				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
+				EmpusaFsmComp->ChangeState(EEmpusaFsm::ATTACK);
 				return;
 			}
 		},
@@ -149,7 +150,7 @@ void AEmpusa::SetupFsm()
 	);
 
 
-	FsmComp->CreateState(EEmpusaFsm::RUN,
+	EmpusaFsmComp->CreateState(EEmpusaFsm::RUN,
 		//Start
 		[this]()
 		{
@@ -165,7 +166,7 @@ void AEmpusa::SetupFsm()
 			float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
 			if (Dist <= AttackRange)
 			{
-				FsmComp->ChangeState(EEmpusaFsm::ATTACK);
+				EmpusaFsmComp->ChangeState(EEmpusaFsm::ATTACK);
 				return;
 			}
 		},
@@ -176,7 +177,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EEmpusaFsm::ATTACK,
+	EmpusaFsmComp->CreateState(EEmpusaFsm::ATTACK,
 		//Start
 		[this]()
 		{
@@ -197,12 +198,12 @@ void AEmpusa::SetupFsm()
 					float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
 					if (Dist > AttackRange&& Dist> RunEndRange)
 					{
-						FsmComp->ChangeState(EEmpusaFsm::RUN);
+						EmpusaFsmComp->ChangeState(EEmpusaFsm::RUN);
 						return;
 					}
 					else if (Dist > AttackRange&& Dist<= RunEndRange)
 					{
-						FsmComp->ChangeState(EEmpusaFsm::WALK);
+						EmpusaFsmComp->ChangeState(EEmpusaFsm::WALK);
 						return;
 					}
 					else
@@ -219,7 +220,7 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EEmpusaFsm::DAMAGED,
+	EmpusaFsmComp->CreateState(EEmpusaFsm::DAMAGED,
 		//Start
 		[this]()
 		{
@@ -228,17 +229,24 @@ void AEmpusa::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bDead)
+			{
+				EmpusaFsmComp->ChangeState(EEmpusaFsm::DEAD);
+				return;
+			}
+
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
+
 				float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
 				if (Dist > AttackRange && Dist > RunEndRange)
 				{
-					FsmComp->ChangeState(EEmpusaFsm::RUN);
+					EmpusaFsmComp->ChangeState(EEmpusaFsm::RUN);
 					return;
 				}
 				else if (Dist > AttackRange && Dist <= RunEndRange)
 				{
-					FsmComp->ChangeState(EEmpusaFsm::WALK);
+					EmpusaFsmComp->ChangeState(EEmpusaFsm::WALK);
 					return;
 				}
 				else
@@ -254,15 +262,21 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EEmpusaFsm::DEAD,
+	EmpusaFsmComp->CreateState(EEmpusaFsm::DEAD,
 		//Start
 		[this]()
 		{
+			DeadAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			{
+				Destroy();
+				return;
+			}
 		},
 
 		//End
@@ -271,12 +285,12 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
-	FsmComp->ChangeState(EEmpusaFsm::IDLE);
+	EmpusaFsmComp->ChangeState(EEmpusaFsm::IDLE);
 }
 
 void AEmpusa::DamagedDefault()
 {
-	FsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+	EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
 
 	DamagedAnimation();
 }

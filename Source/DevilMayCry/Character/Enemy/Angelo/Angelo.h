@@ -96,12 +96,19 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StunAnimation();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DeadAnimation();
+
 protected:
 	//Weapon
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCapsuleComponent> Sword = nullptr;
 
 private:
+
+	//PlayerState
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFsmComponent> AngeloFsmComp = nullptr;
 
 	//Dengeki
 	const float MaxDengekiDelay = 1.f;

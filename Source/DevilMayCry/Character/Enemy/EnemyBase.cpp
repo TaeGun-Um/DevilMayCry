@@ -33,8 +33,6 @@ void AEnemyBase::BeginPlay()
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	DestroyCheck(DeltaTime);
 }
 
 float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -45,10 +43,9 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 
 
 	//죽었을때 계속 때릴수 있어야함
-	if (bCanPull&&CurHP <= 0.f)
+	if (bDead==false && CurHP <= 0.f)
 	{
 		bDead = true;
-		CurDeadTime = MaxDeadTime;
 	}
 	if (DamageEvent.DamageTypeClass)
 	{
