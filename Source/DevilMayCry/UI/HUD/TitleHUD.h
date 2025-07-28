@@ -15,7 +15,7 @@ enum class ETitleFSMState : uint8
     CHARACTERSELECT,
     MENU,
     MULTIPLAY,
-    NONE UMETA(Hidden)
+    NONE
 };
 
 /**
@@ -52,6 +52,10 @@ private:
     bool bIsAnykeyHandled = false;
     bool bIsCharacterSelectHandle = false;
     bool bIsMenuSelectHandle = false;
+    bool bIsClientTraveling = false;
+
+    float ClientConnectTimeout = 5.0f;
+    float ElapsedClientConnectTime = 0.0f;
 
     /// <summary>
     /// Widget Value
@@ -72,8 +76,8 @@ private:
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> MenuWidgetClass;
 
-    UPROPERTY(EditAnywhere, Category = "UI")
-    TSubclassOf<class UUserWidget> MultiPlayWidgetClass;
+    //UPROPERTY(EditAnywhere, Category = "UI")
+    //TSubclassOf<class UUserWidget> MultiPlayWidgetClass;
 
     UPROPERTY()
     TObjectPtr<class UBlackBGWidget> BGBlackWidgetInstance;
@@ -90,8 +94,8 @@ private:
     UPROPERTY()
     TObjectPtr<class USelectMenuWidget> MenuWidgetInstance;
 
-    UPROPERTY()
-    TObjectPtr<class USelectMultiplayWidget> MultiPlayWidgetInstance;
+    //UPROPERTY()
+    //TObjectPtr<class USelectMultiplayWidget> MultiPlayWidgetInstance;
 
     UPROPERTY()
     TObjectPtr<class APlayerController> HUDPlayerController;

@@ -1,0 +1,82 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "LobbyGameModeBase.h"
+#include "SocketSubsystem.h"
+#include "Interfaces/IPv4/IPv4Address.h"
+#include "DevilMayCry/UI/HUD/LobbyHUD.h"
+#include "DevilMayCry/State/LobbyPlayerState.h"
+
+ALobbyGameModeBase::ALobbyGameModeBase()
+{
+	HUDClass = ALobbyHUD::StaticClass();
+	DefaultPawnClass = nullptr;
+	bUseSeamlessTravel = false;
+
+    //PlayerControllerClass = APlayerController_Lobby::StaticClass();
+    //GameStateClass = AGameState_Lobby::StaticClass();
+    PlayerStateClass = ALobbyPlayerState::StaticClass();
+}
+
+void ALobbyGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    if (GetNumPlayers() > 4)
+    {
+        NewPlayer->ClientMessage(TEXT("The room is full"));
+        NewPlayer->Destroy();
+        return;
+    }
+
+    ConnectedPlayers++;
+
+    // 첫 번째 플레이어가 Host
+    if (ConnectedPlayers == 1)
+    {
+        //if (APlayerState_Lobby* PS = Cast<APlayerState_Lobby>(NewPlayer->PlayerState))
+        //{
+        //    PS->SetIsHost(true);
+        //}
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("Player Joined: %d"), ConnectedPlayers);
+}
+
+void ALobbyGameModeBase::Logout(AController* Exiting)
+{
+	Super::Logout(Exiting);
+	ConnectedPlayers--;
+}
+
+void ALobbyGameModeBase::BeginPlay()
+{
+    Super::BeginPlay();
+
+    UE_LOG(LogTemp, Warning, TEXT("[GameMode] LobbyScene Server Start, (ALobbyGameModeBase::BeginPlay)"));
+
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PC->GetHUD()))
+        {
+            FString IP = GetHostIPAddress();
+            LobbyHUD->SetHostIP(IP);
+
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Host IP Set: %s"), *IP));
+            }
+        }
+    }
+}
+
+FString ALobbyGameModeBase::GetHostIPAddress()
+{
+    bool bCanBind = false;
+
+    // IPv4 주소 얻기
+    TSharedRef<FInternetAddr> Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(*GLog, bCanBind);
+    FString IP = Addr->ToString(false); // 포트 제외: false
+
+    return IP;
+}

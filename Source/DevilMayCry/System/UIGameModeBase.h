@@ -16,4 +16,5 @@ class DEVILMAYCRY_API AUIGameModeBase : public AGameModeBase
 	
 public:
 	AUIGameModeBase();
+
 };
