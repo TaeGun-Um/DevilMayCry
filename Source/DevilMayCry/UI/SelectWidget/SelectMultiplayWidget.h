@@ -27,6 +27,7 @@ class DEVILMAYCRY_API USelectMultiplayWidget : public UUserWidget
 public:
     // Animation
     void PlayFadeAnimation();
+    void StartButtonHidden();
 
     // Getter, Setter
     EMenuMultiPlayType GetMenuType() { return MenuType; }
@@ -39,8 +40,10 @@ public:
     void SetIsChangeLocation2(bool _Is = true) { bIsChangeLocation2 = _Is; }
     bool GetIsChangeLocation2() { return bIsChangeLocation2; }
     void SetHostIP(FString _Text);
+    void SetIsHost(bool _bIsHost) { bIsHost = _bIsHost; }
 
     void UpdatePlayerCount();
+    void UpdatePlayerSlot(int32 _PlayerIndex, bool _bIsConnected, bool _bIsReady);
 
     ///////////////// Start Button Options
     UFUNCTION()
@@ -118,6 +121,7 @@ private:
     uint8 bIsMessageHandled : 1;
     uint8 bIsChangeLocation2 : 1;
     uint8 bIsChangeSelectMenu : 1;
+    uint8 bIsHost : 1;
 
     FString HostIP = TEXT("");
 
@@ -244,4 +248,9 @@ private:
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
     TObjectPtr<class UWidgetAnimation> MessageAnimation01;
 
+    UPROPERTY(meta = (BindWidget))
+    TArray<TObjectPtr<class UImage>> PlayerSlots;      // 빨간 얼굴 이미지들 (최대 4개)
+
+    UPROPERTY(meta = (BindWidget))
+    TArray<TObjectPtr<class UTextBlock>> PlayerReadyTexts;  // Ready 표시 텍스트
 };

@@ -61,7 +61,7 @@ void AInGameHUD::Tick(float DeltaTime)
 
 void AInGameHUD::ClassSetting()
 {
-    static ConstructorHelpers::FClassFinder<UUserWidget> InGameWidgetClassFinder(TEXT("/Game/UI/Select/WBP_InGameWidget"));
+    static ConstructorHelpers::FClassFinder<UUserWidget> InGameWidgetClassFinder(TEXT("/Game/UI/InGame/WBP_InGameWidget"));
     if (InGameWidgetClassFinder.Succeeded())
     {
         InGameWidgetClass = InGameWidgetClassFinder.Class;

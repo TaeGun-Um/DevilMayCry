@@ -25,7 +25,8 @@ class DEVILMAYCRY_API ALobbyHUD : public AHUD
 	
 public:
 	ALobbyHUD();
-	
+	void RefreshPlayerStates();
+
 	// Getter, Setter
 	void SetHostIP(FString _Text) { HostIP = _Text; }
 

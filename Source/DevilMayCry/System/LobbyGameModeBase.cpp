@@ -6,6 +6,7 @@
 #include "Interfaces/IPv4/IPv4Address.h"
 #include "DevilMayCry/UI/HUD/LobbyHUD.h"
 #include "DevilMayCry/State/LobbyPlayerState.h"
+#include "GameFramework/GameStateBase.h"
 
 ALobbyGameModeBase::ALobbyGameModeBase()
 {
@@ -41,6 +42,18 @@ void ALobbyGameModeBase::PostLogin(APlayerController* NewPlayer)
     }
 
     UE_LOG(LogTemp, Log, TEXT("Player Joined: %d"), ConnectedPlayers);
+
+    // 모든 클라이언트에게 UI 갱신 명령
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        if (APlayerController* PC = It->Get())
+        {
+            if (ALobbyHUD* HUD = Cast<ALobbyHUD>(PC->GetHUD()))
+            {
+                HUD->RefreshPlayerStates();
+            }
+        }
+    }
 }
 
 void ALobbyGameModeBase::Logout(AController* Exiting)
@@ -79,4 +92,19 @@ FString ALobbyGameModeBase::GetHostIPAddress()
     FString IP = Addr->ToString(false); // 포트 제외: false
 
     return IP;
+}
+
+bool ALobbyGameModeBase::AllPlayersReady()
+{
+    for (APlayerState* PS : GameState->PlayerArray)
+    {
+        if (ALobbyPlayerState* LPS = Cast<ALobbyPlayerState>(PS))
+        {
+            if (!LPS->bIsReady)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }

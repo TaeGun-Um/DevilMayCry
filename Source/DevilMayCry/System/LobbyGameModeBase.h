@@ -16,6 +16,7 @@ class DEVILMAYCRY_API ALobbyGameModeBase : public AGameModeBase
 	
 public:
 	ALobbyGameModeBase();
+	bool AllPlayersReady();
 
 protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;

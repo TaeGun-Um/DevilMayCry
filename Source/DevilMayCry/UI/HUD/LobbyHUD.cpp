@@ -4,6 +4,9 @@
 #include "LobbyHUD.h"
 #include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
 #include "DevilMayCry/UI/BasicWidget/BlackBGWidget.h"
+#include "DevilMayCry/State/LobbyPlayerState.h"
+#include "GameFramework/GameStateBase.h"
+// #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 ALobbyHUD::ALobbyHUD()
@@ -28,6 +31,24 @@ void ALobbyHUD::BeginPlay()
 
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("NetMode: %s"), *Mode));
     }
+
+    if (MultiPlayWidgetInstance)
+    {
+        if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+        {
+            ALobbyPlayerState* PS = PC->GetPlayerState<ALobbyPlayerState>();
+            if (PS && PS->bIsHost)
+            {
+                MultiPlayWidgetInstance->SetIsHost(true);
+            }
+            else
+            {
+                MultiPlayWidgetInstance->SetIsHost(false);
+            }
+        }
+
+        //MultiPlayWidgetInstance->StartButtonHidden();
+    }
 }
 
 void ALobbyHUD::Tick(float DeltaTime)
@@ -38,6 +59,33 @@ void ALobbyHUD::Tick(float DeltaTime)
     {
         MultiFSM->Update(DeltaTime);
     }
+
+    RefreshPlayerStates();
+}
+
+void ALobbyHUD::RefreshPlayerStates()
+{
+    UWorld* World = GetWorld();
+    if (!World || !MultiPlayWidgetInstance) return;
+
+    int32 Index = 0;
+
+    for (APlayerState* PS : World->GetGameState()->PlayerArray)
+    {
+        if (ALobbyPlayerState* LPS = Cast<ALobbyPlayerState>(PS))
+        {
+            MultiPlayWidgetInstance->UpdatePlayerSlot(Index, true, LPS->bIsReady);
+            Index++;
+        }
+    }
+
+    // 나머지 슬롯 비우기
+    for (int32 i = Index; i < 4; i++)
+    {
+        MultiPlayWidgetInstance->UpdatePlayerSlot(i, false, false);
+    }
+
+    MultiPlayWidgetInstance->UpdatePlayerCount();
 }
 
 void ALobbyHUD::ClassSetting()

@@ -21,9 +21,13 @@ public:
     UPROPERTY(ReplicatedUsing = OnRep_IsHost)
     bool bIsHost = false;
 
-    void SetIsHost(bool NewValue) { bIsHost = NewValue; OnRep_IsHost(); }
+    UFUNCTION(Server, Reliable)
+    void ServerSetReady(bool _bIsNewReady);
+
+    void SetIsHost(bool NewValue);
 
 protected:
+    virtual void BeginPlay() override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UFUNCTION()
@@ -31,5 +35,4 @@ protected:
 
     UFUNCTION()
     void OnRep_IsHost();
-
 };

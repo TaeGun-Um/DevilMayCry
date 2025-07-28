@@ -8,6 +8,8 @@
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
 #include "GameFramework/GameStateBase.h"
+#include "DevilMayCry/State/LobbyPlayerState.h"
+#include "DevilMayCry/System/LobbyGameModeBase.h"
 
 bool USelectMultiplayWidget::Initialize()
 {
@@ -25,8 +27,18 @@ void USelectMultiplayWidget::NativeConstruct()
     Super::NativeConstruct();
 
     // 0.5초마다 플레이어 수 업데이트
-    GetWorld()->GetTimerManager().SetTimer(
-        PlayerCountUpdateHandle, this, &USelectMultiplayWidget::UpdatePlayerCount, 0.5f, true);
+    //GetWorld()->GetTimerManager().SetTimer(
+    //    PlayerCountUpdateHandle, this, &USelectMultiplayWidget::UpdatePlayerCount, 0.5f, true);
+        // Host 여부에 따라 Mission Start 버튼 제어
+
+}
+
+void USelectMultiplayWidget::StartButtonHidden()
+{
+    if (MenuStartButton)
+    {
+        MenuStartButton->SetVisibility(bIsHost ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+    }
 }
 
 void USelectMultiplayWidget::NativeDestruct()
@@ -34,7 +46,7 @@ void USelectMultiplayWidget::NativeDestruct()
     Super::NativeDestruct();
 
     // 타이머 제거
-    GetWorld()->GetTimerManager().ClearTimer(PlayerCountUpdateHandle);
+    //GetWorld()->GetTimerManager().ClearTimer(PlayerCountUpdateHandle);
 }
 
 void USelectMultiplayWidget::PlayFadeAnimation()
@@ -63,6 +75,20 @@ void USelectMultiplayWidget::UpdatePlayerCount()
     MenuBarTextBox03->SetText(FText::FromString(PlayerText));
 }
 
+void USelectMultiplayWidget::UpdatePlayerSlot(int32 _PlayerIndex, bool _bIsConnected, bool _bIsReady)
+{
+    if (!PlayerSlots.IsValidIndex(_PlayerIndex) || !PlayerReadyTexts.IsValidIndex(_PlayerIndex))
+    {
+        return;
+    }
+    
+    // 이미지 활성화/비활성
+    PlayerSlots[_PlayerIndex]->SetVisibility(_bIsConnected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+
+    // Ready 상태 텍스트
+    PlayerReadyTexts[_PlayerIndex]->SetText(_bIsReady ? FText::FromString(TEXT("Ready")) : FText::GetEmpty());
+}
+
 ///////////////// Start Button Options
 void USelectMultiplayWidget::StartButtonClicked()
 {
@@ -70,14 +96,29 @@ void USelectMultiplayWidget::StartButtonClicked()
     {
         return;
     }
-    // MessageBox Test
-    // bIsMessageHandled = true;
-    // MessageTextBox->SetText(FText::FromString(TEXT("Not everyone is ready.")));
-    // MessageBox01Visible();
-    // PlayAnimation(MessageAnimation01);
 
-    UWorld* World = GetWorld();
-    World->ServerTravel("/Game/Scene/Location2?listen");
+    //if (false == bIsHost)
+    //{
+    //    return; // Host만 실행
+    //}
+
+    if (ALobbyGameModeBase* GM = GetWorld()->GetAuthGameMode<ALobbyGameModeBase>())
+    {
+        if (!GM->AllPlayersReady())
+        {
+            bIsMessageHandled = true;
+            MessageTextBox->SetText(FText::FromString(TEXT("Not everyone is ready.")));
+            MessageBox01Visible();
+            PlayAnimation(MessageAnimation01);
+            return;
+        }
+
+        UWorld* World = GetWorld();
+        if (World)
+        {
+            World->ServerTravel("/Game/Scene/Location2?listen");
+        }
+    }
 }
 
 void USelectMultiplayWidget::StartButtonHovered()
@@ -147,6 +188,14 @@ void USelectMultiplayWidget::ReadyButtonClicked()
     if (true == bIsMessageHandled)
     {
         return;
+    }
+
+    if (APlayerController* PC = GetOwningPlayer())
+    {
+        if (ALobbyPlayerState* PS = PC->GetPlayerState<ALobbyPlayerState>())
+        {
+            PS->ServerSetReady(true); // 서버에 RPC 호출
+        }
     }
 }
 
@@ -961,6 +1010,17 @@ void USelectMultiplayWidget::VariableSetting()
         MessageCheckButton02->OnHovered.AddDynamic(this, &USelectMultiplayWidget::EnterButtonHovered);
         MessageCheckButton02->OnUnhovered.AddDynamic(this, &USelectMultiplayWidget::EnterButtonUnHovered);
     }
+
+
+    PlayerSlots.Add(UserImage00);
+    PlayerSlots.Add(UserImage01);
+    PlayerSlots.Add(UserImage02);
+    PlayerSlots.Add(UserImage03);
+
+    PlayerReadyTexts.Add(UserTextBox00);
+    PlayerReadyTexts.Add(UserTextBox01);
+    PlayerReadyTexts.Add(UserTextBox02);
+    PlayerReadyTexts.Add(UserTextBox03);
 
     MessageBox00Hidden();
     MessageBox01Hidden();
