@@ -8,6 +8,7 @@
 #include "Engine/DamageEvents.h" 
 #include "../DamageType/DMC5DamageType.h"
 #include "../FsmComponent.h"
+#include "Net/UnrealNetwork.h"
 
 #include "Components/CapsuleComponent.h"
 
@@ -196,22 +197,8 @@ void AParentCharacter::Server_MoveKey_Implementation(const FVector2D& Value)
 }
 void AParentCharacter::Multicast_MoveKey_Implementation(const FVector2D& Value)
 {
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	FVector DirX = ForwardVector * Value.X;
-	FVector DirY = RightVector * Value.Y;
-	MoveDir = FVector2D(DirX + DirY);
+	MoveDir = Value;
 	MoveDir.Normalize();
-
-	if (bMoveOk)
-	{
-		AddMovementInput(ForwardVector, Value.X);
-		AddMovementInput(RightVector, Value.Y);
-	}
 }
 
 void AParentCharacter::Server_MoveComplete_Implementation()
@@ -372,6 +359,35 @@ void AParentCharacter::DamagedImpulse()
 
 void AParentCharacter::Damagedgeneral()
 {
+}
+
+void AParentCharacter::Move(const FVector2D& Value)
+{
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	FVector DirX = ForwardVector * Value.X;
+	FVector DirY = RightVector * Value.Y;
+
+	if (HasAuthority())
+	{
+		Multicast_MoveKey(FVector2D(DirX + DirY));
+		Multicast_SetKeyDir(Value);
+	}
+	else
+	{
+		Server_MoveKey(FVector2D(DirX + DirY));
+		Server_SetKeyDir(Value);
+	}
+
+	if (bMoveOk)
+	{
+		AddMovementInput(ForwardVector, Value.X);
+		AddMovementInput(RightVector, Value.Y);
+	}
 }
 
 

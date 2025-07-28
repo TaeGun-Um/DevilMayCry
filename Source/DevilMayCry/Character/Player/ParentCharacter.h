@@ -65,6 +65,8 @@ public:
 
 
 protected:
+
+	void Move(const FVector2D& Value);
 	UFUNCTION(Server, Reliable)
 	virtual void Server_MoveKey(const FVector2D& Value);
 	UFUNCTION(NetMulticast, Reliable)
@@ -195,7 +197,6 @@ private:
 	void Server_SetKeyDir(const FVector2D& Value);
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetKeyDir(const FVector2D& Value);
-
 
 
 
