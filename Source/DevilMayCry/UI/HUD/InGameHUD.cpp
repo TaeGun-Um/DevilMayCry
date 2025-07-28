@@ -4,15 +4,18 @@
 #include "InGameHUD.h"
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "DevilMayCry/UI/InGameWidget/InGameWidget.h"
 
 AInGameHUD::AInGameHUD()
 {
-
+    ClassSetting();
 }
 
 void AInGameHUD::BeginPlay()
 {
     Super::BeginPlay();
+
+    VariableSetting();
 
     APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (PC)
@@ -55,3 +58,20 @@ void AInGameHUD::Tick(float DeltaTime)
         }
     }
 }
+
+void AInGameHUD::ClassSetting()
+{
+    static ConstructorHelpers::FClassFinder<UUserWidget> InGameWidgetClassFinder(TEXT("/Game/UI/Select/WBP_InGameWidget"));
+    if (InGameWidgetClassFinder.Succeeded())
+    {
+        InGameWidgetClass = InGameWidgetClassFinder.Class;
+    }
+}
+
+void AInGameHUD::VariableSetting()
+{
+    InGameWidgetInstance = CreateWidget<UInGameWidget>(GetWorld(), InGameWidgetClass);
+    InGameWidgetInstance->AddToViewport();
+}
+
+

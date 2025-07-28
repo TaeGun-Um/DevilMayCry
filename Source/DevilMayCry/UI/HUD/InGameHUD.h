@@ -18,13 +18,20 @@ class DEVILMAYCRY_API AInGameHUD : public AHUD
 public:
     AInGameHUD();
 
-    /////////////////// TitleStep
-public:
-
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
 
+private:
+    void VariableSetting();
+    void ClassSetting();
+
     int Count = 0;
     bool bLoggedOnce = false;
+
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> InGameWidgetClass;
+
+    UPROPERTY()
+    TObjectPtr<class UInGameWidget> InGameWidgetInstance;
 };
