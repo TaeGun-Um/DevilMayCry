@@ -62,6 +62,8 @@ protected:
 
 
 	virtual void DamagedDefault() override;
+	virtual void DamagedGeneral();
+	virtual void DamagedSnatch();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DamagedAnimation();
@@ -77,6 +79,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DeadAnimation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SnatchAnimation();
 
 
 protected:

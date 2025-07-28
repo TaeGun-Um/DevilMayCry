@@ -290,9 +290,17 @@ void AEmpusa::SetupFsm()
 
 void AEmpusa::DamagedDefault()
 {
-	EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
-
 	DamagedAnimation();
+	EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+}
+
+void AEmpusa::DamagedGeneral()
+{
+}
+
+void AEmpusa::DamagedSnatch()
+{
+	//SnatchAnimation();
 }
 
 void AEmpusa::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

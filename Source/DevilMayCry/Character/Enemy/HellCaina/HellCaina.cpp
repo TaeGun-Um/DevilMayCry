@@ -245,9 +245,17 @@ void AHellCaina::SetupFsm()
 
 void AHellCaina::DamagedDefault()
 {
-	HellCainaFsmComp->ChangeState(EHellCainaFsm::DAMAGED);
-
 	DamagedAnimation();
+	HellCainaFsmComp->ChangeState(EHellCainaFsm::DAMAGED);
+}
+
+void AHellCaina::DamagedGeneral()
+{
+}
+
+void AHellCaina::DamagedSnatch()
+{
+	//SnatchAnimation();
 }
 
 void AHellCaina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
