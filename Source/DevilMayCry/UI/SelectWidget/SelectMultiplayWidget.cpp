@@ -7,6 +7,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
+#include "GameFramework/GameStateBase.h"
 
 bool USelectMultiplayWidget::Initialize()
 {
@@ -19,9 +20,47 @@ bool USelectMultiplayWidget::Initialize()
 	return true;
 }
 
+void USelectMultiplayWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    // 0.5초마다 플레이어 수 업데이트
+    GetWorld()->GetTimerManager().SetTimer(
+        PlayerCountUpdateHandle, this, &USelectMultiplayWidget::UpdatePlayerCount, 0.5f, true);
+}
+
+void USelectMultiplayWidget::NativeDestruct()
+{
+    Super::NativeDestruct();
+
+    // 타이머 제거
+    GetWorld()->GetTimerManager().ClearTimer(PlayerCountUpdateHandle);
+}
+
 void USelectMultiplayWidget::PlayFadeAnimation()
 {
 	PlayAnimation(FadeAnimation);
+}
+
+void USelectMultiplayWidget::SetHostIP(FString _Text)
+{
+    HostIP = _Text;
+    FString FormattedText = FString::Printf(TEXT("Host IP : %s"), *HostIP);
+    MenuBarTextBox02->SetText(FText::FromString(FormattedText));
+}
+
+void USelectMultiplayWidget::UpdatePlayerCount()
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    AGameStateBase* GameState = World->GetGameState();
+    if (!GameState) return;
+
+    int32 PlayerCount = GameState->PlayerArray.Num();
+
+    FString PlayerText = FString::Printf(TEXT("Players : %d"), PlayerCount);
+    MenuBarTextBox03->SetText(FText::FromString(PlayerText));
 }
 
 ///////////////// Start Button Options
@@ -31,11 +70,14 @@ void USelectMultiplayWidget::StartButtonClicked()
     {
         return;
     }
+    // MessageBox Test
+    // bIsMessageHandled = true;
+    // MessageTextBox->SetText(FText::FromString(TEXT("Not everyone is ready.")));
+    // MessageBox01Visible();
+    // PlayAnimation(MessageAnimation01);
 
-    bIsMessageHandled = true;
-    MessageTextBox->SetText(FText::FromString(TEXT("Not everyone is ready.")));
-    MessageBox01Visible();
-    PlayAnimation(MessageAnimation01);
+    UWorld* World = GetWorld();
+    World->ServerTravel("/Game/Scene/Location2?listen");
 }
 
 void USelectMultiplayWidget::StartButtonHovered()
@@ -308,6 +350,30 @@ void USelectMultiplayWidget::NoButtonClicked()
     MenuExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    APlayerController* PC = GetOwningPlayer();
+    if (PC == nullptr)
+    {
+        return;
+    }
+
+    UWorld* World = GetWorld();
+    if (World == nullptr)
+    {
+        return;
+    }
+
+    // 클라이언트인 경우 서버와 연결 해제
+    if (!PC->HasAuthority())
+    {
+        // 클라이언트는 서버 연결 해제 후 TitleScene으로 이동
+        PC->ClientTravel("/Game/Maps/TitleScene", TRAVEL_Absolute);
+    }
+    else
+    {
+        // 서버는 전체를 TitleScene으로 보내야 하므로 ServerTravel
+        World->ServerTravel("/Game/Maps/TitleScene?listen");
+    }
 }
 
 void USelectMultiplayWidget::NoButtonHovered()
@@ -698,7 +764,7 @@ void USelectMultiplayWidget::VariableSetting()
 
         MenuBarTextBox00->SetFont(FontInfo);
         MenuBarTextBox00->SetJustification(ETextJustify::Left);
-        MenuBarTextBox00->SetText(FText::FromString(TEXT("PLAYER")));
+        MenuBarTextBox00->SetText(FText::FromString(TEXT("INFORMATION")));
         MenuBarTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     }
 
@@ -720,6 +786,46 @@ void USelectMultiplayWidget::VariableSetting()
         MenuBarTextBox01->SetJustification(ETextJustify::Left);
         MenuBarTextBox01->SetText(FText::FromString(TEXT("CONNECTED")));
         MenuBarTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    }
+
+    UCanvasPanelSlot* MenuBarTextBoxSlot02 = Cast<UCanvasPanelSlot>(MenuBarTextBox02->Slot);
+    if (MenuBarTextBoxSlot02)
+    {
+        MenuBarTextBoxSlot02->SetAnchors(FAnchors(1.0f, 0.5f));
+        MenuBarTextBoxSlot02->SetAlignment(FVector2D(1.0f, 0.5f));
+        MenuBarTextBoxSlot02->SetPosition(FVector2D(-231.0f, -58.0f));
+        MenuBarTextBoxSlot02->SetSize(FVector2D(528.0f, 40.f));
+
+        FSlateFontInfo FontInfo;
+        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
+        FontInfo.TypefaceFontName = FName("Default");
+        //FontInfo.Size = 38;
+        //FontInfo.LetterSpacing = 0;
+
+        MenuBarTextBox02->SetFont(FontInfo);
+        MenuBarTextBox02->SetJustification(ETextJustify::Left);
+        MenuBarTextBox02->SetText(FText::FromString(TEXT("Host IP : -")));
+        MenuBarTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    }
+
+    UCanvasPanelSlot* MenuBarTextBoxSlot03 = Cast<UCanvasPanelSlot>(MenuBarTextBox03->Slot);
+    if (MenuBarTextBoxSlot03)
+    {
+        MenuBarTextBoxSlot03->SetAnchors(FAnchors(1.0f, 0.5f));
+        MenuBarTextBoxSlot03->SetAlignment(FVector2D(1.0f, 0.5f));
+        MenuBarTextBoxSlot03->SetPosition(FVector2D(-595.0f, -8.0f));
+        MenuBarTextBoxSlot03->SetSize(FVector2D(165.0f, 40.f));
+
+        FSlateFontInfo FontInfo;
+        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
+        FontInfo.TypefaceFontName = FName("Default");
+        //FontInfo.Size = 38;
+        //FontInfo.LetterSpacing = 0;
+
+        MenuBarTextBox03->SetFont(FontInfo);
+        MenuBarTextBox03->SetJustification(ETextJustify::Left);
+        MenuBarTextBox03->SetText(FText::FromString(TEXT("Players : ")));
+        MenuBarTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     }
 
     UCanvasPanelSlot* MessageImageSlot = Cast<UCanvasPanelSlot>(MessageImage->Slot);

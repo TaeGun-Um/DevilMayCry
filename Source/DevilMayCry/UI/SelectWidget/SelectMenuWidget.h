@@ -37,12 +37,15 @@ public:
     bool IsButtonHovered() { return bIsHovered; }
     void SetIsEnd() { bIsEnd = true; }
     bool GetIsEnd() { return bIsEnd; }
-    void SetIsChangeMulti(bool _Is = true) { bIsChangeMultiMenu = _Is; }
-    bool GetIsChangeMulti() { return bIsChangeMultiMenu; }
+    void SetIsChangeHost(bool _Is = true) { bIsChangeHost= _Is; }
+    bool GetIsChangeHost() { return bIsChangeHost; }
+    void SetIsChangeClient(bool _Is = true) { bIsChangeClient = _Is; }
+    bool GetIsChangeClient() { return bIsChangeClient; }
     void SetIsChangeLocation2(bool _Is = true) { bIsChangeLocation2 = _Is; }
     bool GetIsChangeLocation2() { return bIsChangeLocation2; }
     void SetIsChangePrev(bool _Is = true) { bIsChangePrev = _Is; }
     bool GetIsChangePrev() { return bIsChangePrev; }
+    FString GetIPAddress() const;
 
     ///////////////// Start Button Options
     UFUNCTION()
@@ -149,7 +152,8 @@ private:
     uint8 bIsEnd : 1;
     uint8 bIsExtraWindowsHandled : 1;
     uint8 bIsChangeLocation2 : 1;
-    uint8 bIsChangeMultiMenu : 1;
+    uint8 bIsChangeHost : 1;
+    uint8 bIsChangeClient : 1;
     uint8 bIsChangePrev : 1;
 
 /// <summary>

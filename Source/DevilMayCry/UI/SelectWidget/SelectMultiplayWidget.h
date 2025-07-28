@@ -38,6 +38,9 @@ public:
     bool GetIsChangeMenu() { return bIsChangeSelectMenu; }
     void SetIsChangeLocation2(bool _Is = true) { bIsChangeLocation2 = _Is; }
     bool GetIsChangeLocation2() { return bIsChangeLocation2; }
+    void SetHostIP(FString _Text);
+
+    void UpdatePlayerCount();
 
     ///////////////// Start Button Options
     UFUNCTION()
@@ -98,6 +101,8 @@ public:
 
 protected:
     virtual bool Initialize() override;
+    virtual void NativeConstruct() override;
+    virtual void NativeDestruct() override;
 
 private:
     void VariableSetting();
@@ -106,12 +111,15 @@ private:
     void MessageBox01Visible();
     void MessageBox01Hidden();
 
+    FTimerHandle PlayerCountUpdateHandle;
     EMenuMultiPlayType MenuType = EMenuMultiPlayType::None;
     uint8 bIsHovered : 1;
     uint8 bIsEnd : 1;
     uint8 bIsMessageHandled : 1;
     uint8 bIsChangeLocation2 : 1;
     uint8 bIsChangeSelectMenu : 1;
+
+    FString HostIP = TEXT("");
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> MenuCanvas;
@@ -184,6 +192,12 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MenuBarTextBox01;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MenuBarTextBox02;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MenuBarTextBox03;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> MessageImage;

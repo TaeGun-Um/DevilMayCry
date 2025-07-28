@@ -8,7 +8,7 @@
 #include "DevilMayCry/UI/TitleWidget/TitleWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectCharacterWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectMenuWidget.h"
-#include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
+//#include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 ATitleHUD::ATitleHUD()
@@ -263,7 +263,7 @@ void ATitleHUD::CreateFSM()
             {
 
             }
-            if (true == MenuWidgetInstance->GetIsChangeMulti())
+            if (true == MenuWidgetInstance->GetIsChangeHost() || true == MenuWidgetInstance->GetIsChangeClient())
             {
                 TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MULTIPLAY));
             }
@@ -276,7 +276,8 @@ void ATitleHUD::CreateFSM()
         {
             MenuWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
             MenuWidgetInstance->SetIsChangeLocation2(false);
-            MenuWidgetInstance->SetIsChangeMulti(false);
+            // MenuWidgetInstance->SetIsChangeHost(false);
+            // MenuWidgetInstance->SetIsChangeClient(false);
             MenuWidgetInstance->SetIsChangePrev(false);
         }
         }
@@ -287,26 +288,59 @@ void ATitleHUD::CreateFSM()
         .StateValue = static_cast<int64>(ETitleFSMState::MULTIPLAY),
         .Start = [this]()  // Start
         {
-            MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Visible);
-            MultiPlayWidgetInstance->PlayFadeAnimation();
+            if (true == MenuWidgetInstance->GetIsChangeHost()) // Server
+            {
+                MenuWidgetInstance->SetIsChangeHost(false);
+                UGameplayStatics::OpenLevel(this, TEXT("LobbyScene"), true, TEXT("listen")); // Server
+            }
+            else if (true == MenuWidgetInstance->GetIsChangeClient()) // Client
+            {
+                MenuWidgetInstance->SetIsChangeClient(false);
+                FString ConnectionIP = MenuWidgetInstance->GetIPAddress();
+                if (!ConnectionIP.IsEmpty())
+                {
+                    if (HUDPlayerController)
+                    {
+                        HUDPlayerController->ClientTravel(ConnectionIP, ETravelType::TRAVEL_Absolute);
+                        bIsClientTraveling = true;
+                        ElapsedClientConnectTime = 0.0f;
+                    }
+                }
+                else
+                {
+                    bIsClientTraveling = true;
+                    ElapsedClientConnectTime = 0.0f;
+                }
+            }
         },
         .Update = [this](float DeltaTime)  // Update
         {
-            if (true == MultiPlayWidgetInstance->GetIsChangeLocation2())
+            if (bIsClientTraveling)
             {
-
+                ElapsedClientConnectTime += DeltaTime;
+                if (ElapsedClientConnectTime > ClientConnectTimeout)
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("ClientTravel failed : return to Menu"));
+                    bIsClientTraveling = false;
+                    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+                    return;
+                }
             }
 
-            if (true == MultiPlayWidgetInstance->GetIsChangeMenu())
-            {
-                TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
-            }
+           // for (const FKey& Key : AllKeys)
+           //{
+           //    if (HUDPlayerController->WasInputKeyJustPressed(Key))
+           //    {
+           //        TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+           //        break;
+           //    }
+           //}
         },
         .End = [this]() // End
         {
-            MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-            MultiPlayWidgetInstance->SetIsChangeLocation2(false);
-            MultiPlayWidgetInstance->SetIsChangeMenu(false);
+            //MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+            //MultiPlayWidgetInstance->SetIsChangeLocation2(false);
+            //MultiPlayWidgetInstance->SetIsChangeMenu(false);
         }
         }
     );
@@ -346,11 +380,11 @@ void ATitleHUD::ClassSetting()
         MenuWidgetClass = MenuWidgetClassFinder.Class;
     }
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> MultiWidgetClassFinder(TEXT("/Game/UI/Select/WBP_SelectMultiplayWidget"));
-    if (MultiWidgetClassFinder.Succeeded())
-    {
-        MultiPlayWidgetClass = MultiWidgetClassFinder.Class;
-    }
+    //static ConstructorHelpers::FClassFinder<UUserWidget> MultiWidgetClassFinder(TEXT("/Game/UI/Select/WBP_SelectMultiplayWidget"));
+    //if (MultiWidgetClassFinder.Succeeded())
+    //{
+    //    MultiPlayWidgetClass = MultiWidgetClassFinder.Class;
+    //}
 
     EKeys::GetAllKeys(AllKeys);
 }
@@ -363,9 +397,9 @@ void ATitleHUD::VariableSetting()
     BGBlackWidgetInstance = CreateWidget<UBlackBGWidget>(GetWorld(), BGBlackWidgetClass);
     BGBlackWidgetInstance->AddToViewport();
 
-    MultiPlayWidgetInstance = CreateWidget<USelectMultiplayWidget>(GetWorld(), MultiPlayWidgetClass);
-    MultiPlayWidgetInstance->AddToViewport();
-    MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+    //MultiPlayWidgetInstance = CreateWidget<USelectMultiplayWidget>(GetWorld(), MultiPlayWidgetClass);
+    //MultiPlayWidgetInstance->AddToViewport();
+    //MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 
     MenuWidgetInstance = CreateWidget<USelectMenuWidget>(GetWorld(), MenuWidgetClass);
     MenuWidgetInstance->AddToViewport();

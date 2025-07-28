@@ -15,7 +15,8 @@ bool USelectMenuWidget::Initialize()
     VariableSetting();
     bIsExtraWindowsHandled = false;
     bIsChangeLocation2 = false;
-    bIsChangeMultiMenu = false;
+    bIsChangeHost = false;
+    bIsChangeClient = false;
     bIsChangePrev = false;
 
 	return true;
@@ -24,6 +25,11 @@ bool USelectMenuWidget::Initialize()
 void USelectMenuWidget::PlayFadeAnimation()
 {
 	PlayAnimation(FadeAnimation);
+}
+
+FString USelectMenuWidget::GetIPAddress() const
+{
+    return IPAddressTextBox->GetText().ToString();
 }
 
 ///////////////// Start Button Options ////////////////////
@@ -424,7 +430,7 @@ void USelectMenuWidget::YesButtonClicked()
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
-    SetIsChangeMulti();
+    SetIsChangeHost();
 }
 
 void USelectMenuWidget::YesButtonHovered()
@@ -514,7 +520,7 @@ void USelectMenuWidget::EnterButtonClicked()
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
-    SetIsChangeMulti();
+    SetIsChangeClient();
 }
 
 void USelectMenuWidget::EnterButtonHovered()
