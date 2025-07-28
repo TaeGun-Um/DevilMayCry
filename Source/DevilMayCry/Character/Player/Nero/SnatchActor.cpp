@@ -44,6 +44,7 @@ void ASnatchActor::StartFire(TObjectPtr<class AEnemyBase> Enemy)
 	SetActorLocation(OwnerActor->GetActorLocation());
 	bFire = true; 
 	bPullActor = false;
+
 	FVector Temp;
 
 	if (SnatchEnemy!= nullptr)
@@ -72,7 +73,6 @@ void ASnatchActor::Launch(float DeltaTime)
 		Ratio = FMath::Clamp(Ratio += DeltaTime * SnatchSpeed, 0.f, 1.f);
 		FVector Temp = FMath::Lerp(StartPos, FirePos, Ratio);
 
-		FHitResult Hit;
 		SetActorLocation(Temp);		
 	}
 	else if (bFire && bPullActor)
@@ -85,9 +85,17 @@ void ASnatchActor::Launch(float DeltaTime)
 		FVector Temp = FMath::Lerp(StartPos, FirePos, Ratio);
 
 		SetActorLocation(Temp);
-		if (SnatchEnemy != nullptr)
+
+		if (bCanPull)
 		{
-			SnatchEnemy->SetActorLocation(Temp);
+			if (SnatchEnemy != nullptr)
+			{
+				SnatchEnemy->SetActorLocation(Temp);
+			}
+		}
+		else
+		{
+			OwnerActor->SetActorLocation(Temp);
 		}
 
 		if (Ratio == 0.f)
@@ -118,7 +126,18 @@ void ASnatchActor::OnSphereOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 		if (SweepResult.GetActor() == SnatchEnemy)
 		{
 			bPullActor = true;
-			StartPos = OwnerActor->GetActorLocation() + OwnerActor->GetMesh()->GetRightVector() * PullDistance;
+			bCanPull = SnatchEnemy->GetCanPull();
+
+			if (bCanPull)
+			{
+				FirePos = SnatchEnemy->GetActorLocation();
+				StartPos = OwnerActor->GetActorLocation() + OwnerActor->GetMesh()->GetRightVector() * PullDistance;
+			}
+			else
+			{
+				FirePos = OwnerActor->GetActorLocation();
+				StartPos = SnatchEnemy->GetActorLocation() + SnatchEnemy->GetActorForwardVector() * PullDistance;
+			}
 		}
 	}
 }

@@ -35,6 +35,11 @@ public:
 		bCanParry = Value;
 	}
 
+	bool GetCanPull()
+	{
+		return bCanPull;
+	}
+
 
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
