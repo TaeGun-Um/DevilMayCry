@@ -29,14 +29,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWalkSpeed(float Value);
 
+	UFUNCTION(BlueprintCallable)
+	void SetCanParry(bool Value)
+	{
+		bCanParry = Value;
+	}
+
+	bool GetCanPull()
+	{
+		return bCanPull;
+	}
+
 
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
 	virtual void DamagedDefault();
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
-	void RandomAttack();
 
 
 	void DestroyCheck(float DeltaTime);
@@ -58,6 +67,7 @@ protected:
 	}
 
 
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 
 
@@ -78,20 +88,36 @@ protected:
 
 	//Attack
 	float AttackDamage = 10.f;
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float AttackRange = 170.f;
-	const float LimitAngle = 5.f;
+	const float LimitAngle = 1.f;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 CollisionNum = 0;
+
 
 	//HitGravity
 	const float AirGravity = 0.2f;
 	const float MaxAirTime = 1.f;
 	float CurAirTime = MaxAirTime;
-
+	
 	//Snatch
 	bool bCanPull = true;
 
-	
-private:
+	//Parry
+	bool bCanParry = false;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int32 CollisionNum = 0;
+	FName PrevSection;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 CurParryCount = 0;
+	const int32 ParryToStunCount = 3;
+
+
+	//Name
+	FName Start = TEXT("Start");
+	FName Loop = TEXT("Loop");
+	FName End = TEXT("End");
+
+private:
+
 
 };

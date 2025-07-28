@@ -74,4 +74,6 @@ private:
 
 	bool bPullActor = false;
 	float PullDistance = 100.f;
+
+	bool bCanPull = false;
 };

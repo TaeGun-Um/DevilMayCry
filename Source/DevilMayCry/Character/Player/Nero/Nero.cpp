@@ -23,6 +23,7 @@ ANero::ANero()
 		GetMesh()->SetSkeletalMesh(SKM);
 		SwordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollision"));
 		SwordCollision->SetupAttachment(GetMesh(), "L_Hand");
+		SwordCollision->ComponentTags.Add(TEXT("Weapon"));
 	}
 }
 
@@ -136,11 +137,19 @@ void ANero::Damagedgeneral()
 
 void ANero::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
 	if (OtherActor && OtherActor != this)
 	{
 		TObjectPtr<AEnemyBase> Enemy = Cast<AEnemyBase>(SweepResult.GetActor());
+		if (DamagedActor.Contains(Enemy))
+		{
+			return;
+		}
+
 		if (Enemy!= nullptr)
-		{			
+		{		
+			DamagedActor.Add(Enemy);
+
 			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
 
 			Enemy->TakeDamage(SwordDamage, DamageEvent, GetController(), this);

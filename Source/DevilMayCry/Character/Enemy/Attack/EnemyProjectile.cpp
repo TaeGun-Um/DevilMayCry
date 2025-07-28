@@ -57,17 +57,20 @@ void AEnemyProjectile::Tick(float DeltaTime)
 
 void AEnemyProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor)
+	if (Hit.GetActor() && Hit.GetActor() != this)
 	{
-		TObjectPtr<AParentCharacter> Player = Cast<AParentCharacter>(OtherActor);
+		UE_LOG(LogTemp, Warning, TEXT("Actor Check"));
+		TObjectPtr<AParentCharacter> Player = Cast<AParentCharacter>(Hit.GetActor());
 
 		if (Player)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Player Check"));
 			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
 			Player->TakeDamage(10.f, DamageEvent,nullptr,this);
+
+			Destroy();
 		}		
 	}
-	Destroy();
 }
 
 void AEnemyProjectile::Fire(FVector Dir)

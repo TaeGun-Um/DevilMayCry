@@ -166,6 +166,16 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UFsmComponent> FsmComp = nullptr;
 
+	//HP
+	const float MaxHP = 100.f;
+	float CurHP = MaxHP;
+
+	//Attack
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 CurComboCount = 0;
+
+	TArray<TObjectPtr<AActor>> DamagedActor;
+
 private:
 	void CameraInit();
 	void CenterCamera(float DeltaTime);
@@ -185,6 +195,8 @@ private:
 	void Server_SetKeyDir(const FVector2D& Value);
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetKeyDir(const FVector2D& Value);
+
+
 
 
 private:
@@ -231,8 +243,6 @@ private:
 
 
 	//Attack
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int CurComboCount = 0;
 	bool bAttackKey = false;
 
 	//R Click
@@ -252,8 +262,5 @@ private:
 	bool bZKey = false;
 
 
-	//HP
-	const float MaxHP = 100.f;
-	float CurHP = MaxHP;
 
 };

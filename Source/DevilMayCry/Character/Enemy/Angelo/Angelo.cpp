@@ -34,9 +34,6 @@ AAngelo::AAngelo()
 
 		Sword = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sword"));
 		Sword->SetupAttachment(GetMesh(), "R_WeaponHand");
-
-		CollisionArray.SetNum(static_cast<uint8>(EAngeloCollision::ALL));
-		CollisionArray[static_cast<uint8>(EAngeloCollision::SWORD)] = Sword;
 	}
 
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
@@ -45,7 +42,7 @@ AAngelo::AAngelo()
 	SetupFsm();
 
 	bCanPull = false;
-	AttackRange = 300.f;
+	AttackRange = 800.f;
 	SetWalkSpeed(200.f);
 
 	RakuraiPos.SetNum(RakuraiMaxCount);
@@ -56,6 +53,9 @@ void AAngelo::BeginPlay()
 	Super::BeginPlay();
 
 	Sword->OnComponentBeginOverlap.AddDynamic(this, &AAngelo::OverlapBegin);
+
+	CollisionArray.SetNum(static_cast<uint8>(EAngeloCollision::ALL));
+	CollisionArray[static_cast<uint8>(EAngeloCollision::SWORD)] = Sword;
 
 	ToggleCollision(false, EAngeloCollision::ALL);
 
@@ -101,10 +101,20 @@ void AAngelo::ToggleCollision(bool Value, EAngeloCollision Where)
 
 void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (bCanParry == true && SweepResult.Component->ComponentHasTag(Weapon))
+	{
+		AngeloFsmComp->ChangeState(EAngeloFsm::PARRY);
+		return;
+	}
+
 	if (OtherActor && OtherActor != this)
 	{
+		if (AnimInst->Montage_GetCurrentSection() == Parry)
+		{
+			return;
+		}
 		TObjectPtr<AParentCharacter> Enemy = Cast<AParentCharacter>(SweepResult.GetActor());
-		if (Enemy!=nullptr)
+		if (Enemy != nullptr)
 		{
 			FDamageEvent DamageEvent(UImpulseDamageType::StaticClass());
 			Enemy->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
@@ -114,10 +124,10 @@ void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 
 void AAngelo::SetupFsm()
 {
-	FsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("AngeloFsmComp"));
-	FsmComp->SetIsReplicated(true);
+	AngeloFsmComp = CreateDefaultSubobject<UFsmComponent>(TEXT("AngeloFsmComp"));
+	AngeloFsmComp->SetIsReplicated(true);
 
-	FsmComp->CreateState(EAngeloFsm::IDLE,
+	AngeloFsmComp->CreateState(EAngeloFsm::IDLE,
 		//Start
 		[this]()
 		{
@@ -126,10 +136,9 @@ void AAngelo::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-
 			if (TargetPlayer != nullptr)
 			{
-				FsmComp->ChangeState(EAngeloFsm::RUN);
+				AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 				return;
 			}
 		},
@@ -140,7 +149,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::RUN,
+	AngeloFsmComp->CreateState(EAngeloFsm::RUN,
 		//Start
 		[this]()
 		{
@@ -155,26 +164,26 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				int Random = FMath::RandRange(0, 6);
+				int Random = FMath::RandRange(0, 5);
 				if (Random)
 				{
-					FsmComp->ChangeState(EAngeloFsm::ATTACK);
+					AngeloFsmComp->ChangeState(EAngeloFsm::ATTACK);
 					return;
 				}
 				else
 				{
-					FsmComp->ChangeState(EAngeloFsm::RAKURAI);
+					AngeloFsmComp->ChangeState(EAngeloFsm::RAKURAI);
 					return;
 				}
 			}
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > DengekiStart)
 			{
-				FsmComp->ChangeState(EAngeloFsm::DENGEKI);
+				AngeloFsmComp->ChangeState(EAngeloFsm::DENGEKI);
 				return;
 			}
 
-			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= 500.f)
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{
 				AnimInst->Montage_Stop(0.25f);
 				return;
@@ -187,33 +196,31 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::ATTACK,
+	AngeloFsmComp->CreateState(EAngeloFsm::ATTACK,
 		//Start
 		[this]()
 		{
-			RandomAttack();
+			if (AnimInst->Montage_GetCurrentSection() != Parry)
+			{
+				AttackAnimation();
+			}
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
-			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			TurnToActor(DeltaTime);
+
+			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				if (TargetPlayer && LimitAngleOver(LimitAngle))
+				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
-					TurnToActor(DeltaTime);
+					AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
+					return;
 				}
 				else
 				{
-					if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
-					{
-						FsmComp->ChangeState(EAngeloFsm::RUN);
-						return;
-					}
-					else
-					{
-						RandomAttack();
-					}
+					AttackAnimation();
 				}
 			}
 		},
@@ -224,7 +231,7 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::DAMAGED,
+	AngeloFsmComp->CreateState(EAngeloFsm::DAMAGED,
 		//Start
 		[this]()
 		{
@@ -233,16 +240,22 @@ void AAngelo::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bDead)
+			{
+				AngeloFsmComp->ChangeState(EAngeloFsm::DEAD);
+				return;
+			}
+
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
 				if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > AttackRange)
 				{
-					FsmComp->ChangeState(EAngeloFsm::RUN);
+					AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 					return;
 				}
 				else
 				{
-					FsmComp->ChangeState(EAngeloFsm::ATTACK);
+					AngeloFsmComp->ChangeState(EAngeloFsm::ATTACK);
 					return;
 				}
 			}
@@ -254,15 +267,31 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::PARRY,
+	AngeloFsmComp->CreateState(EAngeloFsm::PARRY,
 		//Start
 		[this]()
 		{
+			++CurParryCount;
+			PrevSection = AnimInst->Montage_GetCurrentSection();
+			AnimInst->Montage_JumpToSection(Parry);
+			bCanParry = false;
+			ToggleCollision(false, EAngeloCollision::ALL);
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			if (CurParryCount == ParryToStunCount)
+			{
+				CurParryCount = 0;
+				AngeloFsmComp->ChangeState(EAngeloFsm::STUN);
+				return;
+			}
+			else
+			{
+				AngeloFsmComp->ChangeState(EAngeloFsm::ATTACK);
+				return;
+			}
 		},
 
 		//End
@@ -271,7 +300,8 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->CreateState(EAngeloFsm::DENGEKI,
+
+	AngeloFsmComp->CreateState(EAngeloFsm::DENGEKI,
 		//Start
 		[this]()
 		{
@@ -286,7 +316,7 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::RUN);
+				AngeloFsmComp->ChangeState(EAngeloFsm::RUN);
 				return;
 			}
 
@@ -309,7 +339,7 @@ void AAngelo::SetupFsm()
 	);
 
 
-	FsmComp->CreateState(EAngeloFsm::RAKURAI,
+	AngeloFsmComp->CreateState(EAngeloFsm::RAKURAI,
 		//Start
 		[this]()
 		{
@@ -330,7 +360,7 @@ void AAngelo::SetupFsm()
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				FsmComp->ChangeState(EAngeloFsm::IDLE);
+				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
 				return;
 			}
 		},
@@ -341,16 +371,30 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-
-	FsmComp->CreateState(EAngeloFsm::DEAD,
+	AngeloFsmComp->CreateState(EAngeloFsm::WARP,
 		//Start
 		[this]()
 		{
+			WarpAnimation();
+			WarpHP = CurHP;
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
+			if (AnimInst->Montage_GetCurrentSection() == Loop)
+			{
+				if (CurHP<=WarpHP*WarpHPRatio)
+				{
+					AngeloFsmComp->ChangeState(EAngeloFsm::STUN);
+					return;
+				}
+			}
+			if (!AnimInst->IsAnyMontagePlaying())
+			{
+				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
+				return;
+			}
 		},
 
 		//End
@@ -359,7 +403,58 @@ void AAngelo::SetupFsm()
 		}
 	);
 
-	FsmComp->ChangeState(EAngeloFsm::IDLE);
+	AngeloFsmComp->CreateState(EAngeloFsm::STUN,
+		//Start
+		[this]()
+		{
+			StunAnimation();
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			if (!AnimInst->IsAnyMontagePlaying())
+			{
+				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
+				return;
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	AngeloFsmComp->CreateState(EAngeloFsm::DEAD,
+		//Start
+		[this]()
+		{
+			DeadAnimation();
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+			if (!AnimInst->IsAnyMontagePlaying())
+			{
+				Destroy();
+				return;
+			}
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+	AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
+}
+
+void AAngelo::BlueprintChangeState(EAngeloFsm State)
+{
+	AngeloFsmComp->ChangeState(State);
 }
 
 void AAngelo::FireDengeki(float DeltaTime)
@@ -368,7 +463,7 @@ void AAngelo::FireDengeki(float DeltaTime)
 
 	if (CurDengekiDelay <= 0.f)
 	{
-		FVector SocketPos = GetMesh()->GetSocketLocation(TEXT("L_WeaponHand"));
+		FVector SocketPos = GetMesh()->GetSocketLocation(L_WeaponHand);
 		FVector TargetPos = TargetPlayer->GetActorLocation();
 
 		TObjectPtr<AEnemyProjectile> Dengeki = GetWorld()->SpawnActor<AEnemyProjectile>(SocketPos, FRotator::ZeroRotator);
@@ -388,8 +483,8 @@ void AAngelo::InitRakurai()
 	for (size_t i = 0; i < RakuraiMaxCount - 1; i++)
 	{
 		FVector2D Rand2D = FMath::RandPointInCircle(RakuraiRadius);
-	
-		RakuraiPos[i] = FVector(Center.X + Rand2D.X, Center.Y + Rand2D.Y, Center.Z+100.f);
+
+		RakuraiPos[i] = FVector(Center.X + Rand2D.X, Center.Y + Rand2D.Y, Center.Z + 100.f);
 	}
 
 	RakuraiPos[RakuraiMaxCount - 1] = TargetPlayer->GetActorLocation();
@@ -415,7 +510,7 @@ void AAngelo::FireRakurai(float DeltaTime)
 		Params.AddIgnoredActor(this);
 		Params.AddIgnoredActor(TargetPlayer);
 
-		// Pawn 채널로 레이캐스트
+		// WorldStatic(구조물) 레이캐스트
 		bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, AttackPos, EndPos, ECC_WorldStatic, Params);
 
 		DrawDebugLine(GetWorld(), AttackPos, EndPos, FColor::Green, false, 1.f, 0, 1.f);
@@ -435,12 +530,22 @@ void AAngelo::FireRakurai(float DeltaTime)
 
 void AAngelo::DamagedDefault()
 {
-	if (FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::ATTACK) || FsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DENGEKI))
+	if (CurHP <= MaxHP * WarpHPRatio && bWarpDone == false)
+	{
+		AngeloFsmComp->ChangeState(EAngeloFsm::WARP);
+		bWarpDone = true;
+		return;
+	}
+
+	if (AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::ATTACK)
+		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DENGEKI)
+		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::WARP))
 	{
 		return;
 	}
 
-	FsmComp->ChangeState(EAngeloFsm::DAMAGED);
+
+	AngeloFsmComp->ChangeState(EAngeloFsm::DAMAGED);
 
 	DamagedAnimation();
 }

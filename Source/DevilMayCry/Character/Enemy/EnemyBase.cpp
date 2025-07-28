@@ -7,8 +7,9 @@
 #include "Components/ShapeComponent.h"
 #include "../DamageType/DMC5DamageType.h"
 #include "AIController.h"
-#include "../Player/ParentCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "../FsmComponent.h"
+#include "../Player/ParentCharacter.h"
 
 // Sets default values
 AEnemyBase::AEnemyBase()
@@ -32,8 +33,6 @@ void AEnemyBase::BeginPlay()
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	DestroyCheck(DeltaTime);
 }
 
 float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -44,10 +43,9 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 
 
 	//죽었을때 계속 때릴수 있어야함
-	if (CurHP <= 0.f)
+	if (bDead==false && CurHP <= 0.f)
 	{
 		bDead = true;
-		CurDeadTime = MaxDeadTime;
 	}
 	if (DamageEvent.DamageTypeClass)
 	{
@@ -118,11 +116,11 @@ bool AEnemyBase::LimitAngleOver(float Limit)
 	ToTarget.Z = 0;
 	ToTarget.Normalize();
 
-	//내적으로 코사인
+	//내적으로 코사인세타 뽑기
 	float Dot = FVector::DotProduct(Forward, ToTarget);
-	//외적으로 Z축
+	//외적해서 Z축 뽑기
 	float CrossZ = FVector::CrossProduct(Forward, ToTarget).Z;
-	//아크탄젠트로 라디안 각도
+	//아크탄젠트로 각도변환
 	float Angle = FMath::Abs(FMath::RadiansToDegrees(FMath::Atan2(CrossZ, Dot)));
 
 	if (Limit < Angle)
@@ -141,7 +139,7 @@ void AEnemyBase::TurnToActor(float DeltaTime)
 	Rotation.Pitch = 0;
 	Rotation.Roll = 0;
 
-	// 부드럽게 보간
+	// 정속 보간
 	Rotation = FMath::RInterpConstantTo(GetActorRotation(), Rotation, DeltaTime, 360.f);
 	SetActorRotation(Rotation);
 

@@ -14,11 +14,6 @@ AEnemyController::AEnemyController()
 void AEnemyController::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (EnemyBehaviorTree !=nullptr)
-    {
-        RunBehaviorTree(EnemyBehaviorTree);
-    }
 }
 
 void AEnemyController::Tick(float DeltaTime)
