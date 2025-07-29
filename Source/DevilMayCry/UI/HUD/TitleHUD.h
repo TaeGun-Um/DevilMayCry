@@ -77,6 +77,9 @@ private:
     TSubclassOf<class UUserWidget> MenuWidgetClass;
 
     //UPROPERTY(EditAnywhere, Category = "UI")
+    //TSubclassOf<class UUserWidget> LoadingWidgetClass;
+
+    //UPROPERTY(EditAnywhere, Category = "UI")
     //TSubclassOf<class UUserWidget> MultiPlayWidgetClass;
 
     UPROPERTY()
@@ -93,6 +96,9 @@ private:
 
     UPROPERTY()
     TObjectPtr<class USelectMenuWidget> MenuWidgetInstance;
+
+    //UPROPERTY()
+    //TObjectPtr<class ULoadingWidget> LoadingWidgetInstance;
 
     //UPROPERTY()
     //TObjectPtr<class USelectMultiplayWidget> MultiPlayWidgetInstance;
