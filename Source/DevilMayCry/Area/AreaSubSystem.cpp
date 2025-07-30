@@ -95,7 +95,10 @@ void UAreaSubSystem::SwitchPhase(bool Value)
 {
 	if (Value)
 	{
-		++CurPhase;
+		if (CurPhase < static_cast<int32>(EPhase::MAX))
+		{
+			++CurPhase;
+		}
 
 		//모든 플레이어 가져오기
 		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
