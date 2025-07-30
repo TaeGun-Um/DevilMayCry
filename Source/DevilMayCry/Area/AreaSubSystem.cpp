@@ -75,11 +75,18 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 					}
 					else if (Cast<AEnemyBase>(AreaActor))
 					{
-						PhaseArray[i].EnemyArray.Add(Cast<AEnemyBase>(AreaActor));
+						bool IsFirst = false;
+						PhaseArray[i].EnemyArray.Add(Cast<AEnemyBase>(AreaActor), &IsFirst);
 
-						AreaActor->SetActorHiddenInGame(true);
-						AreaActor->SetActorEnableCollision(false);
-						AreaActor->SetActorTickEnabled(false);
+						//중복검출이 되는 문제때문에 중복체크
+						if (!IsFirst)
+						{
+							AreaActor->SetActorHiddenInGame(true);
+							AreaActor->SetActorEnableCollision(false);
+							AreaActor->SetActorTickEnabled(false);
+
+							AreaActor->OnDestroyed.AddDynamic(this, &UAreaSubSystem::OnDestroyCheck);
+						}						
 					}
 					else
 					{
@@ -92,11 +99,30 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 	}
 }
 
+void UAreaSubSystem::OnDestroyCheck(AActor* DestroyActor)
+{
+	++PhaseArray[CurPhase].DeathCount;
+	UE_LOG(LogTemp, Warning, TEXT("Dest"));
+	UE_LOG(LogTemp, Warning, TEXT("Count %d"), PhaseArray[CurPhase].DeathCount);
+
+	if (PhaseArray[CurPhase].DeathCount == PhaseArray[CurPhase].EnemyArray.Num())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("End"));
+		SwitchPhase(false);
+	}
+}
+
 void UAreaSubSystem::SwitchPhase(bool Value)
 {
+
 	if (Value)
 	{
-		//모든 플레이어 가져오기
+		if (CurPhase < static_cast<int32>(EPhase::MAX))
+		{
+			++CurPhase;
+		}
+
+		//모든 플레이어 가져와서 위치 변경
 		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
 		{
 			if (Iter->Get())
@@ -105,32 +131,29 @@ void UAreaSubSystem::SwitchPhase(bool Value)
 				Char->SetActorLocation(PhaseArray[CurPhase].Location->GetActorLocation());
 			}
 		}
-	}
-	for (auto Iter : PhaseArray[CurPhase].BlockArray)
-	{
-		Iter->SetActorHiddenInGame(!Value);
-		Iter->SetActorEnableCollision(Value);
-		Iter->SetActorTickEnabled(Value);
+
+		for (auto Iter : PhaseArray[CurPhase].EnemyArray)
+		{
+			Iter->SetActorHiddenInGame(!Value);
+			Iter->SetActorEnableCollision(Value);
+			Iter->SetActorTickEnabled(Value);
+		}
 	}
 
-	for (auto Iter : PhaseArray[CurPhase].MeshArray)
-	{
-		Iter->SetActorHiddenInGame(!Value);
-		Iter->SetActorEnableCollision(Value);
-		Iter->SetActorTickEnabled(Value);
-	}
+		for (auto Iter : PhaseArray[CurPhase].MeshArray)
+		{
+			Iter->SetActorHiddenInGame(!Value);
+			Iter->SetActorEnableCollision(Value);
+			Iter->SetActorTickEnabled(Value);
+		}
 
-	for (auto Iter : PhaseArray[CurPhase].EnemyArray)
-	{
-		Iter->SetActorHiddenInGame(!Value);
-		Iter->SetActorEnableCollision(Value);
-		Iter->SetActorTickEnabled(Value);
-	}
-
-	if (CurPhase < static_cast<int32>(EPhase::MAX))
-	{
-		++CurPhase;
-	}
+		for (auto Iter : PhaseArray[CurPhase].BlockArray)
+		{
+			Iter->SetActorHiddenInGame(!Value);
+			Iter->SetActorEnableCollision(Value);
+			Iter->SetActorTickEnabled(Value);
+		}
+	
 }
 
 void UAreaSubSystem::OnWorldBeginPlay(UWorld& InWorld)

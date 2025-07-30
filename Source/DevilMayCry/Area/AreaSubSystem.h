@@ -31,9 +31,10 @@ public:
 		TObjectPtr<class AAreaTrigger> Trigger = nullptr;
 		TObjectPtr<class AActor> Location = nullptr;
 
-		TArray<TObjectPtr<class AAreaBlockingVolume>> BlockArray;
-		TArray<TObjectPtr<class AStaticMeshActor>> MeshArray;
-		TArray<TObjectPtr<class AEnemyBase>> EnemyArray;
+		TSet<TObjectPtr<class AAreaBlockingVolume>> BlockArray;
+		TSet<TObjectPtr<class AStaticMeshActor>> MeshArray;
+		TSet<TObjectPtr<class AEnemyBase>> EnemyArray;
+		uint32 DeathCount = 0;
 	};
 
 public:
@@ -47,9 +48,11 @@ public:
 
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
-	void FindPhase(UWorld* World);
+	void FindPhase(UWorld* World); 
+	UFUNCTION()
+	void OnDestroyCheck(AActor* DestroyActor);
 
 private:
 	TArray<Phase> PhaseArray;
-	int32 CurPhase = static_cast<int32>(EPhase::PHASE0);
+	int32 CurPhase = -1;
 };
