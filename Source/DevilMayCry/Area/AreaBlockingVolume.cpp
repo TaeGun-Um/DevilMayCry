@@ -13,3 +13,17 @@ void AAreaBlockingVolume::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
 }
+
+#if WITH_EDITOR
+void AAreaBlockingVolume::LoadedFromAnotherClass(const FName& OldClassName)
+{
+	// Super::LoadedFromAnotherClass(OldClassName);
+
+}
+
+void AAreaBlockingVolume::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+	// Super::PostEditChangeChainProperty(PropertyChangedEvent);
+
+}
+#endif

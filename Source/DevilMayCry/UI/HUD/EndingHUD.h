@@ -26,4 +26,12 @@ private:
 	void VariableSetting();
 	void ChangeScene();
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UUserWidget> EndingWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<class UEndingWidget> EndingWidgetInstance;
+
+	UPROPERTY()
+	TObjectPtr<class APlayerController> HUDPlayerController;
 };

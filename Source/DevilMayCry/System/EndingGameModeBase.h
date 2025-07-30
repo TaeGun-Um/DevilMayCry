@@ -13,5 +13,13 @@ UCLASS()
 class DEVILMAYCRY_API AEndingGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	AEndingGameModeBase();
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+
 };

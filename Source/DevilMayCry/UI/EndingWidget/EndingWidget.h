@@ -31,6 +31,12 @@ private:
 	// TObjectPtr<class UCanvasPanel> LoadingCanvas;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UCanvasPanel> EndingCanvas;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class USizeBox> EndingSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> EndingImage;
 
 };

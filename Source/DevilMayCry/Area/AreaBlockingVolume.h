@@ -19,5 +19,11 @@ public:
 
 protected:
 	virtual void PostInitializeComponents() override;
+
+#if WITH_EDITOR
+	virtual void LoadedFromAnotherClass(const FName& OldClassName) override;
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
+#endif
+
 private:
 };

@@ -3,6 +3,7 @@
 
 #include "EndingHUD.h"
 #include "DevilMayCry/UI/LoadingWidget/LoadingWidget.h"
+#include "DevilMayCry/UI/EndingWidget/EndingWidget.h"
 #include "DevilMayCry/UI/BasicWidget/BlackBGWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "DevilMayCry/System/MyGameInstance.h"
@@ -17,16 +18,12 @@ void AEndingHUD::BeginPlay()
     Super::BeginPlay();
     VariableSetting();
 
-    // GetWorldTimerManager().SetTimer(LoadingHandle, this, &ALoadingHUD::ChangeScene, 3.0f, false);
-    // CreateFSM();
-
     if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
     {
         if (GI->CapturedEndingTexture)
         {
-            // UMyEndingWidget* EndingUI = CreateWidget<UMyEndingWidget>(GetWorld(), EndingWidgetClass);
-            // EndingUI->SetCapturedTexture(GI->CapturedEndingTexture);
-            // EndingUI->AddToViewport();
+             EndingWidgetInstance->SetCapturedTexture(GI->CapturedEndingTexture);
+             EndingWidgetInstance->AddToViewport();
         }
     }
 }
@@ -63,11 +60,11 @@ void AEndingHUD::ChangeScene()
 
 void AEndingHUD::ClassSetting()
 {
-    //static ConstructorHelpers::FClassFinder<UUserWidget> LoadingWidgetClassFinder(TEXT("/Game/UI/Loading/WBP_LoadingWidget"));
-    //if (LoadingWidgetClassFinder.Succeeded())
-    //{
-    //    LoadingWidgetClass = LoadingWidgetClassFinder.Class;
-    //}
+    static ConstructorHelpers::FClassFinder<UUserWidget> EndingWidgetClassFinder(TEXT("/Game/UI/Ending/WBP_EndingWidget"));
+    if (EndingWidgetClassFinder.Succeeded())
+    {
+        EndingWidgetClass = EndingWidgetClassFinder.Class;
+    }
 
     //static ConstructorHelpers::FClassFinder<UUserWidget> BGBlackWidgetClassFinder(TEXT("/Game/UI/Basic/WBP_BlackBGWidget"));
     //if (BGBlackWidgetClassFinder.Succeeded())
@@ -84,20 +81,18 @@ void AEndingHUD::VariableSetting()
     //BGBlackWidgetInstance = CreateWidget<UBlackBGWidget>(GetWorld(), BGBlackWidgetClass);
     //BGBlackWidgetInstance->AddToViewport();
 
-    //LoadingWidgetInstance = CreateWidget<ULoadingWidget>(GetWorld(), LoadingWidgetClass);
-    //LoadingWidgetInstance->AddToViewport();
-    //LoadingWidgetInstance->PlayFadeAnimation();
-    //LoadingWidgetInstance->PlayArrowAnimation();
-    //// LoadingWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+    EndingWidgetInstance = CreateWidget<UEndingWidget>(GetWorld(), EndingWidgetClass);
+    EndingWidgetInstance->AddToViewport();
 
-    //if (HUDPlayerController)
-    //{
-    //    HUDPlayerController->SetShowMouseCursor(true);
+    if (HUDPlayerController)
+    {
+        HUDPlayerController->SetShowMouseCursor(true);
 
-    //    FInputModeGameAndUI InputMode;
-    //    InputMode.SetWidgetToFocus(LoadingWidgetInstance->TakeWidget());
-    //    InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-    //    HUDPlayerController->SetInputMode(InputMode);
-    //    HUDPlayerController->SetShowMouseCursor(true);
-    //}
+        FInputModeGameAndUI InputMode;
+        InputMode.SetWidgetToFocus(EndingWidgetInstance->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        HUDPlayerController->SetInputMode(InputMode);
+        HUDPlayerController->SetShowMouseCursor(true);
+    }
 }
+

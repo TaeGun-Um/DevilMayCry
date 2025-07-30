@@ -6,9 +6,10 @@
 
 bool UEndingWidget::Initialize()
 {
+    Super::Initialize();
+    VariableSetting();
 
-
-    return false;
+    return true;
 }
 
 void UEndingWidget::SetCapturedTexture(UTexture2D* _Tex)
