@@ -14,6 +14,7 @@
 #include "../Character/Enemy/EnemyBase.h"
 #include "AreaBlockingVolume.h"
 #include "AreaTrigger.h"
+#include "AreaBlock.h"
 
 
 
@@ -65,9 +66,9 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 						AreaActor->SetActorEnableCollision(false);
 						AreaActor->SetActorTickEnabled(false);
 					}
-					else if (AreaActor->GetClass() == AStaticMeshActor::StaticClass())
+					else if (AreaActor->GetClass() == AAreaBlock::StaticClass())
 					{
-						PhaseArray[i].MeshArray.Add(Cast<AStaticMeshActor>(AreaActor));
+						PhaseArray[i].MeshArray.Add(Cast<AAreaBlock>(AreaActor));
 
 						AreaActor->SetActorHiddenInGame(true);
 						AreaActor->SetActorEnableCollision(false);
