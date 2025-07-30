@@ -34,6 +34,7 @@ AParentCharacter::AParentCharacter()
 	CheckParam.AddObjectTypesToQuery(ECC_WorldDynamic);
 
 	Tags.Add(TEXT("Player"));
+	Tags.Add(TEXT("AREA"));
 }
 
 // Called when the game starts or when spawned

@@ -6,6 +6,7 @@
 
 AAreaBlockingVolume::AAreaBlockingVolume()
 {
+	Tags.Add(TEXT("AREA"));
 }
 
 void AAreaBlockingVolume::PostInitializeComponents()

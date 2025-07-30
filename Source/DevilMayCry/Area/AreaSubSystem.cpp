@@ -60,7 +60,7 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 					else if (AreaActor->GetClass() == AAreaBlockingVolume::StaticClass())
 					{
 						PhaseArray[i].BlockArray.Add(Cast<AAreaBlockingVolume>(AreaActor));
-						
+
 						AreaActor->SetActorHiddenInGame(true);
 						AreaActor->SetActorEnableCollision(false);
 						AreaActor->SetActorTickEnabled(false);
@@ -78,7 +78,7 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 						bool IsFirst = false;
 						PhaseArray[i].EnemyArray.Add(Cast<AEnemyBase>(AreaActor), &IsFirst);
 
-						//중복검출이 되는 문제때문에 중복체크
+						//몬스터 콜리전이 여러개면 (무기 등) 중복검출이 되는 문제때문에 중복체크
 						if (!IsFirst)
 						{
 							AreaActor->SetActorHiddenInGame(true);
@@ -86,11 +86,11 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 							AreaActor->SetActorTickEnabled(false);
 
 							AreaActor->OnDestroyed.AddDynamic(this, &UAreaSubSystem::OnDestroyCheck);
-						}						
+						}
 					}
 					else
 					{
-						//위에가 다 아니었으면 로케이션 세터일거임
+						//위에서 안걸린놈은 로케이션 세터일거임
 						PhaseArray[i].Location = AreaActor;
 					}
 				}
@@ -102,19 +102,17 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 void UAreaSubSystem::OnDestroyCheck(AActor* DestroyActor)
 {
 	++PhaseArray[CurPhase].DeathCount;
-	UE_LOG(LogTemp, Warning, TEXT("Dest"));
-	UE_LOG(LogTemp, Warning, TEXT("Count %d"), PhaseArray[CurPhase].DeathCount);
 
+	//페이즈에 등록된 몬스터와 죽은수가 일치시 페이즈 종료
 	if (PhaseArray[CurPhase].DeathCount == PhaseArray[CurPhase].EnemyArray.Num())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("End"));
 		SwitchPhase(false);
 	}
 }
 
 void UAreaSubSystem::SwitchPhase(bool Value)
 {
-
+	//true일때만 페이즈 증가 , 플레이어 이동, 몬스터 세팅. false는 이미 끝난거
 	if (Value)
 	{
 		if (CurPhase < static_cast<int32>(EPhase::MAX))
@@ -140,20 +138,20 @@ void UAreaSubSystem::SwitchPhase(bool Value)
 		}
 	}
 
-		for (auto Iter : PhaseArray[CurPhase].MeshArray)
-		{
-			Iter->SetActorHiddenInGame(!Value);
-			Iter->SetActorEnableCollision(Value);
-			Iter->SetActorTickEnabled(Value);
-		}
+	for (auto Iter : PhaseArray[CurPhase].MeshArray)
+	{
+		Iter->SetActorHiddenInGame(!Value);
+		Iter->SetActorEnableCollision(Value);
+		Iter->SetActorTickEnabled(Value);
+	}
 
-		for (auto Iter : PhaseArray[CurPhase].BlockArray)
-		{
-			Iter->SetActorHiddenInGame(!Value);
-			Iter->SetActorEnableCollision(Value);
-			Iter->SetActorTickEnabled(Value);
-		}
-	
+	for (auto Iter : PhaseArray[CurPhase].BlockArray)
+	{
+		Iter->SetActorHiddenInGame(!Value);
+		Iter->SetActorEnableCollision(Value);
+		Iter->SetActorTickEnabled(Value);
+	}
+
 }
 
 void UAreaSubSystem::OnWorldBeginPlay(UWorld& InWorld)
