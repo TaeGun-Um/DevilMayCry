@@ -14,4 +14,8 @@ class DEVILMAYCRY_API UMyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<class UTexture2D> CapturedEndingTexture;
+
 };

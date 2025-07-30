@@ -116,7 +116,7 @@ void USelectMultiplayWidget::StartButtonClicked()
         UWorld* World = GetWorld();
         if (World)
         {
-            World->ServerTravel("/Game/Scene/Location2?listen");
+            World->ServerTravel("/Game/Scene/LoadingScene?listen");
         }
     }
 }

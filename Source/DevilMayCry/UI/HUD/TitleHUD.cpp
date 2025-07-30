@@ -8,6 +8,7 @@
 #include "DevilMayCry/UI/TitleWidget/TitleWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectCharacterWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectMenuWidget.h"
+#include "DevilMayCry/UI/LoadingWidget/LoadingWidget.h"
 //#include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -261,7 +262,7 @@ void ATitleHUD::CreateFSM()
         {
             if (true == MenuWidgetInstance->GetIsChangeLocation2())
             {
-
+                UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/LoadingScene")));
             }
             if (true == MenuWidgetInstance->GetIsChangeHost() || true == MenuWidgetInstance->GetIsChangeClient())
             {
@@ -276,8 +277,6 @@ void ATitleHUD::CreateFSM()
         {
             MenuWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
             MenuWidgetInstance->SetIsChangeLocation2(false);
-            // MenuWidgetInstance->SetIsChangeHost(false);
-            // MenuWidgetInstance->SetIsChangeClient(false);
             MenuWidgetInstance->SetIsChangePrev(false);
         }
         }
@@ -306,26 +305,26 @@ void ATitleHUD::CreateFSM()
                         ElapsedClientConnectTime = 0.0f;
                     }
                 }
-                else
-                {
-                    bIsClientTraveling = true;
-                    ElapsedClientConnectTime = 0.0f;
-                }
+                //else
+                //{
+                //    bIsClientTraveling = true;
+                //    ElapsedClientConnectTime = 0.0f;
+                //}
             }
         },
         .Update = [this](float DeltaTime)  // Update
         {
-            if (bIsClientTraveling)
-            {
-                ElapsedClientConnectTime += DeltaTime;
-                if (ElapsedClientConnectTime > ClientConnectTimeout)
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("ClientTravel failed : return to Menu"));
-                    bIsClientTraveling = false;
-                    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
-                    return;
-                }
-            }
+            //if (bIsClientTraveling)
+            //{
+            //    ElapsedClientConnectTime += DeltaTime;
+            //    if (ElapsedClientConnectTime > ClientConnectTimeout)
+            //    {
+            //        UE_LOG(LogTemp, Warning, TEXT("ClientTravel failed : return to Menu"));
+            //        bIsClientTraveling = false;
+            //        TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+            //        return;
+            //    }
+            //}
 
            // for (const FKey& Key : AllKeys)
            //{
@@ -381,6 +380,12 @@ void ATitleHUD::ClassSetting()
         MenuWidgetClass = MenuWidgetClassFinder.Class;
     }
 
+    //static ConstructorHelpers::FClassFinder<UUserWidget> LoadingWidgetClassFinder(TEXT("/Game/UI/Loading/WBP_LoadingWidget"));
+    //if (LoadingWidgetClassFinder.Succeeded())
+    //{
+    //    LoadingWidgetClass = LoadingWidgetClassFinder.Class;
+    //}
+
     //static ConstructorHelpers::FClassFinder<UUserWidget> MultiWidgetClassFinder(TEXT("/Game/UI/Select/WBP_SelectMultiplayWidget"));
     //if (MultiWidgetClassFinder.Succeeded())
     //{
@@ -417,6 +422,10 @@ void ATitleHUD::VariableSetting()
     TitleLogoWidgetInstance = CreateWidget<UTitleLogoWidget>(GetWorld(), TitleLogoWidgetClass);
     TitleLogoWidgetInstance->AddToViewport();
     TitleLogoWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+
+    //LoadingWidgetInstance = CreateWidget<ULoadingWidget>(GetWorld(), LoadingWidgetClass);
+    //LoadingWidgetInstance->AddToViewport();
+    //LoadingWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 
     if (HUDPlayerController)
     {
