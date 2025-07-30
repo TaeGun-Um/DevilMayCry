@@ -70,8 +70,8 @@ void AInGameHUD::ClassSetting()
 
 void AInGameHUD::VariableSetting()
 {
-    InGameWidgetInstance = CreateWidget<UInGameWidget>(GetWorld(), InGameWidgetClass);
-    InGameWidgetInstance->AddToViewport();
+    //InGameWidgetInstance = CreateWidget<UInGameWidget>(GetWorld(), InGameWidgetClass);
+    //InGameWidgetInstance->AddToViewport();
 }
 
 
