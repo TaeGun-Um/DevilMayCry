@@ -305,26 +305,26 @@ void ATitleHUD::CreateFSM()
                         ElapsedClientConnectTime = 0.0f;
                     }
                 }
-                else
-                {
-                    bIsClientTraveling = true;
-                    ElapsedClientConnectTime = 0.0f;
-                }
+                //else
+                //{
+                //    bIsClientTraveling = true;
+                //    ElapsedClientConnectTime = 0.0f;
+                //}
             }
         },
         .Update = [this](float DeltaTime)  // Update
         {
-            if (bIsClientTraveling)
-            {
-                ElapsedClientConnectTime += DeltaTime;
-                if (ElapsedClientConnectTime > ClientConnectTimeout)
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("ClientTravel failed : return to Menu"));
-                    bIsClientTraveling = false;
-                    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
-                    return;
-                }
-            }
+            //if (bIsClientTraveling)
+            //{
+            //    ElapsedClientConnectTime += DeltaTime;
+            //    if (ElapsedClientConnectTime > ClientConnectTimeout)
+            //    {
+            //        UE_LOG(LogTemp, Warning, TEXT("ClientTravel failed : return to Menu"));
+            //        bIsClientTraveling = false;
+            //        TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+            //        return;
+            //    }
+            //}
 
            // for (const FKey& Key : AllKeys)
            //{

@@ -25,6 +25,7 @@ protected:
 private:
     void VariableSetting();
     void ClassSetting();
+    void CaptureScreenshot(); // 이미지 저장(Png)
 
     int Count = 0;
     bool bLoggedOnce = false;

@@ -59,6 +59,11 @@ void AInGameHUD::Tick(float DeltaTime)
     }
 }
 
+void AInGameHUD::CaptureScreenshot()
+{
+    FScreenshotRequest::RequestScreenshot(TEXT("EndingScreen.png"), false, false);
+}
+
 void AInGameHUD::ClassSetting()
 {
     static ConstructorHelpers::FClassFinder<UUserWidget> InGameWidgetClassFinder(TEXT("/Game/UI/InGame/WBP_InGameWidget"));
