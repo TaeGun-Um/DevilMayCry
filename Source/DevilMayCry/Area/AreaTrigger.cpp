@@ -23,5 +23,6 @@ void AAreaTrigger::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		{
 			Cast<UAreaSubSystem>(GetWorld()->GetSubsystemBase(UAreaSubSystem::StaticClass()))->SwitchPhase(true);;
 		}
+		Destroy();
 	}
 }

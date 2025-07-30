@@ -83,6 +83,7 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 					}
 					else
 					{
+						//위에가 다 아니었으면 로케이션 세터일거임
 						PhaseArray[i].Location = AreaActor;
 					}
 				}
@@ -95,11 +96,6 @@ void UAreaSubSystem::SwitchPhase(bool Value)
 {
 	if (Value)
 	{
-		if (CurPhase < static_cast<int32>(EPhase::MAX))
-		{
-			++CurPhase;
-		}
-
 		//모든 플레이어 가져오기
 		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
 		{
@@ -130,12 +126,16 @@ void UAreaSubSystem::SwitchPhase(bool Value)
 		Iter->SetActorEnableCollision(Value);
 		Iter->SetActorTickEnabled(Value);
 	}
+
+	if (CurPhase < static_cast<int32>(EPhase::MAX))
+	{
+		++CurPhase;
+	}
 }
 
 void UAreaSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	FString LevelName = UGameplayStatics::GetCurrentLevelName(&InWorld);
-	UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 
 	//특정 레벨일때만 체크
 	if (LevelName == TEXT("Location2"))
