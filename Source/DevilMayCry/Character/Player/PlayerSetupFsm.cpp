@@ -573,7 +573,6 @@ void AParentCharacter::SetupFsm()
 				return;
 			}
 
-
 			if (bRightClick)
 			{
 				FsmComp->ChangeState(EPlayerState::R_CLICK);
@@ -631,6 +630,7 @@ void AParentCharacter::SetupFsm()
 		//Start
 		[this]()
 		{
+			AnimEnd = false;
 			bMoveOk = false;
 			WallCheck();
 
@@ -648,7 +648,7 @@ void AParentCharacter::SetupFsm()
 			{
 				GetCharacterMovement()->Velocity = FVector::ZeroVector;
 			}
-
+			/*
 			if (AnimEnd)
 			{
 				if (GetCharacterMovement()->IsFalling())
@@ -662,20 +662,13 @@ void AParentCharacter::SetupFsm()
 					return;
 				}
 			}
+			*/
 		},
 		//End
 		[this]()
 		{
 			AnimEnd = false;
 			bMoveOk = true;
-
-			if (LockOnEnemy != nullptr)
-			{
-				//그랩엔 데미지를 0으로 해서 타격인걸 알리긴 해야함
-				FDamageEvent DamageEvent(USnatchDamageType::StaticClass());
-
-				LockOnEnemy->TakeDamage(0.f, DamageEvent, GetController(), this);
-			}
 		}
 	);
 

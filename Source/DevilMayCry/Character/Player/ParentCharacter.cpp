@@ -375,12 +375,12 @@ void AParentCharacter::Move(const FVector2D& Value)
 
 	if (HasAuthority())
 	{
-		Multicast_MoveKey(FVector2D(DirX + DirY));
+		//Multicast_MoveKey(FVector2D(DirX + DirY));
 		Multicast_SetKeyDir(Value);
 	}
 	else
 	{
-		Server_MoveKey(FVector2D(DirX + DirY));
+		//Server_MoveKey(FVector2D(DirX + DirY));
 		Server_SetKeyDir(Value);
 	}
 
@@ -402,6 +402,12 @@ void AParentCharacter::WallCheck()
 
 void AParentCharacter::ToggleCollision(bool Value)
 {
+}
+
+void AParentCharacter::CalcMoveDir()
+{
+	MoveDir = FVector2D(GetVelocity().X, GetVelocity().Y);
+	MoveDir.Normalize();
 }
 
 

@@ -159,6 +159,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void ToggleCollision(bool Value);
 
+	void CalcMoveDir();
+
 protected:
 	//Jump
 	float MaxJumpHeight = 300.f;
