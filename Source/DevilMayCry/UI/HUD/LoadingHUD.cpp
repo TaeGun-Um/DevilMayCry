@@ -4,6 +4,7 @@
 #include "LoadingHUD.h"
 #include "DevilMayCry/UI/LoadingWidget/LoadingWidget.h"
 #include "DevilMayCry/UI/BasicWidget/BlackBGWidget.h"
+#include "DevilMayCry/System/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 ALoadingHUD::ALoadingHUD()
@@ -38,24 +39,51 @@ void ALoadingHUD::Tick(float DeltaTime)
 void ALoadingHUD::ChangeScene()
 {
     UWorld* World = GetWorld();
-    if (!World)
-    {
-        return;
-    }
+
+    if (!World) { return; }
 
     ENetMode NetMode = World->GetNetMode();
-
-    if (NetMode == NM_Standalone)
+    UMyGameInstance* GI = GetGameInstance<UMyGameInstance>();
+    EMapChangeValue Value = GI->MapChangeValue;
+    switch (Value)
     {
-        UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/Location2")));
+    case EMapChangeValue::LOCATION2:
+    {
+        if (NetMode == NM_Standalone)
+        {
+            UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/Location2")));
+        }
+        else if (NetMode == NM_ListenServer)
+        {
+            World->ServerTravel("/Game/Scene/Location2?listen");
+        }
+        else if (NetMode == NM_Client)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Client does not control level travel"));
+        }
     }
-    else if (NetMode == NM_ListenServer)
+    break;
+    case EMapChangeValue::LOCATION11:
     {
-        World->ServerTravel("/Game/Scene/Location2?listen");
+        if (NetMode == NM_Standalone)
+        {
+            UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/Location11")));
+        }
+        else if (NetMode == NM_ListenServer)
+        {
+            World->ServerTravel("/Game/Scene/Location11?listen");
+        }
+        else if (NetMode == NM_Client)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Client does not control level travel"));
+        }
     }
-    else if (NetMode == NM_Client)
+    break;
+    case EMapChangeValue::NONE:
     {
-        UE_LOG(LogTemp, Log, TEXT("Client does not control level travel"));
+        UE_LOG(LogTemp, Log, TEXT("Do not slect the location"));
+    }
+    break;
     }
 }
 

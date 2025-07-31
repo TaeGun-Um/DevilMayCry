@@ -26,6 +26,9 @@ private:
 	void VariableSetting();
 	void ChangeScene();
 
+	bool bIsChangeLocation2 = false;
+	bool bIsChangeLocation11 = false;
+
 	FTimerHandle LoadingHandle;
 
 	UPROPERTY(EditAnywhere, Category = "UI")

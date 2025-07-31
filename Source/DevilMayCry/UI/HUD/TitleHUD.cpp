@@ -10,7 +10,7 @@
 #include "DevilMayCry/UI/SelectWidget/SelectMenuWidget.h"
 #include "DevilMayCry/UI/LoadingWidget/LoadingWidget.h"
 #include "DevilMayCry/Network/UPnPSubsystem.h"
-//#include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
+#include "DevilMayCry/System/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 ATitleHUD::ATitleHUD()
@@ -273,6 +273,10 @@ void ATitleHUD::CreateFSM()
         {
             if (true == MenuWidgetInstance->GetIsChangeLocation2())
             {
+                UWorld* World = GetWorld();
+                UGameInstance* GIBase = World->GetGameInstance();
+                UMyGameInstance* GI = Cast<UMyGameInstance>(GIBase);
+                GI->SetMapChangeValue(EMapChangeValue::LOCATION2);
                 UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/LoadingScene")));
             }
             if (true == MenuWidgetInstance->GetIsChangeHost() || true == MenuWidgetInstance->GetIsChangeClient())
@@ -303,17 +307,17 @@ void ATitleHUD::CreateFSM()
                 MenuWidgetInstance->SetIsChangeHost(false);
 
                 // UPnP 포트포워딩 확인
-                if (UUPnPSubsystem* UPnP = GetGameInstance()->GetSubsystem<UUPnPSubsystem>())
-                {
-                    if (!UPnP->TryUPnPPortForward(7777))
-                    {
-                        UE_LOG(LogTemp, Warning, TEXT("UPnP Port Forwarding failed. External connections may not work."));
-                    }
-                    else
-                    {
-                        UE_LOG(LogTemp, Warning, TEXT("UPnP Port Forwarding Successed."));
-                    }
-                }
+                //if (UUPnPSubsystem* UPnP = GetGameInstance()->GetSubsystem<UUPnPSubsystem>())
+                //{
+                //    if (!UPnP->TryUPnPPortForward(7777))
+                //    {
+                //        UE_LOG(LogTemp, Warning, TEXT("UPnP Port Forwarding failed. External connections may not work."));
+                //    }
+                //    else
+                //    {
+                //        UE_LOG(LogTemp, Warning, TEXT("UPnP Port Forwarding Successed."));
+                //    }
+                //}
 
                 UGameplayStatics::OpenLevel(this, TEXT("LobbyScene"), true, TEXT("listen"));
             }
@@ -321,7 +325,7 @@ void ATitleHUD::CreateFSM()
             {
                 MenuWidgetInstance->SetIsChangeClient(false);
 
-                FString ConnectionIP = MenuWidgetInstance->GetIPAddress(); // 예: "123.45.67.89:7777"
+                FString ConnectionIP = MenuWidgetInstance->GetIPAddress();
                 if (!ConnectionIP.IsEmpty() && HUDPlayerController)
                 {
                     UE_LOG(LogTemp, Log, TEXT("Client connecting to %s"), *ConnectionIP);

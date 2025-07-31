@@ -17,7 +17,7 @@ void UUPnPSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     Super::Initialize(Collection);
     UE_LOG(LogTemp, Log, TEXT("[UUPnPSubsystem] Initialized. UPnP and IP systems are ready."));
 
-    TryUPnPPortForward(7777); // Automatically attempts port forwarding when the game starts.
+    // TryUPnPPortForward(7777); // Automatically attempts port forwarding when the game starts.
     RequestPublicIP(); // Request for public IP
 }
 

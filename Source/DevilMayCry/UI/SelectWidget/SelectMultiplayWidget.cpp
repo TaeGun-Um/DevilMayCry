@@ -10,6 +10,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "DevilMayCry/State/LobbyPlayerState.h"
 #include "DevilMayCry/System/LobbyGameModeBase.h"
+#include "DevilMayCry/System/MyGameInstance.h"
 
 bool USelectMultiplayWidget::Initialize()
 {
@@ -123,7 +124,18 @@ void USelectMultiplayWidget::StartButtonClicked()
         UWorld* World = GetWorld();
         if (World)
         {
-            World->ServerTravel("/Game/Scene/LoadingScene?listen");
+            ENetMode NetMode = World->GetNetMode();
+
+            if (NetMode == NM_ListenServer)
+            {
+                UMyGameInstance* GI = GetGameInstance<UMyGameInstance>();
+                GI->SetMapChangeValue(EMapChangeValue::LOCATION2);
+                World->ServerTravel("/Game/Scene/LoadingScene?listen");
+            }
+            else if (NetMode == NM_Client)
+            {
+                UE_LOG(LogTemp, Log, TEXT("Client does not control level travel"));
+            }
         }
     }
 }
