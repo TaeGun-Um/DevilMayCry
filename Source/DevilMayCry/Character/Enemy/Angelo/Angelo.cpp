@@ -449,6 +449,26 @@ void AAngelo::SetupFsm()
 		}
 	);
 
+	AngeloFsmComp->CreateState(EAngeloFsm::END,
+		//Start
+		[this]()
+		{
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
 	AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
 }
 

@@ -29,6 +29,7 @@ enum class EAngeloFsm :uint8
 	WARP,
 	STUN,
 	DEAD,
+	END,
 };
 
 UCLASS()

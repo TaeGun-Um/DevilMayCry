@@ -25,6 +25,7 @@ enum class EHellCainaFsm :uint8
 	ATTACK,
 	DAMAGED,
 	DEAD,
+	END,
 };
 
 UCLASS()

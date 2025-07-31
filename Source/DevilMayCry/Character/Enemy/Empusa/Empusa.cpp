@@ -285,6 +285,26 @@ void AEmpusa::SetupFsm()
 		}
 	);
 
+	EmpusaFsmComp->CreateState(EEmpusaFsm::END,
+		//Start
+		[this]()
+		{
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
 	EmpusaFsmComp->ChangeState(EEmpusaFsm::IDLE);
 }
 

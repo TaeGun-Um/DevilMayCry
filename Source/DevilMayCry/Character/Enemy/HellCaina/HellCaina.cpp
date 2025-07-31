@@ -240,6 +240,27 @@ void AHellCaina::SetupFsm()
 		}
 	);
 
+	HellCainaFsmComp->CreateState(EHellCainaFsm::END,
+		//Start
+		[this]()
+		{
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
+		},
+
+		//Update
+		[this](float DeltaTime)
+		{
+		},
+
+		//End
+		[this]()
+		{
+		}
+	);
+
+
 	HellCainaFsmComp->ChangeState(EHellCainaFsm::IDLE);
 }
 

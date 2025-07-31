@@ -26,6 +26,7 @@ enum class EEmpusaFsm :uint8
 	ATTACK,
 	DAMAGED,
 	DEAD,
+	END,
 };
 
 UCLASS()

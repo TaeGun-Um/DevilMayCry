@@ -49,6 +49,8 @@ void AParentCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CalcMoveDir();
+
 	if (LockOnEnemy == nullptr)
 	{
 		EnemyCheck();
