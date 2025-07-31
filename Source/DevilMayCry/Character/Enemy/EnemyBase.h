@@ -40,6 +40,11 @@ public:
 		return bCanPull;
 	}
 
+	bool GetIsDestroy()
+	{
+		return bDestroyed;
+	}
+
 
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
@@ -85,6 +90,7 @@ protected:
 	bool bDead = false;
 	const float MaxDeadTime = 2.f;
 	float CurDeadTime = MaxDeadTime;
+	bool bDestroyed = false;
 
 	//Attack
 	float AttackDamage = 10.f;
