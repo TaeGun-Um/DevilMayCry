@@ -17,7 +17,16 @@ void ALoadingHUD::BeginPlay()
     VariableSetting();
 
     GetWorldTimerManager().SetTimer(LoadingHandle, this, &ALoadingHUD::ChangeScene, 3.0f, false);
-    // CreateFSM();
+    
+    HUDPlayerController = GetOwningPlayerController();
+    if (HUDPlayerController)
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetWidgetToFocus(LoadingWidgetInstance->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        HUDPlayerController->SetInputMode(InputMode);
+        HUDPlayerController->SetShowMouseCursor(true);
+    }
 }
 
 void ALoadingHUD::Tick(float DeltaTime)
@@ -77,16 +86,4 @@ void ALoadingHUD::VariableSetting()
     LoadingWidgetInstance->AddToViewport();
     LoadingWidgetInstance->PlayFadeAnimation();
     LoadingWidgetInstance->PlayArrowAnimation();
-    // LoadingWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-
-    if (HUDPlayerController)
-    {
-        HUDPlayerController->SetShowMouseCursor(true);
-
-        FInputModeGameAndUI InputMode;
-        InputMode.SetWidgetToFocus(LoadingWidgetInstance->TakeWidget());
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        HUDPlayerController->SetInputMode(InputMode);
-        HUDPlayerController->SetShowMouseCursor(true);
-    }
 }

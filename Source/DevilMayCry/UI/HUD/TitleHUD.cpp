@@ -22,6 +22,16 @@ void ATitleHUD::BeginPlay()
     Super::BeginPlay();
     VariableSetting();
     CreateFSM();
+
+    HUDPlayerController = GetOwningPlayerController();
+    if (HUDPlayerController)
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetWidgetToFocus(TitleWidgetInstance->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        HUDPlayerController->SetInputMode(InputMode);
+        HUDPlayerController->SetShowMouseCursor(true);
+    }
 }
 
 void ATitleHUD::Tick(float DeltaTime)
@@ -397,8 +407,6 @@ void ATitleHUD::ClassSetting()
 
 void ATitleHUD::VariableSetting()
 {
-    HUDPlayerController = GetOwningPlayerController();
-
     // 순서대로 Create해야 Widget이 위에 덮어 씌워짐
     BGBlackWidgetInstance = CreateWidget<UBlackBGWidget>(GetWorld(), BGBlackWidgetClass);
     BGBlackWidgetInstance->AddToViewport();
@@ -426,15 +434,4 @@ void ATitleHUD::VariableSetting()
     //LoadingWidgetInstance = CreateWidget<ULoadingWidget>(GetWorld(), LoadingWidgetClass);
     //LoadingWidgetInstance->AddToViewport();
     //LoadingWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-
-    if (HUDPlayerController)
-    {
-        HUDPlayerController->SetShowMouseCursor(true);
-
-        FInputModeGameAndUI InputMode;
-        InputMode.SetWidgetToFocus(TitleWidgetInstance->TakeWidget());
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        HUDPlayerController->SetInputMode(InputMode);
-        HUDPlayerController->SetShowMouseCursor(true);
-    }
 }

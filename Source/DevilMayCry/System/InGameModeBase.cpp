@@ -42,6 +42,29 @@ AInGameModeBase::AInGameModeBase()
     SpectatorClass = ASpectatorPawn::StaticClass();
 }
 
+void AInGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    if (AMyPlayerController* PC = Cast<AMyPlayerController>(NewPlayer))
+    {
+        PC->Client_ApplyUIInputMode();  // 클라이언트에게 UI 설정 요청
+    }
+}
+
+void AInGameModeBase::Logout(AController* Exiting)
+{
+    Super::Logout(Exiting);
+
+}
+
+void AInGameModeBase::BeginPlay()
+{
+    Super::BeginPlay();
+
+}
+
+
 void AInGameModeBase::EndingStart()
 {
     // 엔딩 매니저 스폰

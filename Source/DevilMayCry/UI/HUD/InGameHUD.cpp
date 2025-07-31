@@ -14,14 +14,12 @@ AInGameHUD::AInGameHUD()
 void AInGameHUD::BeginPlay()
 {
     Super::BeginPlay();
-
     VariableSetting();
 
     APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (PC)
     {
         PC->SetShowMouseCursor(false);
-
         FInputModeGameOnly InputMode;
         PC->SetInputMode(InputMode);
     }

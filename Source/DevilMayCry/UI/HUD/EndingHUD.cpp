@@ -18,6 +18,16 @@ void AEndingHUD::BeginPlay()
     Super::BeginPlay();
     VariableSetting();
 
+    HUDPlayerController = GetOwningPlayerController();
+    if (HUDPlayerController)
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetWidgetToFocus(EndingWidgetInstance->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        HUDPlayerController->SetInputMode(InputMode);
+        HUDPlayerController->SetShowMouseCursor(true);
+    }
+
     if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
     {
         if (GI->CapturedEndingTexture)
@@ -83,16 +93,5 @@ void AEndingHUD::VariableSetting()
 
     EndingWidgetInstance = CreateWidget<UEndingWidget>(GetWorld(), EndingWidgetClass);
     EndingWidgetInstance->AddToViewport();
-
-    if (HUDPlayerController)
-    {
-        HUDPlayerController->SetShowMouseCursor(true);
-
-        FInputModeGameAndUI InputMode;
-        InputMode.SetWidgetToFocus(EndingWidgetInstance->TakeWidget());
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        HUDPlayerController->SetInputMode(InputMode);
-        HUDPlayerController->SetShowMouseCursor(true);
-    }
 }
 
