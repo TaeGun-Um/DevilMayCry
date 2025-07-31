@@ -39,8 +39,9 @@ public:
     bool GetIsChangeMenu() { return bIsChangeSelectMenu; }
     void SetIsChangeLocation2(bool _Is = true) { bIsChangeLocation2 = _Is; }
     bool GetIsChangeLocation2() { return bIsChangeLocation2; }
-    void SetHostIP(FString _Text);
     void SetIsHost(bool _bIsHost) { bIsHost = _bIsHost; }
+    void SetLocalIP(FString _Text);
+    void SetPublicIP(FString _Text);
 
     void UpdatePlayerCount();
     void UpdatePlayerSlot(int32 _PlayerIndex, bool _bIsConnected, bool _bIsReady);
@@ -123,7 +124,8 @@ private:
     uint8 bIsChangeSelectMenu : 1;
     uint8 bIsHost : 1;
 
-    FString HostIP = TEXT("");
+    FString LocalIP = TEXT("");
+    FString PublicIP = TEXT("");
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UCanvasPanel> MenuCanvas;
@@ -202,6 +204,9 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UTextBlock> MenuBarTextBox03;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> MenuBarTextBox04;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> MessageImage;

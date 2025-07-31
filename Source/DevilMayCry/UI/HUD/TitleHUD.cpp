@@ -9,6 +9,7 @@
 #include "DevilMayCry/UI/SelectWidget/SelectCharacterWidget.h"
 #include "DevilMayCry/UI/SelectWidget/SelectMenuWidget.h"
 #include "DevilMayCry/UI/LoadingWidget/LoadingWidget.h"
+#include "DevilMayCry/Network/UPnPSubsystem.h"
 //#include "DevilMayCry/UI/SelectWidget/SelectMultiplayWidget.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -300,20 +301,33 @@ void ATitleHUD::CreateFSM()
             if (true == MenuWidgetInstance->GetIsChangeHost()) // Server
             {
                 MenuWidgetInstance->SetIsChangeHost(false);
-                UGameplayStatics::OpenLevel(this, TEXT("LobbyScene"), true, TEXT("listen")); // Server
+
+                // UPnP 포트포워딩 확인
+                if (UUPnPSubsystem* UPnP = GetGameInstance()->GetSubsystem<UUPnPSubsystem>())
+                {
+                    if (!UPnP->TryUPnPPortForward(7777))
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("UPnP Port Forwarding failed. External connections may not work."));
+                    }
+                    else
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("UPnP Port Forwarding Successed."));
+                    }
+                }
+
+                UGameplayStatics::OpenLevel(this, TEXT("LobbyScene"), true, TEXT("listen"));
             }
             else if (true == MenuWidgetInstance->GetIsChangeClient()) // Client
             {
                 MenuWidgetInstance->SetIsChangeClient(false);
-                FString ConnectionIP = MenuWidgetInstance->GetIPAddress();
-                if (!ConnectionIP.IsEmpty())
+
+                FString ConnectionIP = MenuWidgetInstance->GetIPAddress(); // 예: "123.45.67.89:7777"
+                if (!ConnectionIP.IsEmpty() && HUDPlayerController)
                 {
-                    if (HUDPlayerController)
-                    {
-                        HUDPlayerController->ClientTravel(ConnectionIP, ETravelType::TRAVEL_Absolute);
-                        bIsClientTraveling = true;
-                        ElapsedClientConnectTime = 0.0f;
-                    }
+                    UE_LOG(LogTemp, Log, TEXT("Client connecting to %s"), *ConnectionIP);
+                    HUDPlayerController->ClientTravel(ConnectionIP, TRAVEL_Absolute);
+                    bIsClientTraveling = true;
+                    ElapsedClientConnectTime = 0.0f;
                 }
                 //else
                 //{

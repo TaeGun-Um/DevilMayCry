@@ -54,11 +54,18 @@ void USelectMultiplayWidget::PlayFadeAnimation()
 	PlayAnimation(FadeAnimation);
 }
 
-void USelectMultiplayWidget::SetHostIP(FString _Text)
+void USelectMultiplayWidget::SetLocalIP(FString _Text)
 {
-    HostIP = _Text;
-    FString FormattedText = FString::Printf(TEXT("Host IP : %s"), *HostIP);
+    LocalIP = _Text;
+    FString FormattedText = FString::Printf(TEXT("Local IP : %s"), *LocalIP);
     MenuBarTextBox02->SetText(FText::FromString(FormattedText));
+}
+
+void USelectMultiplayWidget::SetPublicIP(FString _Text)
+{
+    PublicIP = _Text;
+    FString FormattedText = FString::Printf(TEXT("Public IP : %s"), *PublicIP);
+    MenuBarTextBox04->SetText(FText::FromString(FormattedText));
 }
 
 void USelectMultiplayWidget::UpdatePlayerCount()
@@ -853,7 +860,7 @@ void USelectMultiplayWidget::VariableSetting()
 
         MenuBarTextBox02->SetFont(FontInfo);
         MenuBarTextBox02->SetJustification(ETextJustify::Left);
-        MenuBarTextBox02->SetText(FText::FromString(TEXT("Host IP : -")));
+        MenuBarTextBox02->SetText(FText::FromString(TEXT("Local IP : -")));
         MenuBarTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     }
 
@@ -862,7 +869,7 @@ void USelectMultiplayWidget::VariableSetting()
     {
         MenuBarTextBoxSlot03->SetAnchors(FAnchors(1.0f, 0.5f));
         MenuBarTextBoxSlot03->SetAlignment(FVector2D(1.0f, 0.5f));
-        MenuBarTextBoxSlot03->SetPosition(FVector2D(-595.0f, -8.0f));
+        MenuBarTextBoxSlot03->SetPosition(FVector2D(-595.0f, 42.0f));
         MenuBarTextBoxSlot03->SetSize(FVector2D(165.0f, 40.f));
 
         FSlateFontInfo FontInfo;
@@ -875,6 +882,26 @@ void USelectMultiplayWidget::VariableSetting()
         MenuBarTextBox03->SetJustification(ETextJustify::Left);
         MenuBarTextBox03->SetText(FText::FromString(TEXT("Players : ")));
         MenuBarTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+    }
+
+    UCanvasPanelSlot* MenuBarTextBoxSlot04 = Cast<UCanvasPanelSlot>(MenuBarTextBox04->Slot);
+    if (MenuBarTextBoxSlot04)
+    {
+        MenuBarTextBoxSlot04->SetAnchors(FAnchors(1.0f, 0.5f));
+        MenuBarTextBoxSlot04->SetAlignment(FVector2D(1.0f, 0.5f));
+        MenuBarTextBoxSlot04->SetPosition(FVector2D(-231.0f, -8.0f));
+        MenuBarTextBoxSlot04->SetSize(FVector2D(528.0f, 40.f));
+
+        FSlateFontInfo FontInfo;
+        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/Asset/Font/DMC5Font_Font"));
+        FontInfo.TypefaceFontName = FName("Default");
+        //FontInfo.Size = 38;
+        //FontInfo.LetterSpacing = 0;
+
+        MenuBarTextBox04->SetFont(FontInfo);
+        MenuBarTextBox04->SetJustification(ETextJustify::Left);
+        MenuBarTextBox04->SetText(FText::FromString(TEXT("Public IP : -")));
+        MenuBarTextBox04->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     }
 
     UCanvasPanelSlot* MessageImageSlot = Cast<UCanvasPanelSlot>(MessageImage->Slot);

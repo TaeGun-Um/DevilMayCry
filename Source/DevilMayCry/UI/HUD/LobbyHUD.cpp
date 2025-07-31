@@ -42,7 +42,7 @@ void ALobbyHUD::BeginPlay()
         LobbyPlayerController->SetShowMouseCursor(true);
     }
 
-    // ¾ÈµÊ
+    ////////////////// ¾ÈµÊ
     if (MultiPlayWidgetInstance)
     {
         if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
@@ -125,7 +125,8 @@ void ALobbyHUD::VariableSetting()
     MultiPlayWidgetInstance = CreateWidget<USelectMultiplayWidget>(GetWorld(), MultiPlayWidgetClass);
     MultiPlayWidgetInstance->AddToViewport();
     MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-    MultiPlayWidgetInstance->SetHostIP(HostIP);
+    MultiPlayWidgetInstance->SetLocalIP(LocalIP);
+    MultiPlayWidgetInstance->SetPublicIP(PublicIP);
 }
 
 void ALobbyHUD::CreateFSM()

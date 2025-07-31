@@ -28,7 +28,8 @@ public:
 	void RefreshPlayerStates();
 
 	// Getter, Setter
-	void SetHostIP(FString _Text) { HostIP = _Text; }
+	void SetPublicIP(FString _Text) { PublicIP = _Text; }
+	void SetLocalIP(FString _Text) { LocalIP = _Text; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -60,5 +61,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<class APlayerController> LobbyPlayerController;
 
-	FString HostIP = TEXT("");
+	FString LocalIP = TEXT("");
+	FString PublicIP = TEXT("");
+	
 };

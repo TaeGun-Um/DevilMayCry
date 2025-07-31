@@ -29,7 +29,15 @@ void USelectMenuWidget::PlayFadeAnimation()
 
 FString USelectMenuWidget::GetIPAddress() const
 {
-    return IPAddressTextBox->GetText().ToString();
+    FString InputIP = IPAddressTextBox->GetText().ToString().TrimStartAndEnd();
+
+    // 포트가 포함되어 있지 않으면 자동으로 7777 추가
+    if (!InputIP.Contains(TEXT(":")))
+    {
+        InputIP += TEXT(":7777");
+    }
+
+    return InputIP;
 }
 
 ///////////////// Start Button Options ////////////////////

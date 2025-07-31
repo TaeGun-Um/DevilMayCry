@@ -6,6 +6,7 @@
 #include "Interfaces/IPv4/IPv4Address.h"
 #include "DevilMayCry/UI/HUD/LobbyHUD.h"
 #include "DevilMayCry/State/LobbyPlayerState.h"
+#include "DevilMayCry/Network/UPnPSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 
 ALobbyGameModeBase::ALobbyGameModeBase()
@@ -68,16 +69,43 @@ void ALobbyGameModeBase::BeginPlay()
 
     UE_LOG(LogTemp, Warning, TEXT("[GameMode] LobbyScene Server Start, (ALobbyGameModeBase::BeginPlay)"));
 
+    // 로컬 IP
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
         if (ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PC->GetHUD()))
         {
-            FString IP = GetHostIPAddress();
-            LobbyHUD->SetHostIP(IP);
+            FString LocalIP = GetHostIPAddress();
+            LobbyHUD->SetLocalIP(LocalIP);
 
             if (GEngine)
             {
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Host IP Set: %s"), *IP));
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Local IP: %s"), *LocalIP));
+            }
+        }
+    }
+
+    // 공인 IP
+
+    // UUPnPSubsystem 가져오기
+    if (UGameInstance* GI = GetGameInstance())
+    {
+        if (UUPnPSubsystem* UPnP = GI->GetSubsystem<UUPnPSubsystem>())
+        {
+            FString PublicIP = UPnP->GetCachedPublicIP(); // 초기엔 빈 값일 수 있음
+            UE_LOG(LogTemp, Log, TEXT("현재 캐시된 공인 IP: %s"), *PublicIP);
+
+            // HUD에 표시
+            if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+            {
+                if (ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PC->GetHUD()))
+                {
+                    LobbyHUD->SetPublicIP(PublicIP);
+
+                    if (GEngine)
+                    {
+                        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Public IP : %s"), *PublicIP));
+                    }
+                }
             }
         }
     }
