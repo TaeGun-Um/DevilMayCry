@@ -42,6 +42,25 @@ AInGameModeBase::AInGameModeBase()
     SpectatorClass = ASpectatorPawn::StaticClass();
 }
 
+void AInGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+}
+
+void AInGameModeBase::Logout(AController* Exiting)
+{
+    Super::Logout(Exiting);
+
+}
+
+void AInGameModeBase::BeginPlay()
+{
+    Super::BeginPlay();
+
+}
+
+
 void AInGameModeBase::EndingStart()
 {
     // 엔딩 매니저 스폰

@@ -32,6 +32,17 @@ void ALobbyHUD::BeginPlay()
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("NetMode: %s"), *Mode));
     }
 
+    LobbyPlayerController = GetOwningPlayerController();
+    if (LobbyPlayerController)
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetWidgetToFocus(MultiPlayWidgetInstance->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        LobbyPlayerController->SetInputMode(InputMode);
+        LobbyPlayerController->SetShowMouseCursor(true);
+    }
+
+    // ¾ÈµÊ
     if (MultiPlayWidgetInstance)
     {
         if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
@@ -115,17 +126,6 @@ void ALobbyHUD::VariableSetting()
     MultiPlayWidgetInstance->AddToViewport();
     MultiPlayWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
     MultiPlayWidgetInstance->SetHostIP(HostIP);
-
-    if (LobbyPlayerController)
-    {
-        LobbyPlayerController->SetShowMouseCursor(true);
-
-        FInputModeGameAndUI InputMode;
-        InputMode.SetWidgetToFocus(MultiPlayWidgetInstance->TakeWidget());
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        LobbyPlayerController->SetInputMode(InputMode);
-        LobbyPlayerController->SetShowMouseCursor(true);
-    }
 }
 
 void ALobbyHUD::CreateFSM()
