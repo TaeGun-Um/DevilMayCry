@@ -58,15 +58,17 @@ protected:
 
 	void SetupFsm();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 
 	virtual void DamagedDefault() override;
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void RandomAttack();
+	void RandomAttack(int32 Index);
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_RandomAttack();
+	void Multicast_RandomAttack(int32 Index);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DamagedAnimation();
@@ -104,6 +106,11 @@ private:
 	//Move
 	float RunEndRange = 400.f;
 
+	//Attack
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Replicated)
+	int32 RandomIndex = -1;
+	const int32 RandomMin = 0;
+	const int32 RandomMax = 4;
 
 	//PlayerState
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

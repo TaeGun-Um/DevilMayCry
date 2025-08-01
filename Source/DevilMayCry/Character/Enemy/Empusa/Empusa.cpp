@@ -8,6 +8,7 @@
 #include "../../DamageType/GeneralDamageType.h"
 #include "../../FsmComponent.h"
 #include "AIController.h"
+#include "Net/UnrealNetwork.h"
 
 #include "GameFramework/Controller.h"
 #include "../AI/EnemyController.h"
@@ -136,6 +137,12 @@ void AEmpusa::SetupFsm()
 			TurnToActor(DeltaTime);
 			auto Result = AiController->MoveToActor(TargetPlayer);
 
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > RunEndRange)
+			{
+				EmpusaFsmComp->ChangeState(EEmpusaFsm::RUN);
+				return;
+			}
+
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{
 				EmpusaFsmComp->ChangeState(EEmpusaFsm::ATTACK);
@@ -182,7 +189,8 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			Multicast_RandomAttack();
+			RandomIndex = FMath::RandRange(RandomMin, RandomMax);
+			Multicast_RandomAttack(RandomIndex);
 		},
 
 		//Update
@@ -209,7 +217,7 @@ void AEmpusa::SetupFsm()
 					}
 					else
 					{
-						Multicast_RandomAttack();
+						Multicast_RandomAttack(RandomIndex);
 					}
 				}
 			}
@@ -252,7 +260,7 @@ void AEmpusa::SetupFsm()
 				}
 				else
 				{
-					Multicast_RandomAttack();
+					Multicast_RandomAttack(RandomIndex);
 				}
 			}
 		},
@@ -310,6 +318,13 @@ void AEmpusa::SetupFsm()
 	EmpusaFsmComp->ChangeState(EEmpusaFsm::IDLE);
 }
 
+void AEmpusa::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{	
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AEmpusa, RandomIndex);	
+}
+
 void AEmpusa::DamagedDefault()
 {
 	DamagedAnimation();
@@ -328,9 +343,9 @@ void AEmpusa::DamagedSnatch()
 	//SnatchAnimation();
 }
 
-void AEmpusa::Multicast_RandomAttack_Implementation()
+void AEmpusa::Multicast_RandomAttack_Implementation(int32 Index)
 {
-	RandomAttack();
+	RandomAttack(Index);
 }
 
 void AEmpusa::Multicast_RunAnimation_Implementation()
