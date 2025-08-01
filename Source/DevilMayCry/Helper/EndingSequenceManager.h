@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/SceneCapture2D.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "EndingSequenceManager.generated.h"
 
 UCLASS()
@@ -25,9 +28,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Ending")
-	TObjectPtr<class UTextureRenderTarget2D> RenderTarget;
+	UPROPERTY(EditAnywhere, Category = "Capture")
+	USceneCaptureComponent2D* SceneCapture;
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class USceneCaptureComponent2D> SceneCapture;
+	UPROPERTY(EditAnywhere, Category = "Capture")
+	UTextureRenderTarget2D* RenderTarget;
 };

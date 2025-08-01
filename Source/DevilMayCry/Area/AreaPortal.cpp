@@ -61,17 +61,6 @@ void AAreaPortal::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Othe
 //                {
 //                    GM->EndingStart(); // EndingStart() 호출
 //                }
-//
-//                // 기존 GameInstance 처리
-//                //UMyGameInstance* GI = Cast<UMyGameInstance>(World->GetGameInstance());
-//                //if (GI)
-//                //{
-//                //    GI->SetMapChangeValue(EMapChangeValue::LOCATION11);
-//                //}
-//
-//                //// 서버가 전체 클라이언트 포함 레벨 이동
-//                //World->ServerTravel(TEXT("/Game/Scene/LoadingScene?listen"));
-//            }
 //        }
 //    }
 //}
