@@ -448,7 +448,7 @@ void AAngelo::SetupFsm()
 		{
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
-				Destroy();
+				AngeloFsmComp->ChangeState(EAngeloFsm::END);
 				return;
 			}
 		},
