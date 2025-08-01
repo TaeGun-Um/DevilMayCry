@@ -41,8 +41,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -53,8 +51,6 @@ public:
 public:
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
-	void RandomAttack();
 
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -67,22 +63,39 @@ protected:
 	virtual void DamagedSnatch();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void RandomAttack(int32 Index);
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_RandomAttack(int32 Index);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void DamagedAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DamagedAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_WalkAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkLeftAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_WalkLeftAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkRightAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_WalkRightAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DeadAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DeadAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SnatchAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SnatchAnimation();
 
 
 protected:
@@ -93,4 +106,10 @@ protected:
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UFsmComponent> HellCainaFsmComp = nullptr;
+
+
+	//Attack
+	int32 RandomIndex = -1;
+	const int32 RandomMin = 0;
+	const int32 RandomMax = 1;
 };

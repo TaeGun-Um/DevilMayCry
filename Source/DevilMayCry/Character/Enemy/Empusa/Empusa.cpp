@@ -8,7 +8,6 @@
 #include "../../DamageType/GeneralDamageType.h"
 #include "../../FsmComponent.h"
 #include "AIController.h"
-#include "Net/UnrealNetwork.h"
 
 #include "GameFramework/Controller.h"
 #include "../AI/EnemyController.h"
@@ -33,7 +32,10 @@ AEmpusa::AEmpusa()
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	SetupFsm();
+	if (HasAuthority())
+	{
+		SetupFsm();
+	}
 }
 
 void AEmpusa::BeginPlay()
@@ -217,6 +219,7 @@ void AEmpusa::SetupFsm()
 					}
 					else
 					{
+						RandomIndex = FMath::RandRange(RandomMin, RandomMax);
 						Multicast_RandomAttack(RandomIndex);
 					}
 				}
@@ -233,6 +236,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
+			Multicast_DamagedAnimation();
 		},
 
 		//Update
@@ -260,7 +264,8 @@ void AEmpusa::SetupFsm()
 				}
 				else
 				{
-					Multicast_RandomAttack(RandomIndex);
+					EmpusaFsmComp->ChangeState(EEmpusaFsm::ATTACK);
+					return;
 				}
 			}
 		},
@@ -316,13 +321,6 @@ void AEmpusa::SetupFsm()
 	);
 
 	EmpusaFsmComp->ChangeState(EEmpusaFsm::IDLE);
-}
-
-void AEmpusa::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{	
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AEmpusa, RandomIndex);	
 }
 
 void AEmpusa::DamagedDefault()

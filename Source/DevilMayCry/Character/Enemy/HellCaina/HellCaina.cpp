@@ -32,7 +32,10 @@ AHellCaina::AHellCaina()
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 90.f));
 
-	SetupFsm();
+	if (HasAuthority())
+	{
+		SetupFsm();
+	}
 
 	AttackRange = 500.f;
 }
@@ -120,7 +123,7 @@ void AHellCaina::SetupFsm()
 		//Start
 		[this]()
 		{
-			WalkAnimation();
+			Multicast_WalkAnimation();
 		},
 
 		//Update
@@ -146,7 +149,8 @@ void AHellCaina::SetupFsm()
 		//Start
 		[this]()
 		{
-			RandomAttack();
+			RandomIndex = FMath::RandRange(RandomMin, RandomMax);
+			Multicast_RandomAttack(RandomIndex);
 		},
 
 		//Update
@@ -168,7 +172,8 @@ void AHellCaina::SetupFsm()
 					}
 					else
 					{
-						RandomAttack();
+						RandomIndex = FMath::RandRange(RandomMin, RandomMax);
+						Multicast_RandomAttack(RandomIndex);
 					}
 				}
 			}
@@ -206,7 +211,8 @@ void AHellCaina::SetupFsm()
 				}
 				else
 				{
-					RandomAttack();
+					HellCainaFsmComp->ChangeState(EHellCainaFsm::ATTACK);
+					return;
 				}
 			}
 		},
@@ -221,7 +227,7 @@ void AHellCaina::SetupFsm()
 		//Start
 		[this]()
 		{
-			DeadAnimation();
+			Multicast_DeadAnimation();
 		},
 
 		//Update
@@ -268,7 +274,10 @@ void AHellCaina::SetupFsm()
 void AHellCaina::DamagedDefault()
 {
 	DamagedAnimation();
-	HellCainaFsmComp->ChangeState(EHellCainaFsm::DAMAGED);
+	if (HasAuthority())
+	{
+		HellCainaFsmComp->ChangeState(EHellCainaFsm::DAMAGED);
+	}
 }
 
 void AHellCaina::DamagedGeneral()
@@ -280,8 +289,37 @@ void AHellCaina::DamagedSnatch()
 	//SnatchAnimation();
 }
 
-void AHellCaina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AHellCaina::Multicast_RandomAttack_Implementation(int32 Index)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	RandomAttack(Index);
 }
 
+void AHellCaina::Multicast_DamagedAnimation_Implementation()
+{
+	DamagedAnimation();
+}
+
+void AHellCaina::Multicast_WalkAnimation_Implementation()
+{
+	WalkAnimation();
+}
+
+void AHellCaina::Multicast_WalkLeftAnimation_Implementation()
+{
+	WalkLeftAnimation();
+}
+
+void AHellCaina::Multicast_WalkRightAnimation_Implementation()
+{
+	WalkRightAnimation();
+}
+
+void AHellCaina::Multicast_DeadAnimation_Implementation()
+{
+	DeadAnimation();
+}
+
+void AHellCaina::Multicast_SnatchAnimation_Implementation()
+{
+	SnatchAnimation();
+}

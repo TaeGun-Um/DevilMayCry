@@ -58,7 +58,6 @@ protected:
 
 	void SetupFsm();
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 
 	virtual void DamagedDefault() override;
@@ -107,7 +106,6 @@ private:
 	float RunEndRange = 400.f;
 
 	//Attack
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Replicated)
 	int32 RandomIndex = -1;
 	const int32 RandomMin = 0;
 	const int32 RandomMax = 4;

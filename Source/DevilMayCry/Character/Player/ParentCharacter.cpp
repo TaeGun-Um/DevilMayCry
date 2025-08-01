@@ -28,7 +28,7 @@ AParentCharacter::AParentCharacter()
 
 	CameraInit();
 
-	if (GetLocalRole() == ROLE_Authority)
+	if (HasAuthority())
 	{
 		SetupFsm();
 	}

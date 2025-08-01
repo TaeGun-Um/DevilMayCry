@@ -39,7 +39,10 @@ AAngelo::AAngelo()
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	SetupFsm();
+	if (HasAuthority())
+	{
+		SetupFsm();
+	}
 
 	bCanPull = false;
 	AttackRange = 800.f;
