@@ -28,14 +28,39 @@ void AEndingHUD::BeginPlay()
         HUDPlayerController->SetShowMouseCursor(true);
     }
 
+    //if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
+    //{
+    //    if (GI->CapturedEndingTexture)
+    //    {
+    //         EndingWidgetInstance->SetCapturedTexture(GI->CapturedEndingTexture);
+    //         EndingWidgetInstance->AddToViewport();
+    //    }
+    //}
+
     if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
     {
         if (GI->CapturedEndingTexture)
         {
-             EndingWidgetInstance->SetCapturedTexture(GI->CapturedEndingTexture);
-             EndingWidgetInstance->AddToViewport();
+            // Plane Mesh에 머티리얼로 적용
+            //AActor* PlaneActor = GetWorld()->SpawnActor<AActor>(PlaneBlueprint);
+            AActor* PlaneActor = GetWorld()->SpawnActor<AActor>();
+            UStaticMeshComponent* Mesh = PlaneActor->FindComponentByClass<UStaticMeshComponent>();
+            UMaterialInstanceDynamic* DynMat = Mesh->CreateAndSetMaterialInstanceDynamic(0);
+            DynMat->SetTextureParameterValue("CapturedTex", GI->CapturedEndingTexture);
         }
     }
+
+    // 카메라 180도 회전
+    GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+        {
+            if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+            {
+                PC->SetControlRotation(FRotator(0.f, 180.f, 0.f));
+            }
+        });
+
+    // UI 표시
+    EndingWidgetInstance->AddToViewport();
 }
 
 void AEndingHUD::Tick(float DeltaTime)
@@ -70,11 +95,11 @@ void AEndingHUD::ChangeScene()
 
 void AEndingHUD::ClassSetting()
 {
-    static ConstructorHelpers::FClassFinder<UUserWidget> EndingWidgetClassFinder(TEXT("/Game/UI/Ending/WBP_EndingWidget"));
-    if (EndingWidgetClassFinder.Succeeded())
-    {
-        EndingWidgetClass = EndingWidgetClassFinder.Class;
-    }
+    //static ConstructorHelpers::FClassFinder<UUserWidget> EndingWidgetClassFinder(TEXT("/Game/UI/Ending/WBP_EndingWidget"));
+    //if (EndingWidgetClassFinder.Succeeded())
+    //{
+    //    EndingWidgetClass = EndingWidgetClassFinder.Class;
+    //}
 
     //static ConstructorHelpers::FClassFinder<UUserWidget> BGBlackWidgetClassFinder(TEXT("/Game/UI/Basic/WBP_BlackBGWidget"));
     //if (BGBlackWidgetClassFinder.Succeeded())
@@ -91,7 +116,7 @@ void AEndingHUD::VariableSetting()
     //BGBlackWidgetInstance = CreateWidget<UBlackBGWidget>(GetWorld(), BGBlackWidgetClass);
     //BGBlackWidgetInstance->AddToViewport();
 
-    EndingWidgetInstance = CreateWidget<UEndingWidget>(GetWorld(), EndingWidgetClass);
-    EndingWidgetInstance->AddToViewport();
+    // EndingWidgetInstance = CreateWidget<UEndingWidget>(GetWorld(), EndingWidgetClass);
+    // EndingWidgetInstance->AddToViewport();
 }
 

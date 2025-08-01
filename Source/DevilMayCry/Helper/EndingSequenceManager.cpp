@@ -10,7 +10,8 @@ AEndingSequenceManager::AEndingSequenceManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+    SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
+    SceneCapture->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -18,6 +19,14 @@ void AEndingSequenceManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    if (!RenderTarget)
+    {
+        RenderTarget = NewObject<UTextureRenderTarget2D>(this);
+        RenderTarget->InitAutoFormat(1920, 1080);
+        RenderTarget->ClearColor = FLinearColor::Black;
+        RenderTarget->UpdateResource();
+    }
+    SceneCapture->TextureTarget = RenderTarget;
 }
 
 // Called every frame
