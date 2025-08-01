@@ -18,6 +18,9 @@ class DEVILMAYCRY_API AInGameHUD : public AHUD
 public:
     AInGameHUD();
 
+    // UFUNCTION(Client, Reliable)
+    // void ClientSetBossHPVisible();
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;

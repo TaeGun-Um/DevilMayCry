@@ -16,6 +16,7 @@ class DEVILMAYCRY_API UInGameWidget : public UUserWidget
 	
 public:
 	void SetBossHPVisible();
+	void SetBossHPHidden();
 	void UpdateBossHPBar(float _CurHP, float _MaxHP);
 
 protected:

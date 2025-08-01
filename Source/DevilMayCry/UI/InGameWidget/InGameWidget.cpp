@@ -36,8 +36,13 @@ void UInGameWidget::SetBossHPVisible()
 	BossHPbarBackImage->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UInGameWidget::SetBossHPHidden()
+{
+    BossHPbarImage->SetVisibility(ESlateVisibility::Hidden);
+    BossHPbarBackImage->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UInGameWidget::VariableSetting()
 {
-	BossHPbarImage->SetVisibility(ESlateVisibility::Hidden);
-	BossHPbarBackImage->SetVisibility(ESlateVisibility::Hidden);
+    SetBossHPHidden();
 }

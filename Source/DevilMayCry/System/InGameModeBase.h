@@ -24,7 +24,10 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
+	FTimerHandle BossCheckHandle;
+	
 	UPROPERTY(EditAnywhere, Category = "Ending")
 	TSubclassOf<class AEndingSequenceManager> EndingManagerClass;
 
+	void CheckBossDestroyed();
 };

@@ -43,24 +43,3 @@ void AAreaPortal::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		}
 	}
 }
-
-//void AAreaPortal::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//    if (OtherActor != nullptr)
-//    {
-//        if (TObjectPtr<AParentCharacter> Player = Cast<AParentCharacter>(OtherActor))
-//        {
-//            if (HasAuthority()) // 서버에서만 실행
-//            {
-//                UWorld* World = GetWorld();
-//                if (!World) return;
-//
-//                // GameMode 가져오기 및 캐스팅
-//                AInGameModeBase* GM = Cast<AInGameModeBase>(World->GetAuthGameMode());
-//                if (GM)
-//                {
-//                    GM->EndingStart(); // EndingStart() 호출
-//                }
-//        }
-//    }
-//}
