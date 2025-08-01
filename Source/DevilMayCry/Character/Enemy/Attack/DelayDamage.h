@@ -71,4 +71,8 @@ protected:
 private:
 	bool bActive = false;
 	float CurDamageDelay = Setter.MaxDamageDelay;
+
+
+	UPROPERTY()
+	TObjectPtr<class USceneComponent> SceneComp =nullptr;
 };

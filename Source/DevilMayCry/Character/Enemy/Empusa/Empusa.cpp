@@ -32,7 +32,10 @@ AEmpusa::AEmpusa()
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	SetupFsm();
+	if (HasAuthority())
+	{
+		SetupFsm();
+	}
 }
 
 void AEmpusa::BeginPlay()
@@ -127,14 +130,23 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			WalkAnimation();
+			Multicast_WalkAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
 			TurnToActor(DeltaTime);
-			auto Result = AiController->MoveToActor(TargetPlayer);
+			if (HasAuthority())
+			{
+				auto Result = AiController->MoveToActor(TargetPlayer);
+			}
+
+			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > RunEndRange)
+			{
+				EmpusaFsmComp->ChangeState(EEmpusaFsm::RUN);
+				return;
+			}
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{
@@ -154,14 +166,18 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			RunAnimation();
+			Multicast_RunAnimation();
+			//RunAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
 			TurnToActor(DeltaTime);
-			auto Result = AiController->MoveToActor(TargetPlayer);
+			if (HasAuthority())
+			{
+				auto Result = AiController->MoveToActor(TargetPlayer);
+			}
 
 			float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
 			if (Dist <= AttackRange)
@@ -181,7 +197,8 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			RandomAttack();
+			RandomIndex = FMath::RandRange(RandomMin, RandomMax);
+			Multicast_RandomAttack(RandomIndex);
 		},
 
 		//Update
@@ -208,7 +225,8 @@ void AEmpusa::SetupFsm()
 					}
 					else
 					{
-						RandomAttack();
+						RandomIndex = FMath::RandRange(RandomMin, RandomMax);
+						Multicast_RandomAttack(RandomIndex);
 					}
 				}
 			}
@@ -224,6 +242,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
+			Multicast_DamagedAnimation();
 		},
 
 		//Update
@@ -251,7 +270,8 @@ void AEmpusa::SetupFsm()
 				}
 				else
 				{
-					RandomAttack();
+					EmpusaFsmComp->ChangeState(EEmpusaFsm::ATTACK);
+					return;
 				}
 			}
 		},
@@ -266,7 +286,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			DeadAnimation();
+			Multicast_DeadAnimation();
 		},
 
 		//Update
@@ -289,6 +309,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
+			bDestroyed = true;
 			SetActorHiddenInGame(true);
 			SetActorEnableCollision(false);
 			SetActorTickEnabled(false);
@@ -311,7 +332,10 @@ void AEmpusa::SetupFsm()
 void AEmpusa::DamagedDefault()
 {
 	DamagedAnimation();
-	EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+	if (HasAuthority())
+	{
+		EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+	}
 }
 
 void AEmpusa::DamagedGeneral()
@@ -323,7 +347,32 @@ void AEmpusa::DamagedSnatch()
 	//SnatchAnimation();
 }
 
-void AEmpusa::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AEmpusa::Multicast_RandomAttack_Implementation(int32 Index)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	RandomAttack(Index);
+}
+
+void AEmpusa::Multicast_RunAnimation_Implementation()
+{
+	RunAnimation();
+}
+
+void AEmpusa::Multicast_DamagedAnimation_Implementation()
+{
+	DamagedAnimation();
+}
+
+void AEmpusa::Multicast_WalkAnimation_Implementation()
+{
+	WalkAnimation();
+}
+
+void AEmpusa::Multicast_DeadAnimation_Implementation()
+{
+	DeadAnimation();
+}
+
+void AEmpusa::Multicast_SnatchAnimation_Implementation()
+{
+	SnatchAnimation();
 }

@@ -39,7 +39,10 @@ AAngelo::AAngelo()
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	SetupFsm();
+	if (HasAuthority())
+	{
+		SetupFsm();
+	}
 
 	bCanPull = false;
 	AttackRange = 800.f;
@@ -101,10 +104,13 @@ void AAngelo::ToggleCollision(bool Value, EAngeloCollision Where)
 
 void AAngelo::OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bCanParry == true && SweepResult.Component->ComponentHasTag(Weapon))
+	if (HasAuthority())
 	{
-		AngeloFsmComp->ChangeState(EAngeloFsm::PARRY);
-		return;
+		if (bCanParry == true && SweepResult.Component->ComponentHasTag(Weapon))
+		{
+			AngeloFsmComp->ChangeState(EAngeloFsm::PARRY);
+			return;
+		}
 	}
 
 	if (OtherActor && OtherActor != this)
@@ -153,14 +159,18 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			WalkAnimation();
+			Multicast_WalkAnimation();
 		},
 
 		//Update
 		[this](float DeltaTime)
 		{
 			TurnToActor(DeltaTime);
-			auto Result = AiController->MoveToActor(TargetPlayer);
+
+			if (HasAuthority())
+			{
+				auto Result = AiController->MoveToActor(TargetPlayer);
+			}
 
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
@@ -202,7 +212,7 @@ void AAngelo::SetupFsm()
 		{
 			if (AnimInst->Montage_GetCurrentSection() != Parry)
 			{
-				AttackAnimation();
+				Multicast_AttackAnimation();
 			}
 		},
 
@@ -220,7 +230,7 @@ void AAngelo::SetupFsm()
 				}
 				else
 				{
-					AttackAnimation();
+					Multicast_AttackAnimation();
 				}
 			}
 		},
@@ -305,7 +315,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			DengekiAnimation();
+			Multicast_DengekiAnimation();
 			CurDengekiDelay = 0.f;
 		},
 
@@ -343,7 +353,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			RakuraiAnimation();
+			Multicast_RakuraiAnimation();
 			CurRakuraiDelay = 0.f;
 			RakuraiIndex = 0;
 		},
@@ -375,7 +385,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			WarpAnimation();
+			Multicast_WarpAnimation();
 			WarpHP = CurHP;
 		},
 
@@ -384,7 +394,7 @@ void AAngelo::SetupFsm()
 		{
 			if (AnimInst->Montage_GetCurrentSection() == Loop)
 			{
-				if (CurHP<=WarpHP*WarpHPRatio)
+				if (CurHP <= WarpHP * WarpHPRatio)
 				{
 					AngeloFsmComp->ChangeState(EAngeloFsm::STUN);
 					return;
@@ -407,7 +417,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			StunAnimation();
+			Multicast_StunAnimation();
 		},
 
 		//Update
@@ -430,7 +440,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			DeadAnimation();
+			Multicast_DeadAnimation();
 		},
 
 		//Update
@@ -453,6 +463,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
+			bDestroyed = true;
 			SetActorHiddenInGame(true);
 			SetActorEnableCollision(false);
 			SetActorTickEnabled(false);
@@ -498,6 +509,12 @@ void AAngelo::FireDengeki(float DeltaTime)
 
 void AAngelo::InitRakurai()
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	//본인 포지션 Z+100으로 랜덤 공격 위치 뽑기
 	FVector Center = GetActorLocation();
 
 	for (size_t i = 0; i < RakuraiMaxCount - 1; i++)
@@ -507,10 +524,11 @@ void AAngelo::InitRakurai()
 		RakuraiPos[i] = FVector(Center.X + Rand2D.X, Center.Y + Rand2D.Y, Center.Z + 100.f);
 	}
 
+	//반드시 캐릭터 위치 한개 포함
 	RakuraiPos[RakuraiMaxCount - 1] = TargetPlayer->GetActorLocation();
 	RakuraiPos[RakuraiMaxCount - 1].Z = Center.Z + 100.f;
 
-
+	//섞기
 	Algo::RandomShuffle(RakuraiPos);
 }
 
@@ -557,20 +575,61 @@ void AAngelo::DamagedDefault()
 		return;
 	}
 
-	if (AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::ATTACK)
-		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DENGEKI)
-		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::WARP))
+	if (AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::IDLE)
+		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::RUN)
+		|| AngeloFsmComp->GetCurrentState() == static_cast<uint8>(EAngeloFsm::DAMAGED))
 	{
-		return;
+		if (HasAuthority())
+		{
+			AngeloFsmComp->ChangeState(EAngeloFsm::DAMAGED);
+		}
+
+		DamagedAnimation();
 	}
 
+}
 
-	AngeloFsmComp->ChangeState(EAngeloFsm::DAMAGED);
-
+void AAngelo::Multicast_DamagedAnimation_Implementation()
+{
 	DamagedAnimation();
 }
 
-void AAngelo::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AAngelo::Multicast_DengekiAnimation_Implementation()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	DengekiAnimation();
+}
+
+void AAngelo::Multicast_RakuraiAnimation_Implementation()
+{
+	RakuraiAnimation();
+}
+
+void AAngelo::Multicast_WalkAnimation_Implementation()
+{
+	WalkAnimation();
+}
+
+void AAngelo::Multicast_ParryAnimation_Implementation()
+{
+	ParryAnimation();
+}
+
+void AAngelo::Multicast_AttackAnimation_Implementation()
+{
+	AttackAnimation();
+}
+
+void AAngelo::Multicast_WarpAnimation_Implementation()
+{
+	WarpAnimation();
+}
+
+void AAngelo::Multicast_StunAnimation_Implementation()
+{
+	StunAnimation();
+}
+
+void AAngelo::Multicast_DeadAnimation_Implementation()
+{
+	DeadAnimation();
 }

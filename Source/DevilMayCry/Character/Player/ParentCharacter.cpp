@@ -28,7 +28,10 @@ AParentCharacter::AParentCharacter()
 
 	CameraInit();
 
-	SetupFsm();
+	if (HasAuthority())
+	{
+		SetupFsm();
+	}
 
 	CheckParam.AddObjectTypesToQuery(ECC_WorldStatic);
 	CheckParam.AddObjectTypesToQuery(ECC_WorldDynamic);

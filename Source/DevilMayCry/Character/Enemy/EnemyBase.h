@@ -40,6 +40,12 @@ public:
 		return bCanPull;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	bool GetIsDestroy()
+	{
+		return bDestroyed;
+	}
+
 
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
@@ -47,6 +53,7 @@ public:
 
 protected:
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
 	void DestroyCheck(float DeltaTime);
 
@@ -66,12 +73,15 @@ protected:
 		CollisionNum = Num;
 	}
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void Multicast_SetTargetPlayer(AParentCharacter* Target);
+
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true")/*,Replicated*/)
 	TObjectPtr<class AParentCharacter> TargetPlayer = nullptr;
 
 	TObjectPtr<class AAIController> AiController = nullptr;
@@ -85,6 +95,7 @@ protected:
 	bool bDead = false;
 	const float MaxDeadTime = 2.f;
 	float CurDeadTime = MaxDeadTime;
+	bool bDestroyed = false;
 
 	//Attack
 	float AttackDamage = 10.f;

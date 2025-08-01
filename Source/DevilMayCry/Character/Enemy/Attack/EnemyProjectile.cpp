@@ -16,7 +16,7 @@ AEnemyProjectile::AEnemyProjectile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	bReplicates = true;
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 
@@ -59,12 +59,10 @@ void AEnemyProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 {
 	if (Hit.GetActor() && Hit.GetActor() != this)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Actor Check"));
 		TObjectPtr<AParentCharacter> Player = Cast<AParentCharacter>(Hit.GetActor());
 
 		if (Player)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Player Check"));
 			FDamageEvent DamageEvent(UGeneralDamageType::StaticClass());
 			Player->TakeDamage(10.f, DamageEvent,nullptr,this);
 

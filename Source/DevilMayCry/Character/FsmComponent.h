@@ -69,6 +69,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void FsmTick(float DT);
 	UFUNCTION(Server, Reliable)
 	void Server_FsmTick(float DT);
 	UFUNCTION(NetMulticast, Reliable)
@@ -84,7 +85,6 @@ private:
 		MapState[Index].Update.BindLambda(BindUpdate);
 		MapState[Index].End.BindLambda(BindEnd);
 	};
-
 private:
 
 	TMap<int32, FStateParam> MapState;
