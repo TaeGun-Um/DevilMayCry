@@ -144,7 +144,7 @@ private:
 
 	//Warp
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FVector WarpPos = FVector::ZeroVector;
+	FVector WarpPos = FVector(37300.f, -350.f, 1860.f);
 	float WarpHPRatio = 0.5f;
 	bool bWarpDone = false;
 	float StunHPRatio = 0.3f;
