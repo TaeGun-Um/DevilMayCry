@@ -34,6 +34,8 @@ void UFsmComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 void UFsmComponent::ChangeState(int32 Index)
 {
+	if (!IsValid(GetOwner())) return;
+
 	if (false == MapState.Contains(Index))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Fsm key not exist"));
@@ -58,11 +60,15 @@ void UFsmComponent::ChangeState(int32 Index)
 
 void UFsmComponent::Server_FsmTick_Implementation(float DT)
 {
+	if (!IsValid(GetOwner())) return;
+
 	Multicast_FsmTick(DT);
 }
 
 void UFsmComponent::Multicast_FsmTick_Implementation(float DT)
 {
+	if (!IsValid(GetOwner())) return;
+
 	StateLiveTime += DT;
 	if (CurState == -1)
 	{
@@ -77,6 +83,8 @@ void UFsmComponent::Multicast_FsmTick_Implementation(float DT)
 
 void UFsmComponent::FsmTick(float DT)
 {
+	if (!IsValid(GetOwner())) return;
+
 	StateLiveTime += DT;
 	if (CurState == -1)
 	{
