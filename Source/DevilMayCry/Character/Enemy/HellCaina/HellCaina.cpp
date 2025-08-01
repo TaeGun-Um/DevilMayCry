@@ -160,7 +160,7 @@ void AHellCaina::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			if (!AnimInst->IsAnyMontagePlaying())
 			{
 				if (TargetPlayer && LimitAngleOver(LimitAngle))
 				{
@@ -204,7 +204,7 @@ void AHellCaina::SetupFsm()
 				return;
 			}
 
-			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			if (!AnimInst->IsAnyMontagePlaying())
 			{
 
 				float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
@@ -237,10 +237,20 @@ void AHellCaina::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+			//기본설정은 idle로 블렌드아웃 되어버리므로 옵션을끄고 95퍼쯤에 삭제
+			if (AnimInst->IsAnyMontagePlaying())
 			{
-				HellCainaFsmComp->ChangeState(EHellCainaFsm::END);
-				return;
+				auto CurMontage = AnimInst->GetCurrentActiveMontage();
+				float CurTime = AnimInst->Montage_GetPosition(CurMontage);
+				float TotalTime = CurMontage->GetPlayLength();
+
+				float Percent = CurTime / TotalTime * 100.0f;
+
+				if (Percent >= 95.f)
+				{
+					HellCainaFsmComp->ChangeState(EHellCainaFsm::END);
+					return;
+				}
 			}
 		},
 

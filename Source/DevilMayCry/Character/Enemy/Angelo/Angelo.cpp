@@ -446,10 +446,20 @@ void AAngelo::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
-			if (!AnimInst->IsAnyMontagePlaying())
+			//기본설정은 idle로 블렌드아웃 되어버리므로 옵션을끄고 95퍼쯤에 삭제
+			if (AnimInst->IsAnyMontagePlaying())
 			{
-				AngeloFsmComp->ChangeState(EAngeloFsm::END);
-				return;
+				auto CurMontage = AnimInst->GetCurrentActiveMontage();
+				float CurTime = AnimInst->Montage_GetPosition(CurMontage);
+				float TotalTime = CurMontage->GetPlayLength();
+
+				float Percent = CurTime / TotalTime * 100.0f;
+
+				if (Percent >= 95.f)
+				{
+					AngeloFsmComp->ChangeState(EAngeloFsm::END);
+					return;
+				}
 			}
 		},
 
@@ -464,6 +474,7 @@ void AAngelo::SetupFsm()
 		[this]()
 		{
 			bDestroyed = true;
+			GetMesh()->SetHiddenInGame(true);
 			SetActorHiddenInGame(true);
 			SetActorEnableCollision(false);
 			SetActorTickEnabled(false);
