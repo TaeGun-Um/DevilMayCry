@@ -68,6 +68,14 @@ void AEnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	/*DOREPLIFETIME(AEnemyBase, TargetPlayer);*/
 }
 
+void AEnemyBase::EnemyDestroy()
+{
+	bDestroyed = true;
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+}
+
 void AEnemyBase::DestroyCheck(float DeltaTime)
 {
 	if (bDead)

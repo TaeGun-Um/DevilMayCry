@@ -324,10 +324,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			bDestroyed = true;
-			SetActorHiddenInGame(true);
-			SetActorEnableCollision(false);
-			SetActorTickEnabled(false);
+			EnemyDestroy();
 		},
 
 		//Update

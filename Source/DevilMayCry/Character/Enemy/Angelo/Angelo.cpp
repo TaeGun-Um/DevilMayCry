@@ -473,11 +473,7 @@ void AAngelo::SetupFsm()
 		//Start
 		[this]()
 		{
-			bDestroyed = true;
-			GetMesh()->SetHiddenInGame(true);
-			SetActorHiddenInGame(true);
-			SetActorEnableCollision(false);
-			SetActorTickEnabled(false);
+			EnemyDestroy();
 		},
 
 		//Update

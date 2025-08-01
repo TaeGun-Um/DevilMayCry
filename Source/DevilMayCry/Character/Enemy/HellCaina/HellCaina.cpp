@@ -257,7 +257,6 @@ void AHellCaina::SetupFsm()
 		//End
 		[this]()
 		{
-
 			if (EndFunc)
 			{
 				EndFunc();
@@ -269,10 +268,7 @@ void AHellCaina::SetupFsm()
 		//Start
 		[this]()
 		{
-			bDestroyed = true;
-			SetActorHiddenInGame(true);
-			SetActorEnableCollision(false);
-			SetActorTickEnabled(false);
+			EnemyDestroy();
 		},
 
 		//Update

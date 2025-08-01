@@ -62,8 +62,9 @@ public:
 	
 	
 protected:
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
+
+	void EnemyDestroy();
 
 	void DestroyCheck(float DeltaTime);
 
