@@ -75,18 +75,23 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 						AreaActor->SetActorTickEnabled(false);
 					}
 					else if (Cast<AEnemyBase>(AreaActor))
-					{
+					{						
+						TObjectPtr<AEnemyBase> Enemy = Cast<AEnemyBase>(AreaActor);
+
 						bool IsFirst = false;
-						PhaseArray[i].EnemyArray.Add(Cast<AEnemyBase>(AreaActor), &IsFirst);
+						PhaseArray[i].EnemyArray.Add(Enemy, &IsFirst);
 
 						//몬스터 콜리전이 여러개면 (무기 등) 중복검출이 되는 문제때문에 중복체크
 						if (!IsFirst)
 						{
-							AreaActor->SetActorHiddenInGame(true);
-							AreaActor->SetActorEnableCollision(false);
-							AreaActor->SetActorTickEnabled(false);
-
-							AreaActor->OnDestroyed.AddDynamic(this, &UAreaSubSystem::OnDestroyCheck);
+							Enemy->SetActorHiddenInGame(true);
+							Enemy->SetActorEnableCollision(false);
+							Enemy->SetActorTickEnabled(false);
+							
+							Enemy->SetEndFunc([this]()
+								{
+									CountDestroy();
+								});
 						}
 					}
 					else
@@ -100,7 +105,7 @@ void UAreaSubSystem::FindPhase(UWorld* World)
 	}
 }
 
-void UAreaSubSystem::OnDestroyCheck(AActor* DestroyActor)
+void UAreaSubSystem::CountDestroy()
 {
 	++PhaseArray[CurPhase].DeathCount;
 

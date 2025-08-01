@@ -8,6 +8,7 @@
 #include "../../DamageType/GeneralDamageType.h"
 #include "../../FsmComponent.h"
 #include "AIController.h"
+#include "../../../Area/AreaSubSystem.h"
 
 #include "GameFramework/Controller.h"
 #include "../AI/EnemyController.h"
@@ -302,6 +303,10 @@ void AEmpusa::SetupFsm()
 		//End
 		[this]()
 		{
+			if (EndFunc)
+			{
+				EndFunc();
+			}
 		}
 	);
 

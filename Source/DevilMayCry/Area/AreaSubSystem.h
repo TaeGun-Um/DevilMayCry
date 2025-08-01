@@ -40,6 +40,8 @@ public:
 public:
 	UAreaSubSystem();
 
+	void CountDestroy();
+
 	int32 GetCurPhase()
 	{
 		return static_cast<int32>(CurPhase);
@@ -49,8 +51,6 @@ public:
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	void FindPhase(UWorld* World); 
-	UFUNCTION()
-	void OnDestroyCheck(AActor* DestroyActor);
 
 private:
 	TArray<Phase> PhaseArray;

@@ -47,6 +47,11 @@ public:
 	}
 
 
+	void SetEndFunc(TFunction<void()> Func)
+	{
+		EndFunc = Func;
+	}
+
 	virtual void DamagedGeneral();
 	virtual void DamagedSnatch();
 	virtual void DamagedDefault();
@@ -54,6 +59,7 @@ public:
 	// Getter, Setter
 	float GetEnermyMaxHP() { return MaxHP; }
 	float GetEnermyCurHP() { return CurHP; }
+	
 	
 protected:
 
@@ -131,6 +137,8 @@ protected:
 	FName Start = TEXT("Start");
 	FName Loop = TEXT("Loop");
 	FName End = TEXT("End");
+
+	TFunction<void()> EndFunc;
 
 private:
 
