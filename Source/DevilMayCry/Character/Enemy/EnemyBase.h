@@ -73,6 +73,9 @@ protected:
 		CollisionNum = Num;
 	}
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void Multicast_SetTargetPlayer(AParentCharacter* Target);
+
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;

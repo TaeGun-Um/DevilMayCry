@@ -45,8 +45,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -75,30 +73,48 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DamagedAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DamagedAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DengekiAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DengekiAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RakuraiAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_RakuraiAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_WalkAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ParryAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ParryAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AttackAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AttackAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WarpAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_WarpAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StunAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StunAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DeadAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DeadAnimation();
 
 protected:
 	//Weapon

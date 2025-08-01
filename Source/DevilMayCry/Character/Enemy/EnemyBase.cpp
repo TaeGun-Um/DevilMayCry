@@ -153,6 +153,12 @@ void AEnemyBase::TurnToActor(float DeltaTime)
 
 }
 
+
+void AEnemyBase::Multicast_SetTargetPlayer_Implementation(AParentCharacter* Target)
+{
+	TargetPlayer = Target;
+}
+
 void AEnemyBase::DamagedGeneral()
 {
 }

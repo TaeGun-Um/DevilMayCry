@@ -130,7 +130,10 @@ void AHellCaina::SetupFsm()
 		[this](float DeltaTime)
 		{
 			TurnToActor(DeltaTime);
-			auto Result = AiController->MoveToActor(TargetPlayer);
+			if (HasAuthority())
+			{
+				auto Result = AiController->MoveToActor(TargetPlayer);
+			}
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) <= AttackRange)
 			{

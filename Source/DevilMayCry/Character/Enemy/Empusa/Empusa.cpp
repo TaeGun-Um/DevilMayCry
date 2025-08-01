@@ -137,7 +137,10 @@ void AEmpusa::SetupFsm()
 		[this](float DeltaTime)
 		{
 			TurnToActor(DeltaTime);
-			auto Result = AiController->MoveToActor(TargetPlayer);
+			if (HasAuthority())
+			{
+				auto Result = AiController->MoveToActor(TargetPlayer);
+			}
 
 			if (FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation()) > RunEndRange)
 			{
@@ -171,7 +174,10 @@ void AEmpusa::SetupFsm()
 		[this](float DeltaTime)
 		{
 			TurnToActor(DeltaTime);
-			auto Result = AiController->MoveToActor(TargetPlayer);
+			if (HasAuthority())
+			{
+				auto Result = AiController->MoveToActor(TargetPlayer);
+			}
 
 			float Dist = FVector::DistXY(GetActorLocation(), TargetPlayer->GetActorLocation());
 			if (Dist <= AttackRange)

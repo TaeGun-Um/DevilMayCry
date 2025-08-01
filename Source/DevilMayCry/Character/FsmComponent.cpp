@@ -29,16 +29,7 @@ void UFsmComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	Temp(DeltaTime);
-	//if (GetOwner()->HasAuthority())
-	//{
-	//	Multicast_FsmTick(DeltaTime);
-	//}
-	//else
-	//{
-	//	Server_FsmTick(DeltaTime);
-	//}
-	
+	FsmTick(DeltaTime);	
 }
 
 void UFsmComponent::ChangeState(int32 Index)
@@ -84,7 +75,7 @@ void UFsmComponent::Multicast_FsmTick_Implementation(float DT)
 	}
 }
 
-void UFsmComponent::Temp(float DT)
+void UFsmComponent::FsmTick(float DT)
 {
 	StateLiveTime += DT;
 	if (CurState == -1)
