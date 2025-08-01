@@ -204,7 +204,7 @@ private:
 
 private:
 	//Move
-	const float RunSpeed = 600.f;
+	const float RunSpeed = 800.f;
 	const float WalkSpeed = 400.f;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bMoveOk = true;

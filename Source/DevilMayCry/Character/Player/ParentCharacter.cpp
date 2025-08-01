@@ -38,6 +38,8 @@ AParentCharacter::AParentCharacter()
 
 	Tags.Add(TEXT("Player"));
 	Tags.Add(TEXT("AREA"));
+
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 }
 
 // Called when the game starts or when spawned

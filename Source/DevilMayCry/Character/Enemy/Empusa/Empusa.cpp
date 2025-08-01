@@ -294,7 +294,7 @@ void AEmpusa::SetupFsm()
 		{
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
-				Destroy();
+				EmpusaFsmComp->ChangeState(EEmpusaFsm::END);
 				return;
 			}
 		},

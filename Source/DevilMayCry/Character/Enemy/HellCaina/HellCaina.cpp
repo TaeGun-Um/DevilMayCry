@@ -238,7 +238,7 @@ void AHellCaina::SetupFsm()
 		{
 			if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 			{
-				Destroy();
+				HellCainaFsmComp->ChangeState(EHellCainaFsm::END);
 				return;
 			}
 		},
