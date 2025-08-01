@@ -40,6 +40,7 @@ public:
 		return bCanPull;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	bool GetIsDestroy()
 	{
 		return bDestroyed;
@@ -52,6 +53,7 @@ public:
 
 protected:
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
 	void DestroyCheck(float DeltaTime);
 
@@ -76,7 +78,7 @@ protected:
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true")/*,Replicated*/)
 	TObjectPtr<class AParentCharacter> TargetPlayer = nullptr;
 
 	TObjectPtr<class AAIController> AiController = nullptr;

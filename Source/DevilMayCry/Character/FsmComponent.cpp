@@ -10,6 +10,7 @@ UFsmComponent::UFsmComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	
 	// ...
 }
 
@@ -28,10 +29,15 @@ void UFsmComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (GetOwner()->HasAuthority())
-	{
-		Multicast_FsmTick(DeltaTime);
-	}
+	Temp(DeltaTime);
+	//if (GetOwner()->HasAuthority())
+	//{
+	//	Multicast_FsmTick(DeltaTime);
+	//}
+	//else
+	//{
+	//	Server_FsmTick(DeltaTime);
+	//}
 	
 }
 
@@ -65,6 +71,20 @@ void UFsmComponent::Server_FsmTick_Implementation(float DT)
 }
 
 void UFsmComponent::Multicast_FsmTick_Implementation(float DT)
+{
+	StateLiveTime += DT;
+	if (CurState == -1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s %s"), *GetOwner()->GetName(), TEXT("Fsm Index Error"));
+		return;
+	}
+	if (true == MapState[CurState].Update.IsBound())
+	{
+		MapState[CurState].Update.Execute(DT);
+	}
+}
+
+void UFsmComponent::Temp(float DT)
 {
 	StateLiveTime += DT;
 	if (CurState == -1)

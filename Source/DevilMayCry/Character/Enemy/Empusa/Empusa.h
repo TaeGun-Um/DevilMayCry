@@ -42,8 +42,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -54,8 +52,6 @@ public:
 public:
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
-	void RandomAttack();
 
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -68,19 +64,34 @@ protected:
 	virtual void DamagedSnatch();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void RandomAttack();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_RandomAttack();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void DamagedAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DamagedAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RunAnimation();
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_RunAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WalkAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_WalkAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DeadAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DeadAnimation();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SnatchAnimation();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SnatchAnimation();
 
 protected:
 	//Weapon

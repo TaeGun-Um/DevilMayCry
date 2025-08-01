@@ -127,7 +127,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			WalkAnimation();
+			Multicast_WalkAnimation();
 		},
 
 		//Update
@@ -154,7 +154,8 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			RunAnimation();
+			Multicast_RunAnimation();
+			//RunAnimation();
 		},
 
 		//Update
@@ -181,7 +182,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			RandomAttack();
+			Multicast_RandomAttack();
 		},
 
 		//Update
@@ -208,7 +209,7 @@ void AEmpusa::SetupFsm()
 					}
 					else
 					{
-						RandomAttack();
+						Multicast_RandomAttack();
 					}
 				}
 			}
@@ -251,7 +252,7 @@ void AEmpusa::SetupFsm()
 				}
 				else
 				{
-					RandomAttack();
+					Multicast_RandomAttack();
 				}
 			}
 		},
@@ -266,7 +267,7 @@ void AEmpusa::SetupFsm()
 		//Start
 		[this]()
 		{
-			DeadAnimation();
+			Multicast_DeadAnimation();
 		},
 
 		//Update
@@ -312,7 +313,10 @@ void AEmpusa::SetupFsm()
 void AEmpusa::DamagedDefault()
 {
 	DamagedAnimation();
-	EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+	if (HasAuthority())
+	{
+		EmpusaFsmComp->ChangeState(EEmpusaFsm::DAMAGED);
+	}
 }
 
 void AEmpusa::DamagedGeneral()
@@ -324,7 +328,32 @@ void AEmpusa::DamagedSnatch()
 	//SnatchAnimation();
 }
 
-void AEmpusa::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AEmpusa::Multicast_RandomAttack_Implementation()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	RandomAttack();
+}
+
+void AEmpusa::Multicast_RunAnimation_Implementation()
+{
+	RunAnimation();
+}
+
+void AEmpusa::Multicast_DamagedAnimation_Implementation()
+{
+	DamagedAnimation();
+}
+
+void AEmpusa::Multicast_WalkAnimation_Implementation()
+{
+	WalkAnimation();
+}
+
+void AEmpusa::Multicast_DeadAnimation_Implementation()
+{
+	DeadAnimation();
+}
+
+void AEmpusa::Multicast_SnatchAnimation_Implementation()
+{
+	SnatchAnimation();
 }

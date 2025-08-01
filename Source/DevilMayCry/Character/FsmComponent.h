@@ -84,7 +84,7 @@ private:
 		MapState[Index].Update.BindLambda(BindUpdate);
 		MapState[Index].End.BindLambda(BindEnd);
 	};
-
+	void Temp(float DT);
 private:
 
 	TMap<int32, FStateParam> MapState;

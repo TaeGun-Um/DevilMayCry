@@ -10,6 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "../FsmComponent.h"
 #include "../Player/ParentCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AEnemyBase::AEnemyBase()
@@ -58,6 +59,13 @@ float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 void AEnemyBase::SetWalkSpeed(float Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = Value;
+}
+
+void AEnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	/*DOREPLIFETIME(AEnemyBase, TargetPlayer);*/
 }
 
 void AEnemyBase::DestroyCheck(float DeltaTime)
