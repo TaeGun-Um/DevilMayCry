@@ -10,8 +10,9 @@
 #include "GameFramework/SpectatorPawn.h"
 #include "Kismet/GameplayStatics.h"
 // #include "OnlineSubsystemTypes.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSubsystem.h"
 // #include "OnlineSubsystemUtils.h"
-// #include "Interfaces/OnlineSessionInterface.h""
 
 AInGameModeBase::AInGameModeBase()
 {
@@ -60,11 +61,10 @@ void AInGameModeBase::BeginPlay()
 
 }
 
-
 void AInGameModeBase::EndingStart()
 {
     // 엔딩 매니저 스폰
-    AEndingSequenceManager* Manager = GetWorld()->SpawnActor<AEndingSequenceManager>(EndingManagerClass);
+    AEndingSequenceManager* Manager = GetWorld()->SpawnActor<AEndingSequenceManager>();
 
     // 캡처 및 GameInstance 저장
     if (Manager)
@@ -82,10 +82,10 @@ void AInGameModeBase::EndingStart()
     else if (NetMode == NM_ListenServer)
     {
         // 서버: 세션 종료 후 서버 자신도 EndingScene으로
-        //if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
-        //{
-        //    OnlineSub->GetSessionInterface()->DestroySession(NAME_GameSession);
-        //}
+        if (IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
+        {
+            OnlineSub->GetSessionInterface()->DestroySession(NAME_GameSession);
+        }
 
         // 서버의 클라이언트도 연결 해제 후 EndingScene으로 이동
         for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)

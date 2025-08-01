@@ -31,7 +31,13 @@ private:
     bool bLoggedOnce = false;
 
     UPROPERTY(EditAnywhere, Category = "UI")
+    TSubclassOf<class UUserWidget> BGBlackWidgetClass;
+
+    UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> InGameWidgetClass;
+
+    UPROPERTY()
+    TObjectPtr<class UBlackBGWidget> BGBlackWidgetInstance;
 
     UPROPERTY()
     TObjectPtr<class UInGameWidget> InGameWidgetInstance;

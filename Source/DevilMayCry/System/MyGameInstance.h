@@ -24,6 +24,7 @@ class DEVILMAYCRY_API UMyGameInstance : public UGameInstance
 	
 public:
 	void SetMapChangeValue(EMapChangeValue _Value) { MapChangeValue = _Value; }
+	EMapChangeValue GetMapChangeValue() { return MapChangeValue; }
 
 	UPROPERTY(BlueprintReadWrite) // Ending 캡쳐본 저장용
 	TObjectPtr<class UTexture2D> CapturedEndingTexture;

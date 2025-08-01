@@ -51,6 +51,10 @@ public:
 	virtual void DamagedSnatch();
 	virtual void DamagedDefault();
 
+	// Getter, Setter
+	float GetEnermyMaxHP() { return MaxHP; }
+	float GetEnermyCurHP() { return CurHP; }
+	
 protected:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;

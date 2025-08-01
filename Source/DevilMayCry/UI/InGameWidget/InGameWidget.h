@@ -15,6 +15,8 @@ class DEVILMAYCRY_API UInGameWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	void SetBossHPVisible();
+	void UpdateBossHPBar(float _CurHP, float _MaxHP);
 
 protected:
 	virtual bool Initialize() override;
@@ -22,4 +24,15 @@ protected:
 private:
 	void VariableSetting();
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> HPbarBackImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> HPbarImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> BossHPbarBackImage;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> BossHPbarImage;
 };
