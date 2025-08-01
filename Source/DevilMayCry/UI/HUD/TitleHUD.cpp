@@ -372,8 +372,8 @@ void ATitleHUD::CreateFSM()
         }
     );
 
-    //TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::LOGO));
-    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
+    TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::LOGO));
+    //TitleFSM->ChangeState(static_cast<int64>(ETitleFSMState::MENU));
 }
 
 void ATitleHUD::ClassSetting()
