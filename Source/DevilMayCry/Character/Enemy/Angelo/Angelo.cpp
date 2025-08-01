@@ -423,6 +423,12 @@ void AAngelo::SetupFsm()
 		//Update
 		[this](float DeltaTime)
 		{
+			if (bDead)
+			{
+				AngeloFsmComp->ChangeState(EAngeloFsm::DEAD);
+				return;
+			}
+
 			if (!AnimInst->IsAnyMontagePlaying())
 			{
 				AngeloFsmComp->ChangeState(EAngeloFsm::IDLE);
