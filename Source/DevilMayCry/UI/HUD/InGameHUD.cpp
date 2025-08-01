@@ -8,6 +8,7 @@
 #include "DevilMayCry/UI/BasicWidget/BlackBGWidget.h"
 #include "DevilMayCry/System/MyGameInstance.h"
 #include "DevilMayCry/Character/Enemy/EnemyBase.h"
+#include "DevilMayCry/Character/Enemy/Angelo/Angelo.h"  // AAngelo 헤더 포함
 #include "EngineUtils.h"   // TActorIterator 사용 시 필요
 
 AInGameHUD::AInGameHUD()
@@ -60,13 +61,13 @@ void AInGameHUD::Tick(float DeltaTime)
         }
     }
 
-    // ? Boss HP 업데이트
+    // Boss HP 업데이트
     if (InGameWidgetInstance)
     {
         // 월드에서 보스(EnemyBase) 액터 탐색
-        for (TActorIterator<AEnemyBase> It(GetWorld()); It; ++It)
+        for (TActorIterator<AAngelo> It(GetWorld()); It; ++It)
         {
-            AEnemyBase* Boss = *It;
+            AAngelo* Boss = *It;
             if (Boss && !Boss->GetIsDestroy())  // 유효하고 파괴되지 않은 보스
             {
                 float CurHP = Boss->GetEnermyCurHP();
