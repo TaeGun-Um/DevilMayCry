@@ -288,4 +288,7 @@ private:
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Fade
     TObjectPtr<class UWidgetAnimation> MessageAnimation01;
 
+    UPROPERTY()
+    TObjectPtr<class USoundManager> SM;
+
 };

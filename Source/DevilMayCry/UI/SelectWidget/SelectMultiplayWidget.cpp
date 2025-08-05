@@ -11,6 +11,7 @@
 #include "DevilMayCry/State/LobbyPlayerState.h"
 #include "DevilMayCry/System/LobbyGameModeBase.h"
 #include "DevilMayCry/System/MyGameInstance.h"
+#include "DevilMayCry/Helper/SoundManager.h"
 
 bool USelectMultiplayWidget::Initialize()
 {
@@ -118,6 +119,9 @@ void USelectMultiplayWidget::StartButtonClicked()
             MessageTextBox->SetText(FText::FromString(TEXT("Not everyone is ready.")));
             MessageBox01Visible();
             PlayAnimation(MessageAnimation01);
+
+            SM->PlaySFX(SM->GetWindowSound());
+
             return;
         }
 
@@ -136,6 +140,8 @@ void USelectMultiplayWidget::StartButtonClicked()
             {
                 UE_LOG(LogTemp, Log, TEXT("Client does not control level travel"));
             }
+
+            SM->PlaySFX(SM->GetSelectSound());
         }
     }
 }
@@ -189,6 +195,8 @@ void USelectMultiplayWidget::StartButtonHovered()
     MenuExitTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(SizeUpAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectMultiplayWidget::StartButtonUnHovered()
@@ -216,6 +224,8 @@ void USelectMultiplayWidget::ReadyButtonClicked()
             PS->ServerSetReady(true); // 서버에 RPC 호출
         }
     }
+
+    SM->PlaySFX(SM->GetReadySound());
 }
 
 void USelectMultiplayWidget::ReadyButtonHovered()
@@ -267,6 +277,8 @@ void USelectMultiplayWidget::ReadyButtonHovered()
     MenuStartTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(SizeUpAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectMultiplayWidget::ReadyButtonUnHovered()
@@ -291,6 +303,8 @@ void USelectMultiplayWidget::ExitButtonClicked()
     MessageTextBox->SetText(FText::FromString(TEXT("Are you sure leave the room?")));
     MessageBox00Visible();
     PlayAnimation(MessageAnimation00);
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMultiplayWidget::ExitButtonHovered()
@@ -342,6 +356,8 @@ void USelectMultiplayWidget::ExitButtonHovered()
     MenuReadyTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(SizeUpAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectMultiplayWidget::ExitButtonUnHovered()
@@ -377,6 +393,8 @@ void USelectMultiplayWidget::YesButtonClicked()
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     SetIsChangeMenu();
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMultiplayWidget::YesButtonHovered()
@@ -390,6 +408,8 @@ void USelectMultiplayWidget::YesButtonHovered()
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MenuType = EMenuMultiPlayType::YesCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMultiplayWidget::YesButtonUnHovered()
@@ -442,6 +462,8 @@ void USelectMultiplayWidget::NoButtonClicked()
         // 서버는 전체를 TitleScene으로 보내야 하므로 ServerTravel
         World->ServerTravel("/Game/Maps/TitleScene?listen");
     }
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMultiplayWidget::NoButtonHovered()
@@ -455,6 +477,8 @@ void USelectMultiplayWidget::NoButtonHovered()
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MenuType = EMenuMultiPlayType::NoCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMultiplayWidget::NoButtonUnHovered()
@@ -482,6 +506,8 @@ void USelectMultiplayWidget::EnterButtonClicked()
 
     MenuStartTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMultiplayWidget::EnterButtonHovered()
@@ -494,6 +520,8 @@ void USelectMultiplayWidget::EnterButtonHovered()
 
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MenuType = EMenuMultiPlayType::EnterCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMultiplayWidget::EnterButtonUnHovered()
@@ -1063,4 +1091,6 @@ void USelectMultiplayWidget::VariableSetting()
 
     MessageBox00Hidden();
     MessageBox01Hidden();
+
+    SM = GetGameInstance()->GetSubsystem<USoundManager>();
 }

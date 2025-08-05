@@ -8,6 +8,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
+#include "DevilMayCry/Helper/SoundManager.h"
 
 bool UTitleWidget::Initialize()
 {
@@ -49,6 +50,7 @@ void UTitleWidget::StartButtonClicked()
     }
 
     bIsEnd = true;
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void UTitleWidget::StartButtonHovered()
@@ -77,6 +79,7 @@ void UTitleWidget::StartButtonHovered()
     }
 
     PlayAnimation(SizeUpAnimation);
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void UTitleWidget::StartButtonUnHovered()
@@ -86,6 +89,7 @@ void UTitleWidget::StartButtonUnHovered()
 
 void UTitleWidget::ExitButtonClicked()
 {
+    SM->PlaySFX(SM->GetSelectSound());
     UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
 }
 
@@ -115,6 +119,7 @@ void UTitleWidget::ExitButtonHovered()
     }
 
     PlayAnimation(SizeUpAnimation);
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void UTitleWidget::ExitButtonUnHovered()
@@ -249,4 +254,6 @@ void UTitleWidget::VariableSetting()
         ExitTextBox->SetJustification(ETextJustify::Center);
         ExitTextBox->SetText(FText::FromString(TEXT("Exit")));
     }
+  
+    SM = GetGameInstance()->GetSubsystem<USoundManager>();
 }

@@ -10,6 +10,7 @@
 #include "DevilMayCry/Character/Enemy/EnemyBase.h"
 #include "DevilMayCry/Character/Enemy/Angelo/Angelo.h"  // AAngelo 헤더 포함
 #include "EngineUtils.h"   // TActorIterator 사용 시 필요
+#include "DevilMayCry/Helper/SoundManager.h"
 
 AInGameHUD::AInGameHUD()
 {
@@ -28,6 +29,8 @@ void AInGameHUD::BeginPlay()
         FInputModeGameOnly InputMode;
         PC->SetInputMode(InputMode);
     }
+
+    SM->StopBGM();
 }
 
 void AInGameHUD::Tick(float DeltaTime)
@@ -119,6 +122,8 @@ void AInGameHUD::VariableSetting()
     {
         InGameWidgetInstance->SetBossHPVisible();
     }
+
+    SM = GetGameInstance()->GetSubsystem<USoundManager>();
 }
 
 

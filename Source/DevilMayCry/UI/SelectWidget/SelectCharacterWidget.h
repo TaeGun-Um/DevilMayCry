@@ -151,4 +151,8 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> VergilLineMaterial;
+
+	UPROPERTY()
+	TObjectPtr<class USoundManager> SM;
+
 };

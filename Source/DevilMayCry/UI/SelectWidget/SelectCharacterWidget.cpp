@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/TextBlock.h"
+#include "DevilMayCry/Helper/SoundManager.h"
 
 bool USelectCharacterWidget::Initialize()
 {
@@ -24,6 +25,8 @@ void USelectCharacterWidget::NeroButtonClicked()
     ResetVergilSelect();
     CharacterType = ECharacterType::None;
     bIsEnd = true;
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectCharacterWidget::NeroButtonHovered()
@@ -41,6 +44,8 @@ void USelectCharacterWidget::NeroButtonHovered()
 
     CharacterType = ECharacterType::Nero;
     PlayAnimation(NeroSelectAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectCharacterWidget::NeroButtonUnHovered()
@@ -54,6 +59,8 @@ void USelectCharacterWidget::VergilButtonClicked()
     ResetVergilSelect();
     CharacterType = ECharacterType::None;
     bIsEnd = true;
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectCharacterWidget::VergilButtonHovered()
@@ -71,6 +78,8 @@ void USelectCharacterWidget::VergilButtonHovered()
 
     CharacterType = ECharacterType::Vergil;
     PlayAnimation(VergilSelectAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectCharacterWidget::VergilButtonUnHovered()
@@ -444,4 +453,6 @@ void USelectCharacterWidget::VariableSetting()
             VergilButtonSlot->SetSize(FVector2D(450.f, 700.f));
         }
     }
+
+    SM = GetGameInstance()->GetSubsystem<USoundManager>();
 }

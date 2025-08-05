@@ -106,4 +106,7 @@ private:
     UPROPERTY()
     TObjectPtr<class APlayerController> HUDPlayerController;
 
+    UPROPERTY()
+    TObjectPtr<class USoundManager> SM;
+
 };

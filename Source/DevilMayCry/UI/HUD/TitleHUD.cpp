@@ -12,6 +12,7 @@
 #include "DevilMayCry/Network/UPnPSubsystem.h"
 #include "DevilMayCry/System/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "DevilMayCry/Helper/SoundManager.h"
 
 ATitleHUD::ATitleHUD()
 {
@@ -92,6 +93,8 @@ void ATitleHUD::CreateFSM()
             TitleWidgetInstance->SetVisibility(ESlateVisibility::Visible);
             TitleWidgetInstance->PlayFadeAnimation();
             TitleWidgetInstance->PlayBlinkAnimation();
+
+            SM->PlayBGM(SM->GetTitleBGM(), 0.2f, 14.8f, false);
         },
         .Update = [this](float DeltaTime)  // Update
         {
@@ -179,6 +182,7 @@ void ATitleHUD::CreateFSM()
             bIsAnykeyHandled = false;
             TitleWidgetInstance->SetUnHovered();
             TitleWidgetInstance->SetIsEnd(false);
+            SM->StopBGM();
         }
         }
     );
@@ -190,6 +194,8 @@ void ATitleHUD::CreateFSM()
         {
             CharacterWidgetInstance->SetVisibility(ESlateVisibility::Visible);
             CharacterWidgetInstance->PlayFadeAnimation();
+
+            SM->PlayBGM(SM->GetSelectBGM(), 0.2f, 0.0f, false);
         },
         .Update = [this](float DeltaTime)  // Update
         {
@@ -452,4 +458,6 @@ void ATitleHUD::VariableSetting()
     //LoadingWidgetInstance = CreateWidget<ULoadingWidget>(GetWorld(), LoadingWidgetClass);
     //LoadingWidgetInstance->AddToViewport();
     //LoadingWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+
+    SM = GetGameInstance()->GetSubsystem<USoundManager>();
 }

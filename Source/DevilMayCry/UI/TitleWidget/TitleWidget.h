@@ -115,5 +115,8 @@ private:
     UPROPERTY(Meta = (BindWidgetAnim), Transient) // Title Menu Select Animation
     TObjectPtr<class UWidgetAnimation> SizeDownAnimation;
 
+    UPROPERTY()
+    TObjectPtr<class USoundManager> SM;
+
 };
  

@@ -258,4 +258,8 @@ private:
 
     UPROPERTY(meta = (BindWidget))
     TArray<TObjectPtr<class UTextBlock>> PlayerReadyTexts;  // Ready 표시 텍스트
+
+    UPROPERTY()
+    TObjectPtr<class USoundManager> SM;
+
 };

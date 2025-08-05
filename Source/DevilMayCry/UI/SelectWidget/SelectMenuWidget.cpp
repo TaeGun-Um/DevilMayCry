@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/EditableText.h"
+#include "DevilMayCry/Helper/SoundManager.h"
 
 bool USelectMenuWidget::Initialize()
 {
@@ -53,6 +54,8 @@ void USelectMenuWidget::StartButtonClicked()
     //UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Scene/Location2")));
     // GetWorld()->ServerTravel(TEXT("/Game/Scene/Location2?listen"), false);
     SetIsChangeLocation2(true);
+
+    SM->PlaySFX(SM->GetStartSound());
 }
 
 void USelectMenuWidget::StartButtonHovered()
@@ -104,6 +107,8 @@ void USelectMenuWidget::StartButtonHovered()
     MenuPrevTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(SizeUpAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectMenuWidget::StartButtonUnHovered()
@@ -129,6 +134,8 @@ void USelectMenuWidget::SettingButtonClicked()
     bIsExtraWindowsHandled = true;
     MessageBox00Visible();
     PlayAnimation(MultiplayAnimation);
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMenuWidget::SettingButtonHovered()
@@ -180,6 +187,8 @@ void USelectMenuWidget::SettingButtonHovered()
     MenuStartTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(SizeUpAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectMenuWidget::SettingButtonUnHovered()
@@ -231,6 +240,8 @@ void USelectMenuWidget::PrevButtonClicked()
     MenuStartTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     SetIsChangePrev();
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectMenuWidget::PrevButtonHovered()
@@ -282,6 +293,8 @@ void USelectMenuWidget::PrevButtonHovered()
     MenuSettingTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(SizeUpAnimation);
+
+    SM->PlaySFX(SM->GetButtonSound());
 }
 
 void USelectMenuWidget::PrevButtonUnHovered()
@@ -320,6 +333,8 @@ void USelectMenuWidget::CreateButtonClicked()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(MessageAnimation00);
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectMenuWidget::CreateButtonHovered()
@@ -334,6 +349,8 @@ void USelectMenuWidget::CreateButtonHovered()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     MenuType = EMenuType::Create;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMenuWidget::CreateButtonUnHovered()
@@ -366,6 +383,8 @@ void USelectMenuWidget::JoinButtonClicked()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     PlayAnimation(MessageAnimation01);
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectMenuWidget::JoinButtonHovered()
@@ -380,6 +399,8 @@ void USelectMenuWidget::JoinButtonHovered()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
 
     MenuType = EMenuType::Join;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMenuWidget::JoinButtonUnHovered()
@@ -412,6 +433,8 @@ void USelectMenuWidget::ResetClicked()
     MenuSettingTextBox->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MultiPlayTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMenuWidget::YesButtonClicked()
@@ -440,6 +463,8 @@ void USelectMenuWidget::YesButtonClicked()
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     SetIsChangeHost();
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectMenuWidget::YesButtonHovered()
@@ -453,6 +478,8 @@ void USelectMenuWidget::YesButtonHovered()
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MenuType = EMenuType::YesCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMenuWidget::YesButtonUnHovered()
@@ -484,6 +511,8 @@ void USelectMenuWidget::NoButtonClicked()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMenuWidget::NoButtonHovered()
@@ -497,6 +526,8 @@ void USelectMenuWidget::NoButtonHovered()
     MessageCheckTextBox00->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MenuType = EMenuType::NoCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMenuWidget::NoButtonUnHovered()
@@ -530,6 +561,8 @@ void USelectMenuWidget::EnterButtonClicked()
     MessageCheckTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 
     SetIsChangeClient();
+
+    SM->PlaySFX(SM->GetSelectSound());
 }
 
 void USelectMenuWidget::EnterButtonHovered()
@@ -543,6 +576,8 @@ void USelectMenuWidget::EnterButtonHovered()
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MessageCheckTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MenuType = EMenuType::EnterCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMenuWidget::EnterButtonUnHovered()
@@ -574,6 +609,8 @@ void USelectMenuWidget::BackButtonClicked()
     MultiPlayTextBox01->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+
+    SM->PlaySFX(SM->GetWindowSound());
 }
 
 void USelectMenuWidget::BackButtonHovered()
@@ -587,6 +624,8 @@ void USelectMenuWidget::BackButtonHovered()
     MessageCheckTextBox02->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
     MessageCheckTextBox03->SetColorAndOpacity(FSlateColor(FLinearColor(0.15f, 0.5f, 0.52f, 1.0f)));
     MenuType = EMenuType::BackCheck;
+
+    SM->PlaySFX(SM->GetButtonSound2());
 }
 
 void USelectMenuWidget::BackButtonUnHovered()
@@ -1147,4 +1186,6 @@ void USelectMenuWidget::VariableSetting()
     MessageBox00Hidden();
     MessageBox01Hidden();
     MessageBox02Hidden();
+
+    SM = GetGameInstance()->GetSubsystem<USoundManager>();
 }

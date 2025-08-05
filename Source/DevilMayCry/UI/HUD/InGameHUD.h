@@ -44,4 +44,8 @@ private:
 
     UPROPERTY()
     TObjectPtr<class UInGameWidget> InGameWidgetInstance;
+
+    UPROPERTY()
+    TObjectPtr<class USoundManager> SM;
+
 };
