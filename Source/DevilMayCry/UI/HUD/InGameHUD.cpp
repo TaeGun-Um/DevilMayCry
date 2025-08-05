@@ -30,7 +30,7 @@ void AInGameHUD::BeginPlay()
         PC->SetInputMode(InputMode);
     }
 
-    SM->StopBGM();
+    // SM->StopBGM();
 }
 
 void AInGameHUD::Tick(float DeltaTime)

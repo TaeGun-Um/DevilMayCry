@@ -18,6 +18,8 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
 
     TitleBGM = LoadObject<USoundBase>(nullptr, TEXT("/Game/Asset/Sound/BGM/Titlescreen.Titlescreen"));
     SelectBGM = LoadObject<USoundBase>(nullptr, TEXT("/Game/Asset/Sound/BGM/Ugh_Come_On.Ugh_Come_On"));
+    BossBGM = LoadObject<USoundBase>(nullptr, TEXT("/Game/Asset/Sound/BGM/Voltaic_Black_Knight.Voltaic_Black_Knight"));
+    
     // SelectSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Asset/Sound/BGM/TitleBGM.TitleBGM"));
 
     // UE_LOG(LogTemp, Log, TEXT("[SoundManager] 사운드 에셋 로드 완료"));
