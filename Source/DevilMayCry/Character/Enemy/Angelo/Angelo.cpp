@@ -47,6 +47,7 @@ AAngelo::AAngelo()
 	bCanPull = false;
 	AttackRange = 800.f;
 	SetWalkSpeed(200.f);
+	MaxHP = 500.f;
 
 	RakuraiPos.SetNum(RakuraiMaxCount);
 }

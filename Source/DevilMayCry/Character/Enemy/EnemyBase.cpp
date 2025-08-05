@@ -28,6 +28,8 @@ void AEnemyBase::BeginPlay()
 
 	AiController = Cast<AAIController>(GetController()); 
 	AnimInst = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+
+	CurHP = MaxHP;
 }
 
 // Called every frame
