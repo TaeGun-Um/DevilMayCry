@@ -35,18 +35,24 @@ public:
     FORCEINLINE TObjectPtr<class USoundBase> GetTitleBGM() const { return TitleBGM; }
     FORCEINLINE TObjectPtr<class USoundBase> GetSelectBGM() const { return SelectBGM; }
 
+    UFUNCTION(BlueprintCallable) // BGM Á¤Áö
+    FORCEINLINE USoundBase* GetBossBGM() const { return BossBGM; }
+
 protected:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 private:
     UPROPERTY(EditAnywhere, Category = "Sound")
     TObjectPtr<class UAudioComponent> BGMComponent;
-
+    
     UPROPERTY(EditAnywhere, Category = "Sound")
     TObjectPtr<class USoundBase> TitleBGM;
 
     UPROPERTY(EditAnywhere, Category = "Sound")
     TObjectPtr<class USoundBase> SelectBGM;
+
+    UPROPERTY(EditAnywhere, Category = "Sound")
+    USoundBase* BossBGM;
 
     UPROPERTY(EditAnywhere, Category = "Sound")
     TObjectPtr<class USoundBase> ButtonSound;
