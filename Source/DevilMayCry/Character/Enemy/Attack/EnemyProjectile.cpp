@@ -6,6 +6,8 @@
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/DamageEvents.h" 
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
 
 #include "../../Player/ParentCharacter.h"
 #include "../../DamageType/GeneralDamageType.h"
@@ -36,6 +38,11 @@ AEnemyProjectile::AEnemyProjectile()
 	ProjectileComp->ProjectileGravityScale = 0.0f;
 
 	InitialLifeSpan = 3.f;
+	
+
+	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
+	AudioComp->SetupAttachment(RootComponent);
+	AudioComp->bAutoActivate = false;
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +51,14 @@ void AEnemyProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	SphereCollision->OnComponentHit.AddDynamic(this, &AEnemyProjectile::OnHit);
+
+
+	TObjectPtr<USoundCue> SC = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Asset/Sound/SFX/Cavaliere/Angelo_Dengeki.Angelo_Dengeki'"));
+
+	if (SC)
+	{
+		AudioComp->SetSound(SC);
+	}
 }
 
 // Called every frame
@@ -74,5 +89,6 @@ void AEnemyProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 void AEnemyProjectile::Fire(FVector Dir)
 {
 	ProjectileComp->Velocity = Dir * ProjectileComp->InitialSpeed;
+	AudioComp->Play();
 }
 

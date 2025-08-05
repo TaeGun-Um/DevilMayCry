@@ -75,4 +75,9 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class USceneComponent> SceneComp =nullptr;
+
+	TObjectPtr<class UAudioComponent> AudioComp = nullptr;
+	
+	TObjectPtr<class USoundCue> SCAsset = nullptr;
+
 };

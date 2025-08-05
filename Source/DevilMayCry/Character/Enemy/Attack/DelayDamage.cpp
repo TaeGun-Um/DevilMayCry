@@ -4,6 +4,8 @@
 #include "DelayDamage.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../DamageType/GeneralDamageType.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
 
 
 // Sets default values
@@ -16,12 +18,25 @@ ADelayDamage::ADelayDamage()
 
 	SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComp"));
 	RootComponent = SceneComp;
+
+	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
+	AudioComp->SetupAttachment(RootComponent);
+	AudioComp->bAutoActivate = false;
 }
 
 // Called when the game starts or when spawned
 void ADelayDamage::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TObjectPtr<USoundCue> SC = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Asset/Sound/SFX/Cavaliere/Angelo_Rakurai_SFX.Angelo_Rakurai_SFX'"));
+
+	if (SC)
+	{
+		AudioComp->SetSound(SC);
+	}
+
+	
 }
 
 // Called every frame
@@ -35,6 +50,8 @@ void ADelayDamage::Tick(float DeltaTime)
 
 		if (CurDamageDelay <=0.f)
 		{
+			AudioComp->Play();
+
 			UGameplayStatics::ApplyRadialDamage(
 				this,
 				Setter.Damage,

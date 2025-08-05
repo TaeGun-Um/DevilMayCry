@@ -36,4 +36,7 @@ private:
 
 	TObjectPtr<class USphereComponent> SphereCollision = nullptr;
 
+	TObjectPtr<class UAudioComponent> AudioComp = nullptr;
+
+	TObjectPtr<class USoundCue> SCAsset = nullptr;
 };
